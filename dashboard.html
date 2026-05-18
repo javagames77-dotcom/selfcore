@@ -459,32 +459,33 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
       <div class="page-title" id="t-title-food"></div>
     </div>
 
-    <!-- Метрики -->
+    <!-- Метрики КБЖУ -->
     <div class="grid4" style="margin-bottom:16px">
       <div class="card metric-card">
         <div class="metric-label" id="t-f-eaten"></div>
-        <div class="metric-val" id="f-kcal-val">0<span class="metric-unit">ккал</span></div>
+        <div class="metric-val" id="f-kcal-val">—<span class="metric-unit">ккал</span></div>
         <div class="metric-delta" id="f-kcal-goal"></div>
       </div>
       <div class="card metric-card">
         <div class="metric-label" id="t-f-prot"></div>
-        <div class="metric-val" id="f-prot-val">0<span class="metric-unit">г</span></div>
+        <div class="metric-val" id="f-prot-val">—<span class="metric-unit">г</span></div>
         <div class="metric-delta" id="t-f-prot-goal"></div>
       </div>
       <div class="card metric-card">
         <div class="metric-label" id="t-f-fat"></div>
-        <div class="metric-val" id="f-fat-val">0<span class="metric-unit">г</span></div>
+        <div class="metric-val" id="f-fat-val">—<span class="metric-unit">г</span></div>
         <div class="metric-delta" id="t-f-fat-goal"></div>
       </div>
       <div class="card metric-card">
         <div class="metric-label" id="t-f-carb"></div>
-        <div class="metric-val" id="f-carb-val">0<span class="metric-unit">г</span></div>
+        <div class="metric-val" id="f-carb-val">—<span class="metric-unit">г</span></div>
         <div class="metric-delta" id="t-f-carb-goal"></div>
       </div>
     </div>
 
     <div class="grid2">
-      <!-- Левая колонка: добавить приём пищи -->
+
+      <!-- Левая колонка: добавить вручную -->
       <div class="card" style="padding:16px">
         <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px;display:flex;align-items:center;gap:6px">
           <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v6M4.5 7.5h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -492,26 +493,16 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
         </div>
 
         <!-- TG подсказка -->
-        <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--muted);margin-bottom:12px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px"><path d="M21.5 2.5L2 9.5l7 2.5 2.5 7L21.5 2.5z" stroke="#5B77CC" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l3 3" stroke="#5B77CC" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <span id="t-f-tg-hint"></span>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--tag-blue-bg);border:1px solid var(--border);border-radius:8px;margin-bottom:14px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px">
+            <path d="M21.5 2.5L2 9.5l7 2.5 2.5 7L21.5 2.5z" stroke="#5B77CC" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M9 12l3 3" stroke="#5B77CC" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span style="font-size:12px;color:var(--muted);line-height:1.5" id="t-f-tg-hint"></span>
         </div>
 
-        <!-- Форма: секция загрузки фото -->
+        <!-- Форма ввода -->
         <div id="food-upload-section">
-          <div id="food-dropzone" onclick="foodSimulateAI()"
-            style="border:1.5px dashed var(--border2);border-radius:10px;padding:24px 16px;text-align:center;cursor:pointer;transition:background .15s;margin-bottom:12px">
-            <div style="font-size:28px;margin-bottom:8px">📷</div>
-            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-f-photo-title"></div>
-            <div style="font-size:11px;color:var(--muted)" id="t-f-photo-sub"></div>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-            <div style="flex:1;height:1px;background:var(--border)"></div>
-            <span style="font-size:11px;color:var(--muted2)" id="t-f-or"></span>
-            <div style="flex:1;height:1px;background:var(--border)"></div>
-          </div>
-
           <div style="margin-bottom:8px">
             <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-meal-type-label"></div>
             <select id="food-meal-type" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
@@ -524,7 +515,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 
           <div style="margin-bottom:8px">
             <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-dish-label"></div>
-            <input type="text" id="food-name" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit" id="t-f-dish-placeholder">
+            <input type="text" id="food-name" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
@@ -549,25 +540,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
           <button class="btn-accent" onclick="foodAddManual()" id="t-f-save-btn"></button>
         </div>
 
-        <!-- AI результат -->
-        <div id="food-ai-result" style="display:none">
-          <div style="text-align:center;padding:12px 0 8px">
-            <div style="font-size:28px;margin-bottom:6px">🧠</div>
-            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:2px" id="t-f-ai-recognized"></div>
-            <div style="font-size:11px;color:var(--muted)" id="food-ai-dish-name"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;text-align:center">
-            <div><div style="font-size:20px;font-weight:500;color:#D85A30" id="food-ai-kcal">386</div><div style="font-size:10px;color:var(--muted)">ккал</div></div>
-            <div><div style="font-size:20px;font-weight:500;color:var(--accent)" id="food-ai-prot">18<span style="font-size:11px">г</span></div><div style="font-size:10px;color:var(--muted)" id="t-f-prot-short"></div></div>
-            <div><div style="font-size:20px;font-weight:500;color:#BA7517" id="food-ai-fat">11<span style="font-size:11px">г</span></div><div style="font-size:10px;color:var(--muted)" id="t-f-fat-short"></div></div>
-          </div>
-          <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:12px" id="food-ai-carb-line"></div>
-          <button class="btn-accent" onclick="foodConfirmAI()" id="t-f-confirm-btn"></button>
-          <button style="width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;margin-top:6px;font-family:inherit" onclick="foodReset()" id="t-f-retry-btn"></button>
-        </div>
-
         <!-- Успех -->
-        <div id="food-success" style="display:none;text-align:center;padding:16px 0">
+        <div id="food-success" style="display:none;text-align:center;padding:20px 0">
           <div style="font-size:36px;margin-bottom:8px">✅</div>
           <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-f-saved"></div>
           <div style="font-size:11px;color:var(--muted)" id="t-f-saved-sub"></div>
@@ -575,17 +549,16 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
         </div>
       </div>
 
-      <!-- Правая колонка: список + прогресс + AI совет -->
+      <!-- Правая колонка: список сегодня + прогресс + совет -->
       <div style="display:flex;flex-direction:column;gap:10px">
+
         <div class="card" style="padding:16px">
           <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px;display:flex;align-items:center;gap:6px">
             <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
             <span id="t-f-today-title"></span>
           </div>
-          <div id="food-meals-list">
-            <div style="text-align:center;padding:24px;color:var(--muted2);font-size:12px" id="t-f-empty"></div>
-          </div>
-          <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:10px">
+          <div id="food-meals-list"></div>
+          <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:12px">
             <div id="food-kcal-bar" style="height:100%;border-radius:3px;background:var(--accent);transition:width .4s;width:0%"></div>
           </div>
           <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
@@ -601,6 +574,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
           </div>
           <div id="food-tip-box" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg3);border-radius:8px;padding:10px 12px"></div>
         </div>
+
       </div>
     </div>
   </div>
@@ -1038,19 +1012,14 @@ function applyLang(){
   fe('t-f-eaten','fEaten'); fe('t-f-prot','fProt'); fe('t-f-fat','fFat'); fe('t-f-carb','fCarb');
   fe('t-f-prot-goal','fGoalProt'); fe('t-f-fat-goal','fGoalFat'); fe('t-f-carb-goal','fGoalCarb');
   fe('t-f-add-title','fAddTitle'); fe('t-f-tg-hint','fTgHint');
-  fe('t-f-photo-title','fPhotoTitle'); fe('t-f-photo-sub','fPhotoSub'); fe('t-f-or','fOr');
   fe('t-f-meal-type-label','fMealTypeLabel'); fe('t-f-dish-label','fDishLabel');
   fe('t-f-inp-kcal','fInpKcal'); fe('t-f-inp-prot','fInpProt');
   fe('t-f-inp-fat','fInpFat'); fe('t-f-inp-carb','fInpCarb');
-  fe('t-f-save-btn','fSaveBtn'); fe('t-f-ai-recognized','fAiRecognized');
-  fe('t-f-prot-short','fProtShort'); fe('t-f-fat-short','fFatShort');
-  fe('t-f-confirm-btn','fConfirmBtn'); fe('t-f-retry-btn','fRetryBtn');
+  fe('t-f-save-btn','fSaveBtn');
   fe('t-f-saved','fSaved'); fe('t-f-saved-sub','fSavedSub'); fe('t-f-add-more','fAddMore');
   fe('t-f-today-title','fTodayTitle'); fe('t-f-tip-title','fTipTitle');
   const fkgoal = document.getElementById('f-kcal-goal'); if(fkgoal) fkgoal.textContent = t('fGoalKcal');
-  const fEmpty = document.getElementById('t-f-empty'); if(fEmpty) fEmpty.textContent = t('fEmpty');
   const ftip = document.getElementById('food-tip-box'); if(ftip && ftip.dataset.default!=='0') ftip.textContent = t('fTipDefault');
-  // select options
   const selOpts = [{id:'t-f-opt-breakfast',k:'fOptBreakfast'},{id:'t-f-opt-lunch',k:'fOptLunch'},{id:'t-f-opt-dinner',k:'fOptDinner'},{id:'t-f-opt-snack',k:'fOptSnack'}];
   selOpts.forEach(o=>{ const el=document.getElementById(o.id); if(el) el.textContent=t(o.k); });
   document.getElementById('t-finance-hint').textContent = t('financeHint');
@@ -1402,23 +1371,6 @@ async function foodSaveToServer(meal){
   }catch(e){ return {}; }
 }
 
-function foodSimulateAI(){
-  document.getElementById('food-ai-result').style.display = 'block';
-  document.getElementById('food-upload-section').style.display = 'none';
-  document.getElementById('food-success').style.display = 'none';
-  document.getElementById('food-ai-dish-name').textContent = 'Борщ з хлібом, ~400г';
-}
-
-async function foodConfirmAI(){
-  const mealType = foodGetMealKey();
-  const meal = { dish_name: document.getElementById('food-ai-dish-name').textContent, meal_type: mealType, kcal:386, prot:18, fat:11, carb:52 };
-  await foodSaveToServer(meal);
-  foodMeals.push({ ...meal, time: new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label: t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
-  foodRenderMeals(); foodUpdateMetrics();
-  document.getElementById('food-ai-result').style.display='none';
-  document.getElementById('food-success').style.display='block';
-}
-
 async function foodAddManual(){
   const name = (document.getElementById('food-name')||{}).value||'';
   const kcal = parseInt((document.getElementById('food-inp-kcal')||{}).value)||0;
@@ -1437,7 +1389,6 @@ async function foodAddManual(){
 
 function foodReset(){
   document.getElementById('food-upload-section').style.display='block';
-  document.getElementById('food-ai-result').style.display='none';
   document.getElementById('food-success').style.display='none';
   ['food-name','food-inp-kcal','food-inp-prot','food-inp-fat','food-inp-carb'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
 }
