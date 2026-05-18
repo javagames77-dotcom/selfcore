@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260518_3';
+  var V='20260518_4';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -930,6 +930,9 @@ function toast(msg, type='info'){
   setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),300); },3000);
 }
 
+/* ── ADMIN API ── */
+const ADMIN_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/admin';
+
 /* ── INIT ── */
 (function init(){
   const savedTheme=localStorage.getItem('sc_theme');
@@ -941,9 +944,6 @@ function toast(msg, type='info'){
   applyLang();
   loadPendingBadge();
 })();
-
-/* ── ADMIN API ── */
-const ADMIN_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/admin';
 
 function getToken(){
   return localStorage.getItem('sc_token') || sessionStorage.getItem('sc_token') || '';
