@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260518_3';
+  var V='20260518_6';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -154,6 +154,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 .act-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
 .act-btn:hover{border-color:var(--border2);color:var(--text)}
 .act-btn.del:hover{border-color:var(--tag-red);color:var(--tag-red);background:var(--tag-red-bg)}
+.btn-accent{width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.btn-accent:hover{opacity:.88}
+.food-meal-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)}
+.food-meal-row:last-child{border-bottom:none}
+.food-meal-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
 
 
 /* TOAST */
@@ -453,10 +458,150 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
     <div class="page-header">
       <div class="page-title" id="t-title-food"></div>
     </div>
-    <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
-      <div style="font-size:32px;margin-bottom:8px">🍽️</div>
-      <div style="font-size:14px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-food-hint"></div>
-      <div style="font-size:12px" id="t-food-hint2"></div>
+
+    <!-- Метрики -->
+    <div class="grid4" style="margin-bottom:16px">
+      <div class="card metric-card">
+        <div class="metric-label" id="t-f-eaten"></div>
+        <div class="metric-val" id="f-kcal-val">0<span class="metric-unit">ккал</span></div>
+        <div class="metric-delta" id="f-kcal-goal"></div>
+      </div>
+      <div class="card metric-card">
+        <div class="metric-label" id="t-f-prot"></div>
+        <div class="metric-val" id="f-prot-val">0<span class="metric-unit">г</span></div>
+        <div class="metric-delta" id="t-f-prot-goal"></div>
+      </div>
+      <div class="card metric-card">
+        <div class="metric-label" id="t-f-fat"></div>
+        <div class="metric-val" id="f-fat-val">0<span class="metric-unit">г</span></div>
+        <div class="metric-delta" id="t-f-fat-goal"></div>
+      </div>
+      <div class="card metric-card">
+        <div class="metric-label" id="t-f-carb"></div>
+        <div class="metric-val" id="f-carb-val">0<span class="metric-unit">г</span></div>
+        <div class="metric-delta" id="t-f-carb-goal"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <!-- Левая колонка: добавить приём пищи -->
+      <div class="card" style="padding:16px">
+        <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v6M4.5 7.5h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span id="t-f-add-title"></span>
+        </div>
+
+        <!-- TG подсказка -->
+        <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--muted);margin-bottom:12px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px"><path d="M21.5 2.5L2 9.5l7 2.5 2.5 7L21.5 2.5z" stroke="#5B77CC" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l3 3" stroke="#5B77CC" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span id="t-f-tg-hint"></span>
+        </div>
+
+        <!-- Форма: секция загрузки фото -->
+        <div id="food-upload-section">
+          <div id="food-dropzone" onclick="foodSimulateAI()"
+            style="border:1.5px dashed var(--border2);border-radius:10px;padding:24px 16px;text-align:center;cursor:pointer;transition:background .15s;margin-bottom:12px">
+            <div style="font-size:28px;margin-bottom:8px">📷</div>
+            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-f-photo-title"></div>
+            <div style="font-size:11px;color:var(--muted)" id="t-f-photo-sub"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <div style="flex:1;height:1px;background:var(--border)"></div>
+            <span style="font-size:11px;color:var(--muted2)" id="t-f-or"></span>
+            <div style="flex:1;height:1px;background:var(--border)"></div>
+          </div>
+
+          <div style="margin-bottom:8px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-meal-type-label"></div>
+            <select id="food-meal-type" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+              <option id="t-f-opt-breakfast"></option>
+              <option id="t-f-opt-lunch" selected></option>
+              <option id="t-f-opt-dinner"></option>
+              <option id="t-f-opt-snack"></option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:8px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-dish-label"></div>
+            <input type="text" id="food-name" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit" id="t-f-dish-placeholder">
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-kcal"></div>
+              <input type="number" id="food-inp-kcal" placeholder="450" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-prot"></div>
+              <input type="number" id="food-inp-prot" placeholder="32" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-fat"></div>
+              <input type="number" id="food-inp-fat" placeholder="12" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-carb"></div>
+              <input type="number" id="food-inp-carb" placeholder="48" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+            </div>
+          </div>
+
+          <button class="btn-accent" onclick="foodAddManual()" id="t-f-save-btn"></button>
+        </div>
+
+        <!-- AI результат -->
+        <div id="food-ai-result" style="display:none">
+          <div style="text-align:center;padding:12px 0 8px">
+            <div style="font-size:28px;margin-bottom:6px">🧠</div>
+            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:2px" id="t-f-ai-recognized"></div>
+            <div style="font-size:11px;color:var(--muted)" id="food-ai-dish-name"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;text-align:center">
+            <div><div style="font-size:20px;font-weight:500;color:#D85A30" id="food-ai-kcal">386</div><div style="font-size:10px;color:var(--muted)">ккал</div></div>
+            <div><div style="font-size:20px;font-weight:500;color:var(--accent)" id="food-ai-prot">18<span style="font-size:11px">г</span></div><div style="font-size:10px;color:var(--muted)" id="t-f-prot-short"></div></div>
+            <div><div style="font-size:20px;font-weight:500;color:#BA7517" id="food-ai-fat">11<span style="font-size:11px">г</span></div><div style="font-size:10px;color:var(--muted)" id="t-f-fat-short"></div></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:12px" id="food-ai-carb-line"></div>
+          <button class="btn-accent" onclick="foodConfirmAI()" id="t-f-confirm-btn"></button>
+          <button style="width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;margin-top:6px;font-family:inherit" onclick="foodReset()" id="t-f-retry-btn"></button>
+        </div>
+
+        <!-- Успех -->
+        <div id="food-success" style="display:none;text-align:center;padding:16px 0">
+          <div style="font-size:36px;margin-bottom:8px">✅</div>
+          <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-f-saved"></div>
+          <div style="font-size:11px;color:var(--muted)" id="t-f-saved-sub"></div>
+          <button style="margin-top:12px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit" onclick="foodReset()" id="t-f-add-more"></button>
+        </div>
+      </div>
+
+      <!-- Правая колонка: список + прогресс + AI совет -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card" style="padding:16px">
+          <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <span id="t-f-today-title"></span>
+          </div>
+          <div id="food-meals-list">
+            <div style="text-align:center;padding:24px;color:var(--muted2);font-size:12px" id="t-f-empty"></div>
+          </div>
+          <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:10px">
+            <div id="food-kcal-bar" style="height:100%;border-radius:3px;background:var(--accent);transition:width .4s;width:0%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
+            <span id="food-bar-eaten"></span>
+            <span id="food-bar-goal"></span>
+          </div>
+        </div>
+
+        <div class="card" style="padding:16px">
+          <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 3 3.5.5-2.5 2.5.5 3.5L7.5 9 4 10.5l.5-3.5L2 4.5 5.5 4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <span id="t-f-tip-title"></span>
+          </div>
+          <div id="food-tip-box" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg3);border-radius:8px;padding:10px 12px"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -646,6 +791,24 @@ const i18n = {
     titleAnalytics:'AI аналитика', titleSettings:'Настройки',
     comingSoon:'В разработке', connectZepp:'Подключите Zepp Life и Apple Health через n8n',
     foodHint:'Отправьте фото еды в Telegram бот', foodHint2:'@selfcore_bot',
+    fEaten:'Съедено', fProt:'Белки', fFat:'Жиры', fCarb:'Углеводы',
+    fGoalKcal:'Цель: 2 400 ккал', fGoalProt:'Цель: 140 г', fGoalFat:'Цель: 80 г', fGoalCarb:'Цель: 280 г',
+    fAddTitle:'Добавить приём пищи',
+    fTgHint:'Быстро? Отправь фото в @selfcore_bot — AI посчитает калории автоматически',
+    fPhotoTitle:'Загрузить фото блюда', fPhotoSub:'Нажми — GPT-4o распознает и посчитает',
+    fOr:'или введи вручную',
+    fMealTypeLabel:'Приём пищи', fDishLabel:'Блюдо / продукт',
+    fOptBreakfast:'Завтрак', fOptLunch:'Обед', fOptDinner:'Ужин', fOptSnack:'Перекус',
+    fInpKcal:'Калории (ккал)', fInpProt:'Белки (г)', fInpFat:'Жиры (г)', fInpCarb:'Углеводы (г)',
+    fSaveBtn:'Сохранить приём пищи',
+    fAiRecognized:'GPT-4o распознал блюдо', fProtShort:'белки', fFatShort:'жиры',
+    fConfirmBtn:'Подтвердить и сохранить', fRetryBtn:'Ввести по-другому',
+    fSaved:'Сохранено', fSavedSub:'Данные обновлены · TG уведомление отправлено',
+    fAddMore:'Добавить ещё',
+    fTodayTitle:'Сегодня съедено', fEmpty:'Пока нет приёмов пищи',
+    fTipTitle:'AI подсказка', fTipDefault:'Добавьте первый приём пищи — AI даст рекомендации',
+    fEatenLabel:'съедено', fGoalLabel:'цель',
+    fLoading:'Загружаю данные...',
     financeHint:'Подключение Приват24', financeHint2:'Настройте API ключ в настройках',
     contactsHint:'Подключите Telegram через n8n для аналитики',
     logHint:'Логирование активируется автоматически', planHint:'Планирование задач',
@@ -686,6 +849,24 @@ const i18n = {
     titleAnalytics:'AI аналітика', titleSettings:'Налаштування',
     comingSoon:'У розробці', connectZepp:'Підключіть Zepp Life та Apple Health через n8n',
     foodHint:'Надішліть фото їжі в Telegram бот', foodHint2:'@selfcore_bot',
+    fEaten:'З\'їдено', fProt:'Білки', fFat:'Жири', fCarb:'Вуглеводи',
+    fGoalKcal:'Ціль: 2 400 ккал', fGoalProt:'Ціль: 140 г', fGoalFat:'Ціль: 80 г', fGoalCarb:'Ціль: 280 г',
+    fAddTitle:'Додати прийом їжі',
+    fTgHint:'Швидко? Відправ фото в @selfcore_bot — AI порахує калорії автоматично',
+    fPhotoTitle:'Завантажити фото страви', fPhotoSub:'Натисни — GPT-4o розпізнає і порахує',
+    fOr:'або введи вручну',
+    fMealTypeLabel:'Прийом їжі', fDishLabel:'Страва / продукт',
+    fOptBreakfast:'Сніданок', fOptLunch:'Обід', fOptDinner:'Вечеря', fOptSnack:'Перекус',
+    fInpKcal:'Калорії (ккал)', fInpProt:'Білки (г)', fInpFat:'Жири (г)', fInpCarb:'Вуглеводи (г)',
+    fSaveBtn:'Зберегти прийом їжі',
+    fAiRecognized:'GPT-4o розпізнав страву', fProtShort:'білки', fFatShort:'жири',
+    fConfirmBtn:'Підтвердити і зберегти', fRetryBtn:'Ввести по-іншому',
+    fSaved:'Збережено', fSavedSub:'Дані оновлено · TG сповіщення надіслано',
+    fAddMore:'Додати ще',
+    fTodayTitle:'Сьогодні з\'їдено', fEmpty:'Поки немає прийомів їжі',
+    fTipTitle:'AI підказка', fTipDefault:'Додайте перший прийом їжі — AI дасть рекомендації',
+    fEatenLabel:'з\'їдено', fGoalLabel:'ціль',
+    fLoading:'Завантажую дані...',
     financeHint:'Підключення Приват24', financeHint2:'Налаштуйте API ключ у налаштуваннях',
     contactsHint:'Підключіть Telegram через n8n для аналітики',
     logHint:'Логування активується автоматично', planHint:'Планування завдань',
@@ -726,6 +907,24 @@ const i18n = {
     titleAnalytics:'AI analytics', titleSettings:'Settings',
     comingSoon:'In development', connectZepp:'Connect Zepp Life and Apple Health via n8n',
     foodHint:'Send food photo to Telegram bot', foodHint2:'@selfcore_bot',
+    fEaten:'Eaten', fProt:'Protein', fFat:'Fat', fCarb:'Carbs',
+    fGoalKcal:'Goal: 2 400 kcal', fGoalProt:'Goal: 140 g', fGoalFat:'Goal: 80 g', fGoalCarb:'Goal: 280 g',
+    fAddTitle:'Add meal',
+    fTgHint:'Quick? Send a photo to @selfcore_bot — AI will count calories automatically',
+    fPhotoTitle:'Upload food photo', fPhotoSub:'Click — GPT-4o will recognize and calculate',
+    fOr:'or enter manually',
+    fMealTypeLabel:'Meal type', fDishLabel:'Dish / product',
+    fOptBreakfast:'Breakfast', fOptLunch:'Lunch', fOptDinner:'Dinner', fOptSnack:'Snack',
+    fInpKcal:'Calories (kcal)', fInpProt:'Protein (g)', fInpFat:'Fat (g)', fInpCarb:'Carbs (g)',
+    fSaveBtn:'Save meal',
+    fAiRecognized:'GPT-4o recognized the dish', fProtShort:'protein', fFatShort:'fat',
+    fConfirmBtn:'Confirm and save', fRetryBtn:'Enter differently',
+    fSaved:'Saved', fSavedSub:'Data updated · TG notification sent',
+    fAddMore:'Add more',
+    fTodayTitle:'Eaten today', fEmpty:'No meals yet',
+    fTipTitle:'AI tip', fTipDefault:'Add your first meal — AI will give recommendations',
+    fEatenLabel:'eaten', fGoalLabel:'goal',
+    fLoading:'Loading data...',
     financeHint:'Privat24 connection', financeHint2:'Set API key in settings',
     contactsHint:'Connect Telegram via n8n for analytics',
     logHint:'Logging activates automatically', planHint:'Task planning',
@@ -834,8 +1033,26 @@ function applyLang(){
   // View hints
   document.getElementById('t-coming-soon').textContent = t('comingSoon');
   document.getElementById('t-connect-zepp').textContent = t('connectZepp');
-  document.getElementById('t-food-hint').textContent = t('foodHint');
-  document.getElementById('t-food-hint2').textContent = t('foodHint2');
+  // Food module
+  const fe = (id, key) => { const el=document.getElementById(id); if(el) el.textContent=t(key); };
+  fe('t-f-eaten','fEaten'); fe('t-f-prot','fProt'); fe('t-f-fat','fFat'); fe('t-f-carb','fCarb');
+  fe('t-f-prot-goal','fGoalProt'); fe('t-f-fat-goal','fGoalFat'); fe('t-f-carb-goal','fGoalCarb');
+  fe('t-f-add-title','fAddTitle'); fe('t-f-tg-hint','fTgHint');
+  fe('t-f-photo-title','fPhotoTitle'); fe('t-f-photo-sub','fPhotoSub'); fe('t-f-or','fOr');
+  fe('t-f-meal-type-label','fMealTypeLabel'); fe('t-f-dish-label','fDishLabel');
+  fe('t-f-inp-kcal','fInpKcal'); fe('t-f-inp-prot','fInpProt');
+  fe('t-f-inp-fat','fInpFat'); fe('t-f-inp-carb','fInpCarb');
+  fe('t-f-save-btn','fSaveBtn'); fe('t-f-ai-recognized','fAiRecognized');
+  fe('t-f-prot-short','fProtShort'); fe('t-f-fat-short','fFatShort');
+  fe('t-f-confirm-btn','fConfirmBtn'); fe('t-f-retry-btn','fRetryBtn');
+  fe('t-f-saved','fSaved'); fe('t-f-saved-sub','fSavedSub'); fe('t-f-add-more','fAddMore');
+  fe('t-f-today-title','fTodayTitle'); fe('t-f-tip-title','fTipTitle');
+  const fkgoal = document.getElementById('f-kcal-goal'); if(fkgoal) fkgoal.textContent = t('fGoalKcal');
+  const fEmpty = document.getElementById('t-f-empty'); if(fEmpty) fEmpty.textContent = t('fEmpty');
+  const ftip = document.getElementById('food-tip-box'); if(ftip && ftip.dataset.default!=='0') ftip.textContent = t('fTipDefault');
+  // select options
+  const selOpts = [{id:'t-f-opt-breakfast',k:'fOptBreakfast'},{id:'t-f-opt-lunch',k:'fOptLunch'},{id:'t-f-opt-dinner',k:'fOptDinner'},{id:'t-f-opt-snack',k:'fOptSnack'}];
+  selOpts.forEach(o=>{ const el=document.getElementById(o.id); if(el) el.textContent=t(o.k); });
   document.getElementById('t-finance-hint').textContent = t('financeHint');
   document.getElementById('t-finance-hint2').textContent = t('financeHint2');
   document.getElementById('t-contacts-hint').textContent = t('contactsHint');
@@ -910,6 +1127,7 @@ function showView(name){
   const mb=document.getElementById('mob-'+name);
   if(mb) mb.classList.add('active');
   if(name==='users'){ loadPendingUsers(); loadAllUsers(); }
+  if(name==='food'){ foodLoadToday(); }
 }
 
 /* ── LOGOUT ── */
@@ -1079,6 +1297,149 @@ async function deleteUser(userId){
     if(d.success){ toast(t('userDeleted'), 'info'); await loadPendingUsers(); await loadAllUsers(); await loadPendingBadge(); }
     else{ toast(d.error || t('errConnection'), 'error'); }
   }catch(e){ toast(t('errConnection'), 'error'); }
+}
+
+/* ── NUTRITION MODULE ── */
+const NUTRITION_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/nutrition';
+const FOOD_GOAL = { kcal:2400, prot:140, fat:80, carb:280 };
+let foodMeals = [];
+
+const mealIcons = { breakfast:['🥣','🍳','🥞','☕'], lunch:['🍲','🥗','🍜','🫕'], dinner:['🍽️','🥩','🐟','🥦'], snack:['🍎','🥜','🍫','🧃'] };
+const mealColors = [{bg:'#FAEEDA',col:'#854F0B'},{bg:'#E1F5EE',col:'#0F6E56'},{bg:'#E6F1FB',col:'#185FA5'},{bg:'#EAF3DE',col:'#3B6D11'},{bg:'#EEEDFE',col:'#534AB7'},{bg:'#FAECE7',col:'#993C1D'}];
+
+function foodGetMealKey(){
+  const sel = document.getElementById('food-meal-type');
+  if(!sel) return 'snack';
+  const v = (sel.options[sel.selectedIndex]||{}).text||'';
+  const vl = v.toLowerCase();
+  if(vl.includes('завт')||vl.includes('сніда')||vl.includes('break')) return 'breakfast';
+  if(vl.includes('обід')||vl.includes('обед')||vl.includes('lunch')) return 'lunch';
+  if(vl.includes('вечер')||vl.includes('dinner')) return 'dinner';
+  return 'snack';
+}
+
+function foodRenderMeals(){
+  const list = document.getElementById('food-meals-list');
+  if(!list) return;
+  if(!foodMeals.length){
+    list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted2);font-size:12px">${t('fEmpty')}</div>`;
+    return;
+  }
+  list.innerHTML = foodMeals.map((m,i)=>{
+    const c = mealColors[i % mealColors.length];
+    const icons = mealIcons[m.meal_type]||mealIcons.snack;
+    const icon = icons[i % icons.length];
+    return `<div class="food-meal-row">
+      <div class="food-meal-icon" style="background:${c.bg};color:${c.col}">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.dish_name||''}</div>
+        <div style="font-size:11px;color:var(--muted)">${m.meal_type_label||''}</div>
+      </div>
+      <div style="font-size:13px;font-weight:500;color:var(--text);flex-shrink:0">${m.kcal||0}</div>
+      <div style="font-size:11px;color:var(--muted);flex-shrink:0;width:42px;text-align:right">${m.time||''}</div>
+    </div>`;
+  }).join('');
+}
+
+function foodUpdateMetrics(){
+  const tot = { kcal:0, prot:0, fat:0, carb:0 };
+  foodMeals.forEach(m=>{ tot.kcal+=(m.kcal||0); tot.prot+=(m.prot||0); tot.fat+=(m.fat||0); tot.carb+=(m.carb||0); });
+  const sv = (id,v,unit) => { const el=document.getElementById(id); if(el) el.innerHTML=v+'<span class="metric-unit">'+unit+'</span>'; };
+  sv('f-kcal-val', tot.kcal.toLocaleString(), 'ккал');
+  sv('f-prot-val', tot.prot, 'г');
+  sv('f-fat-val',  tot.fat,  'г');
+  sv('f-carb-val', tot.carb, 'г');
+  const pct = Math.min(100, Math.round(tot.kcal/FOOD_GOAL.kcal*100));
+  const bar = document.getElementById('food-kcal-bar'); if(bar) bar.style.width=pct+'%';
+  const el_eaten = document.getElementById('food-bar-eaten');
+  const el_goal  = document.getElementById('food-bar-goal');
+  if(el_eaten) el_eaten.textContent = tot.kcal.toLocaleString()+' '+t('fEatenLabel');
+  if(el_goal)  el_goal.textContent  = FOOD_GOAL.kcal.toLocaleString()+' '+t('fGoalLabel');
+  const rem = FOOD_GOAL.kcal - tot.kcal;
+  const tip = document.getElementById('food-tip-box');
+  if(tip){
+    tip.dataset.default = '0';
+    if(rem > 0){
+      const lm = currentLang;
+      if(lm==='ru') tip.innerHTML = `До цели осталось <strong>${rem} ккал</strong>. Белков съедено ${tot.prot}г из ${FOOD_GOAL.prot}г.`;
+      else if(lm==='uk') tip.innerHTML = `До цілі залишилось <strong>${rem} ккал</strong>. Білків з\'їдено ${tot.prot}г з ${FOOD_GOAL.prot}г.`;
+      else tip.innerHTML = `<strong>${rem} kcal</strong> left to goal. Protein: ${tot.prot}g of ${FOOD_GOAL.prot}g.`;
+    } else {
+      const lm = currentLang;
+      tip.innerHTML = lm==='ru'?'<strong>Цель по калориям достигнута!</strong> Следи за балансом.':
+                      lm==='uk'?'<strong>Ціль по калоріях досягнута!</strong> Стежи за балансом.':
+                      '<strong>Calorie goal reached!</strong> Watch your balance.';
+    }
+  }
+}
+
+async function foodLoadToday(){
+  const list = document.getElementById('food-meals-list');
+  if(list) list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted2);font-size:12px">${t('fLoading')}</div>`;
+  try{
+    const body = JSON.stringify({ token: getToken(), action:'get_today' });
+    const r = await fetch(NUTRITION_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body });
+    const text = await r.text();
+    const d = text ? JSON.parse(text) : {};
+    if(d.success && Array.isArray(d.meals)){
+      foodMeals = d.meals.map(m=>({
+        ...m,
+        time: m.logged_at ? new Date(m.logged_at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '',
+        meal_type_label: t('fOpt'+(m.meal_type||'snack').charAt(0).toUpperCase()+(m.meal_type||'snack').slice(1))
+      }));
+    } else { foodMeals = []; }
+  }catch(e){ console.error('foodLoadToday',e); foodMeals=[]; }
+  foodRenderMeals();
+  foodUpdateMetrics();
+}
+
+async function foodSaveToServer(meal){
+  try{
+    const body = JSON.stringify({ token: getToken(), action:'add_meal', ...meal });
+    const r = await fetch(NUTRITION_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body });
+    const text = await r.text();
+    return text ? JSON.parse(text) : {};
+  }catch(e){ return {}; }
+}
+
+function foodSimulateAI(){
+  document.getElementById('food-ai-result').style.display = 'block';
+  document.getElementById('food-upload-section').style.display = 'none';
+  document.getElementById('food-success').style.display = 'none';
+  document.getElementById('food-ai-dish-name').textContent = 'Борщ з хлібом, ~400г';
+}
+
+async function foodConfirmAI(){
+  const mealType = foodGetMealKey();
+  const meal = { dish_name: document.getElementById('food-ai-dish-name').textContent, meal_type: mealType, kcal:386, prot:18, fat:11, carb:52 };
+  await foodSaveToServer(meal);
+  foodMeals.push({ ...meal, time: new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label: t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
+  foodRenderMeals(); foodUpdateMetrics();
+  document.getElementById('food-ai-result').style.display='none';
+  document.getElementById('food-success').style.display='block';
+}
+
+async function foodAddManual(){
+  const name = (document.getElementById('food-name')||{}).value||'';
+  const kcal = parseInt((document.getElementById('food-inp-kcal')||{}).value)||0;
+  const prot = parseInt((document.getElementById('food-inp-prot')||{}).value)||0;
+  const fat  = parseInt((document.getElementById('food-inp-fat')||{}).value)||0;
+  const carb = parseInt((document.getElementById('food-inp-carb')||{}).value)||0;
+  if(!name && !kcal){ const el=document.getElementById('food-name'); if(el) el.focus(); return; }
+  const mealType = foodGetMealKey();
+  const meal = { dish_name: name||'?', meal_type: mealType, kcal, prot, fat, carb };
+  await foodSaveToServer(meal);
+  foodMeals.push({ ...meal, time: new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label: t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
+  foodRenderMeals(); foodUpdateMetrics();
+  document.getElementById('food-upload-section').style.display='none';
+  document.getElementById('food-success').style.display='block';
+}
+
+function foodReset(){
+  document.getElementById('food-upload-section').style.display='block';
+  document.getElementById('food-ai-result').style.display='none';
+  document.getElementById('food-success').style.display='none';
+  ['food-name','food-inp-kcal','food-inp-prot','food-inp-fat','food-inp-carb'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
 }
 
 </script>
