@@ -346,7 +346,7 @@ async function handleSubmit(e){
     const res=await fetch(REGISTER_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({first_name:firstName,last_name:lastName,login,email,password,role:'user',lang:currentLang}),
+      body:JSON.stringify({first_name:firstName,last_name:lastName,login,email,password,role:'friend',lang:currentLang}),
       signal:AbortSignal.timeout(15000)
     });
     const data=await res.json();
