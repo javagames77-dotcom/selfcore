@@ -965,10 +965,16 @@ async function loadPendingBadge(){
     const d = await adminFetch('list_pending');
     const count = (d.users||[]).length;
     const badge = document.getElementById('pendingBadge');
+    const navUsers = document.getElementById('nav-users');
     if(!badge) return;
-    if(count > 0){ badge.textContent = count; badge.classList.add('show'); }
-    else { badge.classList.remove('show'); }
-  }catch(e){}
+    if(count > 0){
+      badge.textContent = count;
+      badge.classList.add('show');
+      if(navUsers) navUsers.style.display = '';
+    } else {
+      badge.classList.remove('show');
+    }
+  }catch(e){ console.error('badge error', e); }
 }
 
 /* Завантаження pending пользователей */
@@ -1052,7 +1058,7 @@ async function approveUser(userId){
 
 async function blockUser(userId){
   try{
-    const d = await adminFetch('reject', { user_id: userId });
+    const d = await adminFetch('block', { user_id: userId });
     if(d.success){ toast(t('userBlocked'), 'info'); await loadAllUsers(); }
     else{ toast(d.error || t('errConnection'), 'error'); }
   }catch(e){ toast(t('errConnection'), 'error'); }
@@ -1060,7 +1066,7 @@ async function blockUser(userId){
 
 async function unblockUser(userId){
   try{
-    const d = await adminFetch('approve', { user_id: userId });
+    const d = await adminFetch('unblock', { user_id: userId });
     if(d.success){ toast(t('userUnblocked'), 'success'); await loadAllUsers(); }
     else{ toast(d.error || t('errConnection'), 'error'); }
   }catch(e){ toast(t('errConnection'), 'error'); }
@@ -1068,7 +1074,7 @@ async function unblockUser(userId){
 
 async function deleteUser(userId){
   try{
-    const d = await adminFetch('reject', { user_id: userId });
+    const d = await adminFetch('delete', { user_id: userId });
     if(d.success){ toast(t('userDeleted'), 'info'); await loadPendingUsers(); await loadAllUsers(); await loadPendingBadge(); }
     else{ toast(d.error || t('errConnection'), 'error'); }
   }catch(e){ toast(t('errConnection'), 'error'); }
