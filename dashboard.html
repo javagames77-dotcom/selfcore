@@ -117,6 +117,33 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 .tag-green{background:var(--tag-green-bg);color:var(--tag-green)}
 .tag-amber{background:var(--tag-amber-bg);color:var(--tag-amber)}
 .tag-red{background:var(--tag-red-bg);color:var(--tag-red)}
+.tag-gray{background:var(--bg3);color:var(--muted)}
+.req-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.req-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:background .2s,border-color .2s}
+.req-card-body{padding:16px}
+.req-card-name{font-size:14px;font-weight:600;color:var(--black);margin-bottom:6px}
+.req-card-row{font-size:12px;color:var(--muted);margin-bottom:3px}
+.req-card-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.btn-success{background:var(--tag-green-bg);color:var(--tag-green);border:1px solid var(--tag-green);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .12s}
+.btn-success:hover{opacity:.85}
+.btn-danger{background:var(--tag-red-bg);color:var(--tag-red);border:1px solid var(--tag-red);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .12s}
+.btn-danger:hover{opacity:.85}
+.sitem-badge{margin-left:auto;background:var(--accent);color:#fff;border-radius:9px;font-size:10px;font-weight:700;padding:1px 6px;min-width:18px;text-align:center;display:none}
+.sitem-badge.show{display:inline-block}
+.loading-state{text-align:center;padding:48px;color:var(--muted);font-size:13px}
+.empty-state{text-align:center;padding:48px;color:var(--muted2)}
+.empty-text{font-size:13px;color:var(--muted)}
+.tbl-wrap{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead tr{border-bottom:1px solid var(--border)}
+.tbl th{padding:10px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--tbl-hover)}
+.act-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
+.act-btn:hover{border-color:var(--border2);color:var(--text)}
+.act-btn.del:hover{border-color:var(--tag-red);color:var(--tag-red);background:var(--tag-red-bg)}
+
 
 /* TOAST */
 #toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:99999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
@@ -240,6 +267,11 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
     <span id="t-nav-analytics"></span>
   </button>
 
+  <button class="sitem" onclick="showView('users')" id="nav-users" style="display:none">
+    <svg viewBox="0 0 15 15" fill="none"><circle cx="5.5" cy="4.5" r="2" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1.5 12c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/><path d="M10 6.5c.7.4 1.5 1.2 1.5 2.5M12 4a2 2 0 010 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-users"></span>
+    <span class="sitem-badge" id="pendingBadge"></span>
+  </button>
   <div class="sidebar-section" id="t-nav-system"></div>
   <button class="sitem" onclick="showView('settings')" id="nav-settings">
     <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7.5 1.5v1.3M7.5 12.2v1.3M1.5 7.5h1.3M12.2 7.5h1.3M3.4 3.4l.9.9M10.7 10.7l.9.9M3.4 11.6l.9-.9M10.7 4.3l.9-.9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -493,6 +525,46 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 </div><!-- /main -->
 </div><!-- /layout -->
 
+
+  <!-- VIEW: USERS (тільки admin) -->
+  <div class="view" id="view-users">
+    <div class="page-header">
+      <div class="page-title" id="t-title-users"></div>
+    </div>
+
+    <!-- PENDING -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px" id="t-pending-section"></div>
+      <div class="loading-state" id="usersLoading" style="display:none" id="t-loading"></div>
+      <div class="empty-state" id="usersEmpty" style="display:none">
+        <div class="empty-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="10" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M4 28c0-6.6 5.4-12 12-12s12 5.4 12 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="empty-text" id="t-users-empty"></div>
+      </div>
+      <div class="req-grid" id="pendingList"></div>
+    </div>
+
+    <!-- ALL USERS -->
+    <div>
+      <div style="font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px" id="t-all-users-section"></div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th id="t-th-name"></th>
+            <th>Login</th>
+            <th>Email</th>
+            <th id="t-th-role"></th>
+            <th id="t-th-status"></th>
+            <th id="t-th-date"></th>
+            <th></th>
+          </tr></thead>
+          <tbody id="allUsersTbody"><tr><td colspan="7" class="loading-state" id="t-loading2"></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 <!-- MOB NAV -->
 <nav class="mob-nav">
   <div class="mob-nav-items">
@@ -569,6 +641,14 @@ const i18n = {
     analyticsHint:'AI анализ доступен после сбора данных за 7+ дней',
     settingsAccount:'Аккаунт', settingsName:'Имя', settingsRole:'Роль',
     roleAdmin:'Администратор', roleFamily:'Семья', roleFriend:'Друг',
+    navUsers:'Пользователи', titleUsers:'Пользователи',
+    pendingSection:'Ожидают подтверждения', allUsersSection:'Все пользователи',
+    approve:'Подтвердить', reject:'Отклонить',
+    usersEmpty:'Нет пользователей', loading:'Загрузка...',
+    userApproved:'Пользователь подтверждён', userRejected:'Пользователь отклонён',
+    status_active:'Активен', status_pending:'Ожидает', status_blocked:'Заблокирован',
+    thName:'Имя', thRole:'Роль', thStatus:'Статус', thDate:'Дата',
+    errConnection:'Ошибка соединения',
     mobDashboard:'Главная', mobHealth:'Здоровье', mobFood:'Питание', mobFinance:'Финансы', mobContacts:'Контакты',
   },
   uk:{
@@ -599,6 +679,14 @@ const i18n = {
     analyticsHint:'AI аналіз доступний після збору даних за 7+ днів',
     settingsAccount:'Акаунт', settingsName:'Ім\'я', settingsRole:'Роль',
     roleAdmin:'Адміністратор', roleFamily:'Сім\'я', roleFriend:'Друг',
+    navUsers:'Користувачі', titleUsers:'Користувачі',
+    pendingSection:'Очікують підтвердження', allUsersSection:'Усі користувачі',
+    approve:'Підтвердити', reject:'Відхилити',
+    usersEmpty:'Немає користувачів', loading:'Завантаження...',
+    userApproved:'Користувача підтверджено', userRejected:'Користувача відхилено',
+    status_active:'Активний', status_pending:'Очікує', status_blocked:'Заблокований',
+    thName:'Ім'я', thRole:'Роль', thStatus:'Статус', thDate:'Дата',
+    errConnection:'Помилка з'єднання',
     mobDashboard:'Головна', mobHealth:'Здоров\'я', mobFood:'Їжа', mobFinance:'Фінанси', mobContacts:'Контакти',
   },
   en:{
@@ -629,6 +717,14 @@ const i18n = {
     analyticsHint:'AI analysis available after 7+ days of data',
     settingsAccount:'Account', settingsName:'Name', settingsRole:'Role',
     roleAdmin:'Administrator', roleFamily:'Family', roleFriend:'Friend',
+    navUsers:'Users', titleUsers:'Users',
+    pendingSection:'Pending approval', allUsersSection:'All users',
+    approve:'Approve', reject:'Reject',
+    usersEmpty:'No users', loading:'Loading...',
+    userApproved:'User approved', userRejected:'User rejected',
+    status_active:'Active', status_pending:'Pending', status_blocked:'Blocked',
+    thName:'Name', thRole:'Role', thStatus:'Status', thDate:'Date',
+    errConnection:'Connection error',
     mobDashboard:'Home', mobHealth:'Health', mobFood:'Food', mobFinance:'Finance', mobContacts:'Contacts',
   }
 };
@@ -741,6 +837,29 @@ function applyLang(){
   document.getElementById('t-mob-finance').textContent = t('mobFinance');
   document.getElementById('t-mob-contacts').textContent = t('mobContacts');
 
+
+  // Admin
+  const isAdmin = user.role === 'admin';
+  const navUsers = document.getElementById('nav-users');
+  if(navUsers) navUsers.style.display = isAdmin ? '' : 'none';
+  const tNavUsers = document.getElementById('t-nav-users');
+  if(tNavUsers) tNavUsers.textContent = t('navUsers');
+  const tTitleUsers = document.getElementById('t-title-users');
+  if(tTitleUsers) tTitleUsers.textContent = t('titleUsers');
+  const tPending = document.getElementById('t-pending-section');
+  if(tPending) tPending.textContent = t('pendingSection');
+  const tAllUsers = document.getElementById('t-all-users-section');
+  if(tAllUsers) tAllUsers.textContent = t('allUsersSection');
+  const tEmpty = document.getElementById('t-users-empty');
+  if(tEmpty) tEmpty.textContent = t('usersEmpty');
+  const tThName = document.getElementById('t-th-name');
+  if(tThName) tThName.textContent = t('thName');
+  const tThRole = document.getElementById('t-th-role');
+  if(tThRole) tThRole.textContent = t('thRole');
+  const tThStatus = document.getElementById('t-th-status');
+  if(tThStatus) tThStatus.textContent = t('thStatus');
+  const tThDate = document.getElementById('t-th-date');
+  if(tThDate) tThDate.textContent = t('thDate');
   // Lang buttons
   document.querySelectorAll('.lang-btn').forEach(btn=>{
     const map={'UA':'uk','RU':'ru','EN':'en'};
@@ -770,6 +889,7 @@ function showView(name){
   if(si) si.classList.add('active');
   const mb=document.getElementById('mob-'+name);
   if(mb) mb.classList.add('active');
+  if(name==='users'){ loadPendingUsers(); loadAllUsers(); }
 }
 
 /* ── LOGOUT ── */
@@ -799,7 +919,121 @@ function toast(msg, type='info'){
     document.getElementById('icon-moon').style.display=savedTheme==='dark'?'block':'none';
   }
   applyLang();
+  loadPendingBadge();
 })();
+
+/* ── ADMIN API ── */
+const ADMIN_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/admin';
+
+function getToken(){
+  return localStorage.getItem('sc_token') || sessionStorage.getItem('sc_token') || '';
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+async function adminFetch(action, data){
+  const body = Object.assign({ token: getToken(), action }, data||{});
+  const r = await fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  return r.json();
+}
+
+/* Badge — кількість pending */
+async function loadPendingBadge(){
+  const user = getUser();
+  if(user.role !== 'admin') return;
+  try{
+    const d = await adminFetch('list_pending');
+    const count = (d.users||[]).length;
+    const badge = document.getElementById('pendingBadge');
+    if(!badge) return;
+    if(count > 0){ badge.textContent = count; badge.classList.add('show'); }
+    else { badge.classList.remove('show'); }
+  }catch(e){}
+}
+
+/* Завантаження pending пользователей */
+async function loadPendingUsers(){
+  const loading = document.getElementById('usersLoading');
+  const empty   = document.getElementById('usersEmpty');
+  const list    = document.getElementById('pendingList');
+  loading.style.display = 'block';
+  empty.style.display   = 'none';
+  list.innerHTML        = '';
+  try{
+    const d = await adminFetch('list_pending');
+    loading.style.display = 'none';
+    const users = d.users || [];
+    if(!users.length){ empty.style.display = 'block'; return; }
+    list.innerHTML = users.map(u => {
+      const created = new Date(u.created_at).toLocaleDateString('ru-RU');
+      return `<div class="req-card">
+        <div class="req-card-body">
+          <div class="req-card-name">${esc(u.first_name)} ${esc(u.last_name)}</div>
+          <div class="req-card-row">Login: ${esc(u.login)}</div>
+          <div class="req-card-row">Email: ${esc(u.email)}</div>
+          <div class="req-card-row" style="margin-top:6px;font-size:11px;color:var(--muted2)">${created}</div>
+        </div>
+        <div class="req-card-footer">
+          <button class="btn-success" onclick="approveUser(${u.id})" id="t-approve">${t('approve')}</button>
+          <button class="btn-danger"  onclick="rejectUser(${u.id})"  id="t-reject">${t('reject')}</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    loading.style.display = 'none';
+    empty.style.display   = 'block';
+  }
+}
+
+/* Завантаження всіх пользователей */
+async function loadAllUsers(){
+  const tbody = document.getElementById('allUsersTbody');
+  tbody.innerHTML = `<tr><td colspan="7" class="loading-state">${t('loading')}</td></tr>`;
+  try{
+    const d = await adminFetch('list_users');
+    const users = d.users || [];
+    if(!users.length){ tbody.innerHTML = `<tr><td colspan="7" class="loading-state">${t('usersEmpty')}</td></tr>`; return; }
+    const statusMap = { active:'tag-green', pending:'tag-amber', blocked:'tag-red' };
+    tbody.innerHTML = users.map(u => {
+      const created = new Date(u.created_at).toLocaleDateString('ru-RU');
+      const stCls   = statusMap[u.status] || 'tag-gray';
+      const stLbl   = t('status_'+u.status) || u.status;
+      return `<tr>
+        <td style="font-weight:500">${esc(u.first_name)} ${esc(u.last_name)}</td>
+        <td style="color:var(--muted)">${esc(u.login)}</td>
+        <td style="color:var(--muted)">${esc(u.email)}</td>
+        <td>${esc(u.role)}</td>
+        <td><span class="tag ${stCls}">${stLbl}</span></td>
+        <td style="color:var(--muted)">${created}</td>
+        <td>
+          <div style="display:flex;gap:4px">
+            ${u.status==='pending' ? `<button class="act-btn" onclick="approveUser(${u.id})" title="${t('approve')}"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : ''}
+            ${u.status!=='blocked' ? `<button class="act-btn del" onclick="rejectUser(${u.id})" title="${t('reject')}"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>` : ''}
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }catch(e){
+    tbody.innerHTML = `<tr><td colspan="7" class="loading-state">${t('errConnection')}</td></tr>`;
+  }
+}
+
+async function approveUser(userId){
+  try{
+    const d = await adminFetch('approve', { user_id: userId });
+    if(d.success){ toast(t('userApproved'), 'success'); await loadPendingUsers(); await loadAllUsers(); await loadPendingBadge(); }
+    else{ toast(d.error || t('errConnection'), 'error'); }
+  }catch(e){ toast(t('errConnection'), 'error'); }
+}
+
+async function rejectUser(userId){
+  try{
+    const d = await adminFetch('reject', { user_id: userId });
+    if(d.success){ toast(t('userRejected'), 'info'); await loadPendingUsers(); await loadAllUsers(); await loadPendingBadge(); }
+    else{ toast(d.error || t('errConnection'), 'error'); }
+  }catch(e){ toast(t('errConnection'), 'error'); }
+}
+
 </script>
 </body>
 </html>
