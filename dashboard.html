@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260518_4';
+  var V='20260518_3';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -954,7 +954,8 @@ function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 async function adminFetch(action, data){
   const body = Object.assign({ token: getToken(), action }, data||{});
   const r = await fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-  return r.json();
+  const text = await r.text();
+  return text ? JSON.parse(text) : {};
 }
 
 /* Badge — кількість pending */
