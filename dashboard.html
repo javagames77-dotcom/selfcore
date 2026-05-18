@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selfcore</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="light"]{--bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0f0ed;--border:#e8e8e4;--border2:#d0d0ca;--text:#1a1a1a;--muted:#6b6b6b;--muted2:#b0b0b0;--black:#0a0a0a;--nav-bg:rgba(255,255,255,.96);--sidebar-bg:#ffffff;--input-bg:#fafaf8;--theme-btn-bg:#f0f0ed;--theme-btn-color:#6b6b6b;--card-bg:#ffffff;--card-shadow:0 1px 3px rgba(0,0,0,.06);--tbl-hover:#fafafa;--accent:#1D9E75;--accent-hover:#0F6E56;--accent-light:#E1F5EE;--tag-green-bg:#f0fdf4;--tag-green:#16a34a;--tag-red-bg:#fff0f0;--tag-red:#c0392b;--tag-amber-bg:#fffbeb;--tag-amber:#b45309;--tag-blue-bg:#eff6ff;--tag-blue:#1d4ed8;--tag-purple-bg:#f5f3ff;--tag-purple:#6d28d9}
+[data-theme="dark"]{--bg:#0f0f0f;--bg2:#161616;--bg3:#1e1e1e;--border:#2a2a2a;--border2:#3d3d3d;--text:#f0f0f0;--muted:#888;--muted2:#555;--black:#f0f0f0;--nav-bg:rgba(15,15,15,.97);--sidebar-bg:#0f0f0f;--input-bg:#161616;--theme-btn-bg:#1e1e1e;--theme-btn-color:#888;--card-bg:#161616;--card-shadow:0 1px 3px rgba(0,0,0,.3);--tbl-hover:#1e1e1e;--accent:#1D9E75;--accent-hover:#5DCAA5;--accent-light:#04342C;--tag-green-bg:#0a2010;--tag-green:#4ade80;--tag-red-bg:#2a1010;--tag-red:#ff7070;--tag-amber-bg:#2a1800;--tag-amber:#fbbf24;--tag-blue-bg:#0c1a3a;--tag-blue:#93c5fd;--tag-purple-bg:#1a0a3a;--tag-purple:#c084fc}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:var(--text);font-size:13px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+
+/* NAV */
+.nav{height:48px;background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:200;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .2s,border-color .2s}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.logo-icon{display:grid;grid-template-columns:repeat(4,5px);grid-template-rows:repeat(4,5px);gap:1.5px;flex-shrink:0}
+.lc{width:5px;height:5px;border-radius:1.2px}
+.logo-text-wrap{display:flex;flex-direction:column;position:relative;height:24px;width:44px}
+.logo-self{position:absolute;top:2px;left:0;font-size:11px;font-weight:300;letter-spacing:-.2px;color:var(--muted2);line-height:.73}
+.logo-core{position:absolute;bottom:0;left:0;font-size:14px;font-weight:600;letter-spacing:-.4px;color:var(--black);line-height:.73;transition:color .2s}
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nav-badge{font-size:10px;font-weight:500;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;letter-spacing:.02em}
+.nav-divider{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.nav-btn{font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit;transition:all .12s}
+.nav-btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg2)}
+.theme-toggle{width:32px;height:32px;background:var(--theme-btn-bg);border:1px solid var(--border);border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--theme-btn-color);flex-shrink:0}
+.theme-toggle:hover{border-color:var(--border2)}
+.lang-switcher{display:flex;align-items:center;gap:2px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:3px}
+.lang-btn{padding:3px 8px;border:none;border-radius:5px;background:transparent;color:var(--muted);font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;letter-spacing:.02em}
+.lang-btn.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* LAYOUT */
+.layout{display:flex;height:calc(100vh - 48px)}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:background .2s,border-color .2s;overflow-y:auto}
+.sidebar-user{padding:14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.sidebar-user-info{min-width:0}
+.sidebar-user-name{font-size:12px;font-weight:500;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .2s}
+.sidebar-user-role{font-size:10px;color:var(--muted2)}
+.sidebar-section{padding:14px 12px 6px;font-size:10px;font-weight:500;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase}
+.sitem{display:flex;align-items:center;gap:9px;padding:7px 12px;margin:1px 6px;border:none;border-radius:7px;background:transparent;color:var(--muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .12s;text-align:left;width:calc(100% - 12px);text-decoration:none}
+.sitem:hover{background:var(--bg3);color:var(--text)}
+.sitem.active{background:var(--accent-light);color:var(--accent)}
+.sitem svg{flex-shrink:0;width:15px;height:15px}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:24px}
+
+/* VIEWS */
+.view{display:none}
+.view.active{display:block}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.page-title{font-size:16px;font-weight:600;color:var(--black);letter-spacing:-.02em}
+
+/* CARDS */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--card-shadow);transition:all .2s}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
+
+/* METRIC CARD */
+.metric-card{padding:14px 16px;cursor:default}
+.metric-label{font-size:11px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.metric-val{font-size:22px;font-weight:500;color:var(--black);line-height:1}
+.metric-unit{font-size:12px;font-weight:400;color:var(--muted);margin-left:2px}
+.metric-delta{font-size:11px;margin-top:5px;color:var(--muted)}
+.delta-up{color:var(--tag-green)}
+.delta-dn{color:var(--tag-red)}
+
+/* MODULE CARD */
+.mod-card{padding:16px;cursor:pointer;transition:border-color .15s}
+.mod-card:hover{border-color:var(--border2)}
+.mod-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:16px}
+.mod-name{font-size:13px;font-weight:500;color:var(--black);margin-bottom:2px}
+.mod-sub{font-size:11px;color:var(--muted)}
+.mod-val{font-size:17px;font-weight:500;color:var(--black);margin-top:6px}
+
+/* QUICK BUTTONS */
+.quick-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.quick-btn{flex:1;min-width:120px;padding:8px 12px;background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s;font-family:inherit}
+.quick-btn:hover{background:var(--bg2);border-color:var(--border2);color:var(--text)}
+
+/* BAR */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-label{font-size:12px;color:var(--muted);width:80px;flex-shrink:0}
+.bar-track{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .4s}
+.bar-val{font-size:12px;color:var(--muted);width:50px;text-align:right;flex-shrink:0}
+
+/* CONTACTS PREVIEW */
+.contact-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)}
+.contact-row:last-child{border-bottom:none}
+.cav{width:28px;height:28px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--muted);flex-shrink:0}
+.cname{flex:1;font-size:12px;color:var(--text)}
+.ctime{font-size:11px;color:var(--muted);white-space:nowrap}
+.plat{font-size:10px;padding:2px 6px;border-radius:8px;font-weight:500}
+.pt{background:var(--tag-purple-bg);color:var(--tag-purple)}
+.pv{background:#fbeaf0;color:#993556}
+.pw{background:var(--tag-green-bg);color:var(--tag-green)}
+
+/* CARD TITLE */
+.card-title{font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px;display:flex;align-items:center;gap:6px;padding:14px 16px 0}
+.card-body{padding:0 16px 14px}
+
+/* HEALTH GRID */
+.health-icon-wrap{display:grid;grid-template-columns:repeat(4,5px);grid-template-rows:repeat(4,5px);gap:1.5px}
+.hc{width:5px;height:5px;border-radius:1.2px}
+
+/* TAGS */
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500}
+.tag-green{background:var(--tag-green-bg);color:var(--tag-green)}
+.tag-amber{background:var(--tag-amber-bg);color:var(--tag-amber)}
+.tag-red{background:var(--tag-red-bg);color:var(--tag-red)}
+
+/* TOAST */
+#toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:99999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
+.toast{padding:.7rem 1.1rem;border-radius:10px;font-size:13px;font-weight:500;color:#fff;max-width:320px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-success{background:#16a34a}
+.toast-error{background:#dc2626}
+.toast-info{background:var(--accent)}
+
+/* MOB NAV */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--nav-bg);border-top:1px solid var(--border);z-index:199;backdrop-filter:blur(10px)}
+.mob-nav-items{display:flex;height:100%}
+.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;color:var(--muted);font-size:9px;font-weight:500;font-family:inherit;cursor:pointer;transition:color .15s}
+.mob-nav-btn.active{color:var(--accent)}
+
+@media(max-width:768px){
+  .sidebar{display:none}
+  .mob-nav{display:block}
+  .main{padding:16px;padding-bottom:72px}
+  .grid4{grid-template-columns:repeat(2,1fr)}
+  .grid3{grid-template-columns:repeat(2,1fr)}
+  .nav-badge,.nav-divider{display:none}
+}
+@media(max-width:480px){
+  .grid4{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .main{padding:12px;padding-bottom:72px}
+  .quick-btn{min-width:100px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">
+      <div class="lc" style="background:#1D9E75"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.65"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.32"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.8"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.42"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.16"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.5"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.2"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.22"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+    </div>
+    <div class="logo-text-wrap">
+      <span class="logo-self">self</span>
+      <span class="logo-core">core</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <span class="nav-badge" id="navBadge"></span>
+    <div class="nav-divider"></div>
+    <div class="lang-switcher">
+      <button class="lang-btn" onclick="setLang('uk')">UA</button>
+      <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <svg id="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v1.8M8 12.7v1.8M1.5 8h1.8M12.7 8h1.8M3.6 3.6l1.3 1.3M11.1 11.1l1.3 1.3M3.6 12.4l1.3-1.3M11.1 4.9l1.3-1.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <svg id="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:none"><path d="M13.5 10A6 6 0 015 2.5a6 6 0 108 8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="nav-btn" onclick="logout()" id="t-logout"></button>
+  </div>
+</nav>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-user">
+    <div class="sidebar-avatar" id="sidebarAvatar"></div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name" id="sidebarName"></div>
+      <div class="sidebar-user-role" id="sidebarRole"></div>
+    </div>
+  </div>
+
+  <div class="sidebar-section" id="t-nav-main"></div>
+  <button class="sitem active" onclick="showView('dashboard')" id="nav-dashboard">
+    <svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+    <span id="t-nav-overview"></span>
+  </button>
+  <button class="sitem" onclick="showView('log')" id="nav-log">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-log"></span>
+  </button>
+  <button class="sitem" onclick="showView('plan')" id="nav-plan">
+    <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 1.5v2M10 1.5v2M1.5 6h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-plan"></span>
+  </button>
+
+  <div class="sidebar-section" id="t-nav-modules"></div>
+  <button class="sitem" onclick="showView('health')" id="nav-health">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M7.5 13S2 9.5 2 5.5a3 3 0 015.5-1.5A3 3 0 0113 5.5C13 9.5 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+    <span id="t-nav-health"></span>
+  </button>
+  <button class="sitem" onclick="showView('food')" id="nav-food">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-food"></span>
+  </button>
+  <button class="sitem" onclick="showView('finance')" id="nav-finance">
+    <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5h12" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="9.5" r=".8" fill="currentColor"/></svg>
+    <span id="t-nav-finance"></span>
+  </button>
+  <button class="sitem" onclick="showView('contacts')" id="nav-contacts">
+    <svg viewBox="0 0 15 15" fill="none"><circle cx="5.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1 13c0-2.2 2-4 4.5-4s4.5 1.8 4.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/><path d="M11 6.5c.8.4 1.5 1.3 1.5 2.5M13 4a2 2 0 010 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+    <span id="t-nav-contacts"></span>
+  </button>
+  <button class="sitem" onclick="showView('analytics')" id="nav-analytics">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <span id="t-nav-analytics"></span>
+  </button>
+
+  <div class="sidebar-section" id="t-nav-system"></div>
+  <button class="sitem" onclick="showView('settings')" id="nav-settings">
+    <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7.5 1.5v1.3M7.5 12.2v1.3M1.5 7.5h1.3M12.2 7.5h1.3M3.4 3.4l.9.9M10.7 10.7l.9.9M3.4 11.6l.9-.9M10.7 4.3l.9-.9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-settings"></span>
+  </button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- VIEW: DASHBOARD -->
+  <div class="view active" id="view-dashboard">
+    <div class="page-header">
+      <div class="page-title" id="t-welcome"></div>
+    </div>
+
+    <div class="quick-row">
+      <button class="quick-btn" onclick="showView('food')">
+        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span id="t-q-food"></span>
+      </button>
+      <button class="quick-btn" onclick="showView('plan')">
+        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 1.5v2M10 1.5v2M1.5 6h12M5 9h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span id="t-q-tasks"></span>
+      </button>
+      <button class="quick-btn" onclick="showView('finance')">
+        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5h12" stroke="currentColor" stroke-width="1.2"/></svg>
+        <span id="t-q-finance"></span>
+      </button>
+      <button class="quick-btn" onclick="showView('contacts')">
+        <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M1 10l3-3 3 3 4-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <span id="t-q-contacts"></span>
+      </button>
+    </div>
+
+    <div class="grid4" style="margin-bottom:16px">
+      <div class="card metric-card">
+        <div class="metric-label" id="t-m-health"></div>
+        <div class="metric-val">81<span class="metric-unit">/ 100</span></div>
+        <div class="metric-delta delta-up" id="t-m-health-delta"></div>
+      </div>
+      <div class="card metric-card">
+        <div class="metric-label" id="t-m-weight"></div>
+        <div class="metric-val">83.4<span class="metric-unit">кг</span></div>
+        <div class="metric-delta delta-dn" id="t-m-weight-delta"></div>
+      </div>
+      <div class="card metric-card">
+        <div class="metric-label" id="t-m-kcal"></div>
+        <div class="metric-val">1 840<span class="metric-unit">ккал</span></div>
+        <div class="metric-delta" id="t-m-kcal-delta"></div>
+      </div>
+      <div class="card metric-card">
+        <div class="metric-label" id="t-m-finance"></div>
+        <div class="metric-val" style="font-size:18px">−2 340<span class="metric-unit">₴</span></div>
+        <div class="metric-delta" id="t-m-finance-delta"></div>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-bottom:16px">
+      <div class="card mod-card" onclick="showView('health')">
+        <div style="padding:14px 16px 0">
+          <div class="mod-icon" style="background:var(--accent-light);color:var(--accent)">
+            <svg width="16" height="16" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S2 9.5 2 5.5a3 3 0 015.5-1.5A3 3 0 0113 5.5C13 9.5 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+          </div>
+          <div class="mod-name" id="t-mod-health"></div>
+          <div class="mod-sub">Zepp + Apple Health</div>
+          <div class="mod-val">81 <span style="font-size:12px;color:var(--muted);font-weight:400">/ 100</span></div>
+        </div>
+        <div style="height:12px"></div>
+      </div>
+      <div class="card mod-card" onclick="showView('food')">
+        <div style="padding:14px 16px 0">
+          <div class="mod-icon" style="background:var(--tag-amber-bg);color:var(--tag-amber)">
+            <svg width="16" height="16" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="mod-name" id="t-mod-food"></div>
+          <div class="mod-sub">GPT-4o · TG бот</div>
+          <div class="mod-val">1 840 <span style="font-size:12px;color:var(--muted);font-weight:400">ккал</span></div>
+        </div>
+        <div style="height:12px"></div>
+      </div>
+      <div class="card mod-card" onclick="showView('finance')">
+        <div style="padding:14px 16px 0">
+          <div class="mod-icon" style="background:var(--tag-green-bg);color:var(--tag-green)">
+            <svg width="16" height="16" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6.5h12" stroke="currentColor" stroke-width="1.3"/><circle cx="5" cy="9.5" r=".8" fill="currentColor"/></svg>
+          </div>
+          <div class="mod-name" id="t-mod-finance"></div>
+          <div class="mod-sub">Приват24 · авто</div>
+          <div class="mod-val" style="color:var(--tag-red)">−2 340 <span style="font-size:12px;color:var(--muted);font-weight:400">₴</span></div>
+        </div>
+        <div style="height:12px"></div>
+      </div>
+      <div class="card mod-card" onclick="showView('log')">
+        <div style="padding:14px 16px 0">
+          <div class="mod-icon" style="background:var(--tag-blue-bg);color:var(--tag-blue)">
+            <svg width="16" height="16" viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="mod-name" id="t-mod-log"></div>
+          <div class="mod-sub" id="t-mod-log-sub"></div>
+          <div class="mod-val">24 <span style="font-size:12px;color:var(--muted);font-weight:400" id="t-mod-log-unit"></span></div>
+        </div>
+        <div style="height:12px"></div>
+      </div>
+      <div class="card mod-card" onclick="showView('contacts')">
+        <div style="padding:14px 16px 0">
+          <div class="mod-icon" style="background:var(--tag-purple-bg);color:var(--tag-purple)">
+            <svg width="16" height="16" viewBox="0 0 15 15" fill="none"><circle cx="5.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M1 13c0-2.2 2-4 4.5-4s4.5 1.8 4.5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+          </div>
+          <div class="mod-name" id="t-mod-contacts"></div>
+          <div class="mod-sub">TG · Viber · WhatsApp</div>
+          <div class="mod-val">12 <span style="font-size:12px;color:var(--muted);font-weight:400" id="t-mod-contacts-unit"></span></div>
+        </div>
+        <div style="height:12px"></div>
+      </div>
+      <div class="card mod-card" onclick="showView('analytics')">
+        <div style="padding:14px 16px 0">
+          <div class="mod-icon" style="background:#feecdc;color:#c05621">
+            <svg width="16" height="16" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M7.5 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="mod-name" id="t-mod-ai"></div>
+          <div class="mod-sub">GPT-4o · отчёты</div>
+          <div class="mod-val" style="font-size:13px;color:var(--tag-green)" id="t-mod-ai-ready"></div>
+        </div>
+        <div style="height:12px"></div>
+      </div>
+    </div>
+
+    <!-- Contacts preview -->
+    <div class="card" style="padding:0">
+      <div class="card-title" id="t-top-contacts"></div>
+      <div class="card-body">
+        <div class="contact-row">
+          <div class="cav">АН</div>
+          <div class="cname">Андрей Н.</div>
+          <span class="plat pt">TG</span>
+          <div class="ctime">48 мин</div>
+        </div>
+        <div class="contact-row">
+          <div class="cav">МА</div>
+          <div class="cname">Марина А.</div>
+          <span class="plat pv">Viber</span>
+          <div class="ctime">31 мин</div>
+        </div>
+        <div class="contact-row">
+          <div class="cav">СД</div>
+          <div class="cname">Сергей Д.</div>
+          <span class="plat pw">WA</span>
+          <div class="ctime">22 мин</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: HEALTH -->
+  <div class="view" id="view-health">
+    <div class="page-header">
+      <div class="page-title" id="t-title-health"></div>
+    </div>
+    <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+      <div style="font-size:32px;margin-bottom:8px">❤️</div>
+      <div style="font-size:14px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-coming-soon"></div>
+      <div style="font-size:12px" id="t-connect-zepp"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: FOOD -->
+  <div class="view" id="view-food">
+    <div class="page-header">
+      <div class="page-title" id="t-title-food"></div>
+    </div>
+    <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+      <div style="font-size:32px;margin-bottom:8px">🍽️</div>
+      <div style="font-size:14px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-food-hint"></div>
+      <div style="font-size:12px" id="t-food-hint2"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: FINANCE -->
+  <div class="view" id="view-finance">
+    <div class="page-header">
+      <div class="page-title" id="t-title-finance"></div>
+    </div>
+    <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+      <div style="font-size:32px;margin-bottom:8px">💳</div>
+      <div style="font-size:14px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-finance-hint"></div>
+      <div style="font-size:12px" id="t-finance-hint2"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: CONTACTS -->
+  <div class="view" id="view-contacts">
+    <div class="page-header">
+      <div class="page-title" id="t-title-contacts"></div>
+    </div>
+    <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+      <div style="font-size:32px;margin-bottom:8px">👥</div>
+      <div style="font-size:14px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-contacts-hint"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: LOG -->
+  <div class="view" id="view-log">
+    <div class="page-header">
+      <div class="page-title" id="t-title-log"></div>
+    </div>
+    <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+      <div style="font-size:32px;margin-bottom:8px">📋</div>
+      <div style="font-size:14px;font-weight:500;color:var(--black)" id="t-log-hint"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: PLAN -->
+  <div class="view" id="view-plan">
+    <div class="page-header">
+      <div class="page-title" id="t-title-plan"></div>
+    </div>
+    <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+      <div style="font-size:32px;margin-bottom:8px">📅</div>
+      <div style="font-size:14px;font-weight:500;color:var(--black)" id="t-plan-hint"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: ANALYTICS -->
+  <div class="view" id="view-analytics">
+    <div class="page-header">
+      <div class="page-title" id="t-title-analytics"></div>
+    </div>
+    <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+      <div style="font-size:32px;margin-bottom:8px">🧠</div>
+      <div style="font-size:14px;font-weight:500;color:var(--black)" id="t-analytics-hint"></div>
+    </div>
+  </div>
+
+  <!-- VIEW: SETTINGS -->
+  <div class="view" id="view-settings">
+    <div class="page-header">
+      <div class="page-title" id="t-title-settings"></div>
+    </div>
+    <div class="card" style="padding:24px">
+      <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:16px" id="t-settings-account"></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px" id="t-settings-name"></div>
+      <div style="font-size:13px;color:var(--text);margin-bottom:16px;font-weight:500" id="settingsUserName"></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px" id="t-settings-role"></div>
+      <div style="font-size:13px;color:var(--text);font-weight:500" id="settingsUserRole"></div>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <button class="nav-btn" onclick="logout()" style="color:var(--tag-red);border-color:var(--tag-red)" id="t-logout2"></button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- MOB NAV -->
+<nav class="mob-nav">
+  <div class="mob-nav-items">
+    <button class="mob-nav-btn active" onclick="showView('dashboard')" id="mob-dashboard">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+      <span id="t-mob-dashboard"></span>
+    </button>
+    <button class="mob-nav-btn" onclick="showView('health')" id="mob-health">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S2 9.5 2 5.5a3 3 0 015.5-1.5A3 3 0 0113 5.5C13 9.5 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+      <span id="t-mob-health"></span>
+    </button>
+    <button class="mob-nav-btn" onclick="showView('food')" id="mob-food">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-mob-food"></span>
+    </button>
+    <button class="mob-nav-btn" onclick="showView('finance')" id="mob-finance">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5h12" stroke="currentColor" stroke-width="1.2"/></svg>
+      <span id="t-mob-finance"></span>
+    </button>
+    <button class="mob-nav-btn" onclick="showView('contacts')" id="mob-contacts">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><circle cx="5.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1 13c0-2.2 2-4 4.5-4s4.5 1.8 4.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+      <span id="t-mob-contacts"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<script>
+/* ── AUTH CHECK ── */
+(function(){
+  const token = localStorage.getItem('sc_token') || sessionStorage.getItem('sc_token');
+  if(!token){ window.location.href='/index.html'; return; }
+  try{
+    const user = JSON.parse(localStorage.getItem('sc_user') || sessionStorage.getItem('sc_user') || '{}');
+    if(!user || !user.id){ window.location.href='/index.html'; }
+  } catch(e){ window.location.href='/index.html'; }
+})();
+
+/* ── USER ── */
+function getUser(){
+  try{ return JSON.parse(localStorage.getItem('sc_user') || sessionStorage.getItem('sc_user') || '{}'); }
+  catch(e){ return {}; }
+}
+
+/* ── i18n ── */
+const i18n = {
+  ru:{
+    logout:'Выход', navMain:'Главное', navModules:'Модули', navSystem:'Система',
+    navOverview:'Дашборд', navLog:'Лог дня', navPlan:'Планирование',
+    navHealth:'Здоровье', navFood:'Питание', navFinance:'Финансы',
+    navContacts:'Контакты', navAnalytics:'Аналитика', navSettings:'Настройки',
+    welcome:'Привет,', goodMorning:'Доброе утро,', goodDay:'Добрый день,', goodEvening:'Добрый вечер,',
+    mHealth:'Индекс здоровья', mHealthDelta:'+4 за неделю',
+    mWeight:'Вес', mWeightDelta:'−0.6 кг за месяц',
+    mKcal:'Калории сегодня', mKcalDelta:'Цель: 2 400 ккал',
+    mFinance:'Расходы сегодня', mFinanceDelta:'Приват24 · авто',
+    qFood:'Фото еды', qTasks:'Задачи дня', qFinance:'Расходы', qContacts:'Переписки',
+    modHealth:'Здоровье', modFood:'Питание', modFinance:'Финансы',
+    modLog:'Лог дня', modLogSub:'Активность', modLogUnit:'событий',
+    modContacts:'Контакты', modContactsUnit:'контактов сегодня',
+    modAI:'AI аналитика', modAIReady:'Отчёт готов',
+    topContacts:'Топ контактов сегодня',
+    titleHealth:'Здоровье и фитнес', titleFood:'Питание',
+    titleFinance:'Финансы', titleContacts:'Контакты',
+    titleLog:'Лог дня', titlePlan:'Планирование',
+    titleAnalytics:'AI аналитика', titleSettings:'Настройки',
+    comingSoon:'В разработке', connectZepp:'Подключите Zepp Life и Apple Health через n8n',
+    foodHint:'Отправьте фото еды в Telegram бот', foodHint2:'@selfcore_bot',
+    financeHint:'Подключение Приват24', financeHint2:'Настройте API ключ в настройках',
+    contactsHint:'Подключите Telegram через n8n для аналитики',
+    logHint:'Логирование активируется автоматически', planHint:'Планирование задач',
+    analyticsHint:'AI анализ доступен после сбора данных за 7+ дней',
+    settingsAccount:'Аккаунт', settingsName:'Имя', settingsRole:'Роль',
+    roleAdmin:'Администратор', roleFamily:'Семья', roleFriend:'Друг',
+    mobDashboard:'Главная', mobHealth:'Здоровье', mobFood:'Питание', mobFinance:'Финансы', mobContacts:'Контакты',
+  },
+  uk:{
+    logout:'Вихід', navMain:'Головне', navModules:'Модулі', navSystem:'Система',
+    navOverview:'Дашборд', navLog:'Лог дня', navPlan:'Планування',
+    navHealth:'Здоров\'я', navFood:'Харчування', navFinance:'Фінанси',
+    navContacts:'Контакти', navAnalytics:'Аналітика', navSettings:'Налаштування',
+    welcome:'Привіт,', goodMorning:'Доброго ранку,', goodDay:'Добрий день,', goodEvening:'Добрий вечір,',
+    mHealth:'Індекс здоров\'я', mHealthDelta:'+4 за тиждень',
+    mWeight:'Вага', mWeightDelta:'−0.6 кг за місяць',
+    mKcal:'Калорії сьогодні', mKcalDelta:'Ціль: 2 400 ккал',
+    mFinance:'Витрати сьогодні', mFinanceDelta:'Приват24 · авто',
+    qFood:'Фото їжі', qTasks:'Завдання дня', qFinance:'Витрати', qContacts:'Листування',
+    modHealth:'Здоров\'я', modFood:'Харчування', modFinance:'Фінанси',
+    modLog:'Лог дня', modLogSub:'Активність', modLogUnit:'подій',
+    modContacts:'Контакти', modContactsUnit:'контактів сьогодні',
+    modAI:'AI аналітика', modAIReady:'Звіт готовий',
+    topContacts:'Топ контактів сьогодні',
+    titleHealth:'Здоров\'я і фітнес', titleFood:'Харчування',
+    titleFinance:'Фінанси', titleContacts:'Контакти',
+    titleLog:'Лог дня', titlePlan:'Планування',
+    titleAnalytics:'AI аналітика', titleSettings:'Налаштування',
+    comingSoon:'У розробці', connectZepp:'Підключіть Zepp Life та Apple Health через n8n',
+    foodHint:'Надішліть фото їжі в Telegram бот', foodHint2:'@selfcore_bot',
+    financeHint:'Підключення Приват24', financeHint2:'Налаштуйте API ключ у налаштуваннях',
+    contactsHint:'Підключіть Telegram через n8n для аналітики',
+    logHint:'Логування активується автоматично', planHint:'Планування завдань',
+    analyticsHint:'AI аналіз доступний після збору даних за 7+ днів',
+    settingsAccount:'Акаунт', settingsName:'Ім\'я', settingsRole:'Роль',
+    roleAdmin:'Адміністратор', roleFamily:'Сім\'я', roleFriend:'Друг',
+    mobDashboard:'Головна', mobHealth:'Здоров\'я', mobFood:'Їжа', mobFinance:'Фінанси', mobContacts:'Контакти',
+  },
+  en:{
+    logout:'Sign out', navMain:'Main', navModules:'Modules', navSystem:'System',
+    navOverview:'Dashboard', navLog:'Day log', navPlan:'Planning',
+    navHealth:'Health', navFood:'Nutrition', navFinance:'Finance',
+    navContacts:'Contacts', navAnalytics:'Analytics', navSettings:'Settings',
+    welcome:'Hello,', goodMorning:'Good morning,', goodDay:'Good afternoon,', goodEvening:'Good evening,',
+    mHealth:'Health score', mHealthDelta:'+4 this week',
+    mWeight:'Weight', mWeightDelta:'−0.6 kg this month',
+    mKcal:'Calories today', mKcalDelta:'Goal: 2 400 kcal',
+    mFinance:'Expenses today', mFinanceDelta:'Privat24 · auto',
+    qFood:'Food photo', qTasks:'Today tasks', qFinance:'Expenses', qContacts:'Messages',
+    modHealth:'Health', modFood:'Nutrition', modFinance:'Finance',
+    modLog:'Day log', modLogSub:'Activity', modLogUnit:'events',
+    modContacts:'Contacts', modContactsUnit:'contacts today',
+    modAI:'AI analytics', modAIReady:'Report ready',
+    topContacts:'Top contacts today',
+    titleHealth:'Health & Fitness', titleFood:'Nutrition',
+    titleFinance:'Finance', titleContacts:'Contacts',
+    titleLog:'Day log', titlePlan:'Planning',
+    titleAnalytics:'AI analytics', titleSettings:'Settings',
+    comingSoon:'In development', connectZepp:'Connect Zepp Life and Apple Health via n8n',
+    foodHint:'Send food photo to Telegram bot', foodHint2:'@selfcore_bot',
+    financeHint:'Privat24 connection', financeHint2:'Set API key in settings',
+    contactsHint:'Connect Telegram via n8n for analytics',
+    logHint:'Logging activates automatically', planHint:'Task planning',
+    analyticsHint:'AI analysis available after 7+ days of data',
+    settingsAccount:'Account', settingsName:'Name', settingsRole:'Role',
+    roleAdmin:'Administrator', roleFamily:'Family', roleFriend:'Friend',
+    mobDashboard:'Home', mobHealth:'Health', mobFood:'Food', mobFinance:'Finance', mobContacts:'Contacts',
+  }
+};
+
+let currentLang = localStorage.getItem('sc_lang') || 'ru';
+function t(k){ return (i18n[currentLang]||i18n.ru)[k]||k; }
+
+function greeting(){
+  const h = new Date().getHours();
+  if(h>=5&&h<12) return t('goodMorning');
+  if(h>=12&&h<18) return t('goodDay');
+  return t('goodEvening');
+}
+
+function applyLang(){
+  document.documentElement.lang = currentLang;
+  const user = getUser();
+  const name = user.first_name || '';
+  const roleMap = {admin:t('roleAdmin'), family:t('roleFamily'), friend:t('roleFriend')};
+
+  // Nav
+  document.getElementById('t-logout').textContent = t('logout');
+  document.getElementById('t-logout2').textContent = t('logout');
+  document.getElementById('navBadge').textContent = roleMap[user.role] || '';
+
+  // Sidebar user
+  document.getElementById('sidebarName').textContent = (user.first_name||'') + ' ' + (user.last_name||'');
+  document.getElementById('sidebarRole').textContent = roleMap[user.role] || '';
+  document.getElementById('sidebarAvatar').textContent = (user.first_name||'?')[0].toUpperCase();
+
+  // Sidebar nav
+  document.getElementById('t-nav-main').textContent = t('navMain');
+  document.getElementById('t-nav-modules').textContent = t('navModules');
+  document.getElementById('t-nav-system').textContent = t('navSystem');
+  document.getElementById('t-nav-overview').textContent = t('navOverview');
+  document.getElementById('t-nav-log').textContent = t('navLog');
+  document.getElementById('t-nav-plan').textContent = t('navPlan');
+  document.getElementById('t-nav-health').textContent = t('navHealth');
+  document.getElementById('t-nav-food').textContent = t('navFood');
+  document.getElementById('t-nav-finance').textContent = t('navFinance');
+  document.getElementById('t-nav-contacts').textContent = t('navContacts');
+  document.getElementById('t-nav-analytics').textContent = t('navAnalytics');
+  document.getElementById('t-nav-settings').textContent = t('navSettings');
+
+  // Welcome
+  document.getElementById('t-welcome').textContent = greeting() + ' ' + name;
+
+  // Quick
+  document.getElementById('t-q-food').textContent = t('qFood');
+  document.getElementById('t-q-tasks').textContent = t('qTasks');
+  document.getElementById('t-q-finance').textContent = t('qFinance');
+  document.getElementById('t-q-contacts').textContent = t('qContacts');
+
+  // Metrics
+  document.getElementById('t-m-health').textContent = t('mHealth');
+  document.getElementById('t-m-health-delta').textContent = t('mHealthDelta');
+  document.getElementById('t-m-weight').textContent = t('mWeight');
+  document.getElementById('t-m-weight-delta').textContent = t('mWeightDelta');
+  document.getElementById('t-m-kcal').textContent = t('mKcal');
+  document.getElementById('t-m-kcal-delta').textContent = t('mKcalDelta');
+  document.getElementById('t-m-finance').textContent = t('mFinance');
+  document.getElementById('t-m-finance-delta').textContent = t('mFinanceDelta');
+
+  // Modules
+  document.getElementById('t-mod-health').textContent = t('modHealth');
+  document.getElementById('t-mod-food').textContent = t('modFood');
+  document.getElementById('t-mod-finance').textContent = t('modFinance');
+  document.getElementById('t-mod-log').textContent = t('modLog');
+  document.getElementById('t-mod-log-sub').textContent = t('modLogSub');
+  document.getElementById('t-mod-log-unit').textContent = t('modLogUnit');
+  document.getElementById('t-mod-contacts').textContent = t('modContacts');
+  document.getElementById('t-mod-contacts-unit').textContent = t('modContactsUnit');
+  document.getElementById('t-mod-ai').textContent = t('modAI');
+  document.getElementById('t-mod-ai-ready').textContent = t('modAIReady');
+  document.getElementById('t-top-contacts').textContent = t('topContacts');
+
+  // View titles
+  document.getElementById('t-title-health').textContent = t('titleHealth');
+  document.getElementById('t-title-food').textContent = t('titleFood');
+  document.getElementById('t-title-finance').textContent = t('titleFinance');
+  document.getElementById('t-title-contacts').textContent = t('titleContacts');
+  document.getElementById('t-title-log').textContent = t('titleLog');
+  document.getElementById('t-title-plan').textContent = t('titlePlan');
+  document.getElementById('t-title-analytics').textContent = t('titleAnalytics');
+  document.getElementById('t-title-settings').textContent = t('titleSettings');
+
+  // View hints
+  document.getElementById('t-coming-soon').textContent = t('comingSoon');
+  document.getElementById('t-connect-zepp').textContent = t('connectZepp');
+  document.getElementById('t-food-hint').textContent = t('foodHint');
+  document.getElementById('t-food-hint2').textContent = t('foodHint2');
+  document.getElementById('t-finance-hint').textContent = t('financeHint');
+  document.getElementById('t-finance-hint2').textContent = t('financeHint2');
+  document.getElementById('t-contacts-hint').textContent = t('contactsHint');
+  document.getElementById('t-log-hint').textContent = t('logHint');
+  document.getElementById('t-plan-hint').textContent = t('planHint');
+  document.getElementById('t-analytics-hint').textContent = t('analyticsHint');
+
+  // Settings
+  document.getElementById('t-settings-account').textContent = t('settingsAccount');
+  document.getElementById('t-settings-name').textContent = t('settingsName');
+  document.getElementById('t-settings-role').textContent = t('settingsRole');
+  document.getElementById('settingsUserName').textContent = (user.first_name||'') + ' ' + (user.last_name||'');
+  document.getElementById('settingsUserRole').textContent = roleMap[user.role] || '';
+
+  // Mob nav
+  document.getElementById('t-mob-dashboard').textContent = t('mobDashboard');
+  document.getElementById('t-mob-health').textContent = t('mobHealth');
+  document.getElementById('t-mob-food').textContent = t('mobFood');
+  document.getElementById('t-mob-finance').textContent = t('mobFinance');
+  document.getElementById('t-mob-contacts').textContent = t('mobContacts');
+
+  // Lang buttons
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    const map={'UA':'uk','RU':'ru','EN':'en'};
+    btn.classList.toggle('active', map[btn.textContent]===currentLang);
+  });
+}
+
+function setLang(lang){ currentLang=lang; localStorage.setItem('sc_lang',lang); applyLang(); }
+
+/* ── THEME ── */
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  localStorage.setItem('sc_theme',isDark?'light':'dark');
+  document.getElementById('icon-sun').style.display=isDark?'block':'none';
+  document.getElementById('icon-moon').style.display=isDark?'none':'block';
+}
+
+/* ── VIEWS ── */
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.sitem').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  const si=document.getElementById('nav-'+name);
+  if(si) si.classList.add('active');
+  const mb=document.getElementById('mob-'+name);
+  if(mb) mb.classList.add('active');
+}
+
+/* ── LOGOUT ── */
+function logout(){
+  localStorage.removeItem('sc_token'); localStorage.removeItem('sc_user');
+  sessionStorage.removeItem('sc_token'); sessionStorage.removeItem('sc_user');
+  window.location.href='/index.html';
+}
+
+/* ── TOAST ── */
+function toast(msg, type='info'){
+  const c=document.getElementById('toast-container');
+  const t=document.createElement('div');
+  t.className='toast toast-'+type;
+  t.textContent=msg;
+  c.appendChild(t);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>t.classList.add('show')); });
+  setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),300); },3000);
+}
+
+/* ── INIT ── */
+(function init(){
+  const savedTheme=localStorage.getItem('sc_theme');
+  if(savedTheme){
+    document.documentElement.setAttribute('data-theme',savedTheme);
+    document.getElementById('icon-sun').style.display=savedTheme==='dark'?'none':'block';
+    document.getElementById('icon-moon').style.display=savedTheme==='dark'?'block':'none';
+  }
+  applyLang();
+})();
+</script>
+</body>
+</html>
