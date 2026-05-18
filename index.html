@@ -299,7 +299,7 @@ body{
 
     <div class="divider"><span id="t-or"></span></div>
     <div class="signup">
-      <span id="t-no-account"></span>&nbsp;<a href="/register.html" id="t-register"></a>
+      <span id="t-no-account"></span>&nbsp;<a href="/selfcore-register.html" id="t-register"></a>
     </div>
   </div>
 </div>
@@ -308,7 +308,7 @@ body{
 /* ────────────────────────────────────────────
    CONFIG
 ──────────────────────────────────────────── */
-const AUTH_URL = 'https://YOUR-RAILWAY-APP.up.railway.app/webhook/selfcore-login';
+const AUTH_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/auth/login';
 
 /* ────────────────────────────────────────────
    i18n — RU default, UA, EN
@@ -655,25 +655,11 @@ async function handleLogin(event) {
 (function checkExistingToken() {
   const token = localStorage.getItem('sc_token') || sessionStorage.getItem('sc_token');
   if (!token) return;
-  const user = JSON.parse(localStorage.getItem('sc_user') || sessionStorage.getItem('sc_user') || '{}');
-  if (user.role) {
-    // Верифицируем токен на сервере
-    fetch(AUTH_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'verify', token }),
-      signal: AbortSignal.timeout(5000),
-    })
-    .then(r => r.json())
-    .then(data => { if (data.success) redirectByRole(user.role); })
-    .catch(() => {
-      // Токен невалиден — очищаем
-      localStorage.removeItem('sc_token');
-      localStorage.removeItem('sc_user');
-      sessionStorage.removeItem('sc_token');
-      sessionStorage.removeItem('sc_user');
-    });
-  }
+  const raw = localStorage.getItem('sc_user') || sessionStorage.getItem('sc_user') || '{}';
+  try {
+    const user = JSON.parse(raw);
+    if (user && user.role) redirectByRole(user.role);
+  } catch(e) {}
 })();
 
 /* ────────────────────────────────────────────
