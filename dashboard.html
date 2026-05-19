@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_21';
+  var V='20260519_22';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -583,7 +583,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
           <div class="card" style="padding:14px">
             <div id="food-meals-list" style="max-height:300px;overflow-y:scroll;scrollbar-width:thin;-webkit-overflow-scrolling:touch"></div>
             <div style="height:7px;background:#d0d0cc;border-radius:4px;overflow:hidden;margin-top:12px">
-              <div id="food-kcal-bar" style="height:100%;border-radius:4px;background:var(--accent);width:0%;transition:none"></div>
+              <div id="food-kcal-bar-normal" style="height:100%;background:var(--accent);transition:none"></div><div id="food-kcal-bar-over" style="height:100%;background:#E24B4A;transition:none;width:0%"></div>
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
               <span id="food-bar-eaten"></span><span id="food-bar-goal"></span>
@@ -1617,22 +1617,41 @@ function foodUpdateMetrics(){
     const el = document.getElementById(id);
     if(el) el.style.width = p + '%';
   };
-  const kcalPct = pct(FOOD_GOAL.kcal>0 ? tot.kcal/FOOD_GOAL.kcal*100 : 0);
+  const kcalPct = FOOD_GOAL.kcal>0 ? tot.kcal/FOOD_GOAL.kcal*100 : 0;
   const protPct = pct(FOOD_GOAL.prot>0 ? tot.prot/FOOD_GOAL.prot*100 : 0);
   const fatPct  = pct(FOOD_GOAL.fat >0 ? tot.fat /FOOD_GOAL.fat *100 : 0);
   const carbPct = pct(FOOD_GOAL.carb>0 ? tot.carb/FOOD_GOAL.carb*100 : 0);
-  setBar('f-kcal-bar2',   kcalPct);
-  setBar('food-kcal-bar', kcalPct);
+  setBar('f-kcal-bar2',   pct(kcalPct));
   setBar('f-prot-bar',    protPct);
   setBar('f-fat-bar',     fatPct);
   setBar('f-carb-bar',    carbPct);
+  // Двухсегментный бар для калорий
+  const normalBar = document.getElementById('food-kcal-bar-normal');
+  const overBar   = document.getElementById('food-kcal-bar-over');
+  if(normalBar && overBar){
+    if(kcalPct <= 100){
+      normalBar.style.width = pct(kcalPct)+'%';
+      overBar.style.width   = '0%';
+    } else {
+      const overPct = Math.min(pct(kcalPct)-100, 100);
+      normalBar.style.width = '92%';
+      overBar.style.width   = Math.min(overPct/100*8, 8)+'%';
+    }
+  }
   const rem = FOOD_GOAL.kcal - tot.kcal;
   const fkgoal = document.getElementById('f-kcal-goal');
   if(fkgoal) fkgoal.textContent = (rem>0 ? t('fEatenLabel')+' '+tot.kcal+' · '+rem+' '+t('fGoalLabel') : '✅ '+t('fGoalLabel')+' '+t('fEatenLabel'));
   const el_eaten = document.getElementById('food-bar-eaten');
   const el_goal  = document.getElementById('food-bar-goal');
   if(el_eaten) el_eaten.textContent = tot.kcal.toLocaleString()+' '+t('fEatenLabel');
-  if(el_goal)  el_goal.textContent  = FOOD_GOAL.kcal.toLocaleString()+' '+t('fGoalLabel');
+  if(el_goal){
+    const over = tot.kcal - FOOD_GOAL.kcal;
+    if(over > 0){
+      el_goal.innerHTML = '<span style="color:#E24B4A">+'+over+' ккал сверх</span>';
+    } else {
+      el_goal.textContent = FOOD_GOAL.kcal.toLocaleString()+' '+t('fGoalLabel');
+    }
+  }
   const tip = document.getElementById('food-tip-box');
   if(tip){
     tip.dataset.default='0';
