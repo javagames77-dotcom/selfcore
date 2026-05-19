@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_23';
+  var V='20260519_24';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1791,69 +1791,93 @@ function foodReset(){
 }
 
 /* ── Statistics tab ── */
-function foodRenderStat(){
-  const days=t('fPeriodLabel');
-  const el=document.getElementById('t-f-period-label'); if(el) el.textContent=days;
+async function foodRenderStat(){
   const chartGoal=document.getElementById('food-chart-goal-lbl');
   if(chartGoal) chartGoal.textContent=t('fGoalLabel')+' '+FOOD_GOAL.kcal;
-  foodRenderChart(7);
-  foodRenderBJU();
   const aiBox=document.getElementById('food-ai-week-box');
   if(aiBox&&!aiBox.dataset.loaded) aiBox.textContent=t('fAiWeekDefault');
+  await foodLoadStats(foodChartPeriod);
 }
 
 let foodChartPeriod=7;
+
+async function foodLoadStats(days){
+  const bars=document.getElementById('food-chart-bars');
+  if(bars) bars.innerHTML='<div style="font-size:11px;color:var(--muted);padding:8px">'+t('fLoading')+'</div>';
+  try{
+    const body=JSON.stringify({token:getToken(),action:'get_stats',days});
+    const r=await fetch(NUTRITION_URL,{method:'POST',headers:{'Content-Type':'application/json'},body});
+    const text=await r.text();
+    const d=text?JSON.parse(text):{};
+    if(d.success&&Array.isArray(d.days)){
+      foodRenderChart(days,d.days);
+      foodRenderBJU(d.days);
+      foodRenderStatCards(days,d.days);
+    }
+  }catch(e){ console.error('foodLoadStats',e); }
+}
+
 function foodSetPeriod(n,btn){
   foodChartPeriod=n;
   document.querySelectorAll('.food-period-btn').forEach(el=>el.classList.remove('active'));
   btn.classList.add('active');
-  foodRenderChart(n);
+  foodLoadStats(n);
 }
 
-function foodRenderChart(n){
-  const bars=document.getElementById('food-chart-bars');
-  if(!bars) return;
-  const dayNames=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
-  const today=new Date();
-  const data=[];
-  for(let i=n-1;i>=0;i--){
-    const d=new Date(today); d.setDate(d.getDate()-i);
-    const dayKcal = i===0 ? foodMeals.reduce((a,m)=>a+(m.kcal||0),0) : Math.round(1600+Math.random()*1200);
-    data.push({ label: i===0?'сег':dayNames[d.getDay()], kcal: dayKcal });
-  }
-  const maxV=Math.max(...data.map(d=>d.kcal),FOOD_GOAL.kcal);
-  const goalPct=Math.round(FOOD_GOAL.kcal/maxV*80);
-  const goalLine=document.getElementById('food-chart-goal-line');
-  if(goalLine) goalLine.style.bottom=(goalPct+18)+'px';
-  bars.innerHTML=data.map(d=>{
-    const h=Math.round(d.kcal/maxV*80);
-    const over=d.kcal>=FOOD_GOAL.kcal;
-    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'
-      +'<div style="font-size:9px;color:var(--muted)">'+Math.round(d.kcal/100)/10+'k</div>'
-      +'<div style="width:100%;border-radius:3px 3px 0 0;background:'+(over?'var(--accent)':'#B5D4F4')+';height:'+h+'px;min-height:2px"></div>'
-      +'<div style="font-size:9px;color:var(--muted)">'+d.label+'</div>'
-      +'</div>';
-  }).join('');
-  const avgKcal=Math.round(data.reduce((a,d)=>a+d.kcal,0)/data.length);
-  const avgProt=Math.round(data.length?120:0);
-  const hitDays=data.filter(d=>d.kcal>=FOOD_GOAL.kcal*0.85&&d.kcal<=FOOD_GOAL.kcal*1.15).length;
+function foodRenderStatCards(days,data){
+  if(!data||!data.length) return;
+  const totKcal=data.reduce((a,d)=>a+(parseInt(d.kcal)||0),0);
+  const totProt=data.reduce((a,d)=>a+(parseInt(d.prot)||0),0);
+  const avgKcal=Math.round(totKcal/data.length);
+  const avgProt=Math.round(totProt/data.length);
+  const hitDays=data.filter(d=>Math.abs((parseInt(d.kcal)||0)-FOOD_GOAL.kcal)/FOOD_GOAL.kcal<0.15).length;
   const sv2=(id,v)=>{const el=document.getElementById(id);if(el)el.innerHTML=v;};
   sv2('f-stat-avg','<span style="font-size:20px;font-weight:500;color:var(--black)">'+avgKcal.toLocaleString()+'</span><span class="metric-unit">ккал</span>');
   sv2('f-stat-hit','<span style="font-size:20px;font-weight:500;color:var(--black)">'+Math.round(hitDays/data.length*100)+'</span><span class="metric-unit">%</span>');
   sv2('f-stat-prot','<span style="font-size:20px;font-weight:500;color:var(--black)">'+avgProt+'</span><span class="metric-unit">г</span>');
   const hitSub=document.getElementById('f-stat-hit-sub'); if(hitSub) hitSub.textContent=hitDays+' из '+data.length+' дней';
-  const streak=document.getElementById('f-stat-streak'); if(streak) streak.innerHTML='<span style="font-size:20px;font-weight:500;color:var(--black)">7</span><span class="metric-unit">'+t('fDaysUnit')+'</span>';
+  const streak=document.getElementById('f-stat-streak'); if(streak) streak.innerHTML='<span style="font-size:20px;font-weight:500;color:var(--black)">'+data.length+'</span><span class="metric-unit">'+t('fDaysUnit')+'</span>';
+  const elPeriod=document.getElementById('t-f-period-label'); if(elPeriod) elPeriod.textContent='за '+days+' дней';
 }
 
-function foodRenderBJU(){
+function foodRenderChart(n,data){
+  const barsEl=document.getElementById('food-chart-bars');
+  if(!barsEl) return;
+  const chartGoal=document.getElementById('food-chart-goal-lbl');
+  if(chartGoal) chartGoal.textContent=t('fGoalLabel')+' '+FOOD_GOAL.kcal;
+  if(!data||!data.length){
+    barsEl.innerHTML='<div style="font-size:11px;color:var(--muted);padding:8px">'+t('fEmpty')+'</div>';
+    return;
+  }
+  const maxV=Math.max(...data.map(d=>parseInt(d.kcal)||0),FOOD_GOAL.kcal);
+  const goalPct=Math.round(FOOD_GOAL.kcal/maxV*80);
+  const goalLine=document.getElementById('food-chart-goal-line');
+  if(goalLine) goalLine.style.bottom=(goalPct+18)+'px';
+  const dayNames=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  barsEl.innerHTML=data.map(d=>{
+    const kcal=parseInt(d.kcal)||0;
+    const h=Math.round(kcal/maxV*80);
+    const over=kcal>=FOOD_GOAL.kcal;
+    const date=new Date(d.day);
+    const label=dayNames[date.getDay()];
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'
+      +'<div style="font-size:9px;color:var(--muted)">'+Math.round(kcal/100)/10+'k</div>'
+      +'<div style="width:100%;border-radius:3px 3px 0 0;background:'+(over?'var(--accent)':'#B5D4F4')+';height:'+h+'px;min-height:2px"></div>'
+      +'<div style="font-size:9px;color:var(--muted)">'+label+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function foodRenderBJU(data){
   const rows=document.getElementById('food-bju-rows');
-  if(!rows) return;
-  const tot={kcal:0,prot:0,fat:0,carb:0};
-  foodMeals.forEach(m=>{tot.kcal+=(m.kcal||0);tot.prot+=(m.prot||0);tot.fat+=(m.fat||0);tot.carb+=(m.carb||0);});
+  if(!rows||!data||!data.length) return;
+  const totProt=Math.round(data.reduce((a,d)=>a+(parseInt(d.prot)||0),0)/data.length);
+  const totFat=Math.round(data.reduce((a,d)=>a+(parseInt(d.fat)||0),0)/data.length);
+  const totCarb=Math.round(data.reduce((a,d)=>a+(parseInt(d.carb)||0),0)/data.length);
   const items=[
-    {label:t('fProt'),val:tot.prot,goal:FOOD_GOAL.prot,color:'#1D9E75'},
-    {label:t('fFat'), val:tot.fat, goal:FOOD_GOAL.fat, color:'#BA7517'},
-    {label:t('fCarb'),val:tot.carb,goal:FOOD_GOAL.carb,color:'#185FA5'},
+    {label:t('fProt'),val:totProt,goal:FOOD_GOAL.prot,color:'#1D9E75'},
+    {label:t('fFat'),val:totFat,goal:FOOD_GOAL.fat,color:'#BA7517'},
+    {label:t('fCarb'),val:totCarb,goal:FOOD_GOAL.carb,color:'#185FA5'},
   ];
   rows.innerHTML=items.map(item=>{
     const pct=Math.min(100,Math.round(item.val/item.goal*100));
