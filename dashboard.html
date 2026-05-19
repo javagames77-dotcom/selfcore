@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_2';
+  var V='20260519_3';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -552,18 +552,22 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
             <div style="font-size:13px;color:var(--muted)" id="t-f-analyzing"></div>
           </div>
           <div id="food-ai-result" style="display:none">
-            <div style="text-align:center;padding:10px 0">
+            <div style="text-align:center;padding:8px 0 10px">
               <div style="font-size:26px;margin-bottom:5px">&#129504;</div>
-              <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:2px" id="t-f-ai-recognized"></div>
-              <div style="font-size:11px;color:var(--muted)" id="food-ai-dish-name"></div>
+              <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-f-ai-recognized"></div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:2px" id="food-ai-confidence"></div>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;text-align:center">
-              <div><div style="font-size:17px;font-weight:500;color:#D85A30" id="food-ai-kcal">—</div><div style="font-size:10px;color:var(--muted)">&#1082;&#1082;&#1072;&#1083;</div></div>
-              <div><div style="font-size:17px;font-weight:500;color:#1D9E75" id="food-ai-prot">—</div><div style="font-size:10px;color:var(--muted)" id="t-f-prot-short"></div></div>
-              <div><div style="font-size:17px;font-weight:500;color:#BA7517" id="food-ai-fat">—</div><div style="font-size:10px;color:var(--muted)" id="t-f-fat-short"></div></div>
-              <div><div style="font-size:17px;font-weight:500;color:#185FA5" id="food-ai-carb-val">—</div><div style="font-size:10px;color:var(--muted)">&#1091;&#1075;&#1083;&#1077;&#1074;.</div></div>
+            <div style="margin-bottom:7px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-dish-label2"></div>
+              <input type="text" id="food-ai-dish-name" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1.5px solid var(--accent);background:var(--input-bg);color:var(--text);font-family:inherit">
             </div>
-            <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:10px" id="food-ai-notes"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px">
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">ккал</div><input type="number" id="food-ai-kcal" style="width:100%;font-size:13px;font-weight:500;color:#D85A30;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-prot-short"></div><input type="number" id="food-ai-prot" style="width:100%;font-size:13px;font-weight:500;color:#1D9E75;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-fat-short"></div><input type="number" id="food-ai-fat" style="width:100%;font-size:13px;font-weight:500;color:#BA7517;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">углев. г</div><input type="number" id="food-ai-carb-val" style="width:100%;font-size:13px;font-weight:500;color:#185FA5;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
+            </div>
+            <div id="food-ai-notes" style="font-size:11px;color:var(--muted);line-height:1.5;background:var(--bg3);border-radius:8px;padding:8px 10px;margin-bottom:10px"></div>
             <button class="btn-accent" onclick="foodConfirmAI()" id="t-f-confirm-btn"></button>
             <button style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;margin-top:6px;font-family:inherit" onclick="foodReset()" id="t-f-retry-btn"></button>
           </div>
@@ -1207,7 +1211,7 @@ function applyLang(){
   fe('t-f-eaten','fEaten'); fe('t-f-prot','fProt'); fe('t-f-fat','fFat'); fe('t-f-carb','fCarb');
   fe('t-f-prot-goal','fGoalProt'); fe('t-f-fat-goal','fGoalFat'); fe('t-f-carb-goal','fGoalCarb');
   fe('t-f-add-title','fAddTitle'); fe('t-f-tg-hint','fTgHint');
-  fe('t-f-meal-type-label','fMealTypeLabel'); fe('t-f-dish-label','fDishLabel');
+  fe('t-f-meal-type-label','fMealTypeLabel'); fe('t-f-dish-label','fDishLabel'); fe('t-f-dish-label2','fDishLabel');
   fe('t-f-inp-kcal','fInpKcal'); fe('t-f-inp-prot','fInpProt');
   fe('t-f-inp-fat','fInpFat'); fe('t-f-inp-carb','fInpCarb');
   fe('t-f-save-btn','fSaveBtn');
@@ -1651,12 +1655,18 @@ async function foodHandleFile(input){
     if(d.success && d.nutrition){
       const n = d.nutrition;
       foodLastAI = n;
-      document.getElementById('food-ai-dish-name').textContent = n.dish_name||'';
-      document.getElementById('food-ai-kcal').textContent = n.kcal||0;
-      document.getElementById('food-ai-prot').textContent = n.prot||0;
-      document.getElementById('food-ai-fat').textContent = n.fat||0;
-      document.getElementById('food-ai-carb-val').textContent = n.carb||0;
-      document.getElementById('food-ai-notes').textContent = n.notes||'';
+      // Заполняем редактируемые поля
+      const sv = (id, v) => { const el=document.getElementById(id); if(el) el.value=v; };
+      const st = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+      sv('food-ai-dish-name', n.dish_name||'');
+      sv('food-ai-kcal', n.kcal||0);
+      sv('food-ai-prot', n.prot||0);
+      sv('food-ai-fat',  n.fat||0);
+      sv('food-ai-carb-val', n.carb||0);
+      st('food-ai-notes', n.notes||'');
+      // Уверенность AI
+      const conf = document.getElementById('food-ai-confidence');
+      if(conf && n.confidence) conf.textContent = '🎯 ' + (currentLang==='en'?'Confidence':'Уверенность') + ': ' + n.confidence + '%' + (n.weight_g ? ' · ' + (currentLang==='en'?'Weight':'Вес') + ': ' + n.weight_g + 'г' : '');
       document.getElementById('food-ai-result').style.display='block';
     } else {
       document.getElementById('food-upload-section').style.display='block';
@@ -1675,7 +1685,13 @@ let foodLastAI = null;
 async function foodConfirmAI(){
   if(!foodLastAI) return;
   const mealType = foodGetMealKey();
-  const meal = { ...foodLastAI, meal_type: mealType };
+  // Читаем отредактированные значения из полей
+  const dish_name = (document.getElementById('food-ai-dish-name')||{}).value || foodLastAI.dish_name;
+  const kcal = parseInt((document.getElementById('food-ai-kcal')||{}).value) || foodLastAI.kcal;
+  const prot = parseInt((document.getElementById('food-ai-prot')||{}).value) || foodLastAI.prot;
+  const fat  = parseInt((document.getElementById('food-ai-fat') ||{}).value) || foodLastAI.fat;
+  const carb = parseInt((document.getElementById('food-ai-carb-val')||{}).value) || foodLastAI.carb;
+  const meal = { dish_name, meal_type: mealType, kcal, prot, fat, carb };
   await foodSaveToServer(meal);
   foodMeals.push({ ...meal, time: new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label: t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
   foodRenderMeals(); foodUpdateMetrics();
