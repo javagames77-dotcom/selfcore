@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_11';
+  var V='20260519_13';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1625,11 +1625,11 @@ function foodUpdateMetrics(){
   const protPct = pct(FOOD_GOAL.prot>0 ? tot.prot/FOOD_GOAL.prot*100 : 0);
   const fatPct  = pct(FOOD_GOAL.fat >0 ? tot.fat /FOOD_GOAL.fat *100 : 0);
   const carbPct = pct(FOOD_GOAL.carb>0 ? tot.carb/FOOD_GOAL.carb*100 : 0);
-  setBar('f-kcal-bar2', kcalPct);
-  setBar('f-kcal-bar',  kcalPct);
-  setBar('f-prot-bar',  protPct);
-  setBar('f-fat-bar',   fatPct);
-  setBar('f-carb-bar',  carbPct);
+  setBar('f-kcal-bar2',   kcalPct);
+  setBar('food-kcal-bar', kcalPct);
+  setBar('f-prot-bar',    protPct);
+  setBar('f-fat-bar',     fatPct);
+  setBar('f-carb-bar',    carbPct);
   const rem = FOOD_GOAL.kcal - tot.kcal;
   const fkgoal = document.getElementById('f-kcal-goal');
   if(fkgoal) fkgoal.textContent = (rem>0 ? t('fEatenLabel')+' '+tot.kcal+' · '+rem+' '+t('fGoalLabel') : '✅ '+t('fGoalLabel')+' '+t('fEatenLabel'));
