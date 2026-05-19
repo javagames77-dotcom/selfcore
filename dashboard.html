@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_10';
+  var V='20260519_11';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -482,25 +482,25 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
           <div class="metric-label" id="t-f-eaten"></div>
           <div class="metric-val" id="f-kcal-val">—<span class="metric-unit">ккал</span></div>
           <div class="metric-delta" id="f-kcal-goal"></div>
-          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-kcal-bar2" style="height:100%;border-radius:2px;background:var(--accent);width:0%;transition:width .4s"></div></div>
+          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-kcal-bar2" style="height:100%;border-radius:2px;transition:none;background:var(--accent);width:0%;transition:width .4s"></div></div>
         </div>
         <div class="card metric-card">
           <div class="metric-label" id="t-f-prot"></div>
           <div class="metric-val" id="f-prot-val">—<span class="metric-unit">г</span></div>
           <div class="metric-delta" id="t-f-prot-goal"></div>
-          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-prot-bar" style="height:100%;border-radius:2px;background:#1D9E75;width:0%;transition:width .4s"></div></div>
+          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-prot-bar" style="height:100%;border-radius:2px;transition:none;background:#1D9E75;width:0%;transition:width .4s"></div></div>
         </div>
         <div class="card metric-card">
           <div class="metric-label" id="t-f-fat"></div>
           <div class="metric-val" id="f-fat-val">—<span class="metric-unit">г</span></div>
           <div class="metric-delta" id="t-f-fat-goal"></div>
-          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-fat-bar" style="height:100%;border-radius:2px;background:#BA7517;width:0%;transition:width .4s"></div></div>
+          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-fat-bar" style="height:100%;border-radius:2px;transition:none;background:#BA7517;width:0%;transition:width .4s"></div></div>
         </div>
         <div class="card metric-card">
           <div class="metric-label" id="t-f-carb"></div>
           <div class="metric-val" id="f-carb-val">—<span class="metric-unit">г</span></div>
           <div class="metric-delta" id="t-f-carb-goal"></div>
-          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-carb-bar" style="height:100%;border-radius:2px;background:#185FA5;width:0%;transition:width .4s"></div></div>
+          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-carb-bar" style="height:100%;border-radius:2px;transition:none;background:#185FA5;width:0%;transition:width .4s"></div></div>
         </div>
       </div>
 
@@ -587,7 +587,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
             </div>
             <div id="food-meals-list"></div>
             <div style="height:7px;background:#d0d0cc;border-radius:4px;overflow:hidden;margin-top:12px">
-              <div id="food-kcal-bar" style="height:100%;border-radius:4px;background:var(--accent);width:0%"></div>
+              <div id="food-kcal-bar" style="height:100%;border-radius:4px;background:var(--accent);width:0%;transition:none"></div>
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
               <span id="food-bar-eaten"></span><span id="food-bar-goal"></span>
