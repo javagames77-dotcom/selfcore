@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_3';
+  var V='20260519_4';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1317,7 +1317,7 @@ function showView(name){
   const mb=document.getElementById('mob-'+name);
   if(mb) mb.classList.add('active');
   if(name==='users'){ loadPendingUsers(); loadAllUsers(); }
-  if(name==='food'){ foodLoadToday(); }
+  if(name==='food'){ foodLoadGoals(); foodLoadToday(); }
 }
 
 /* ── LOGOUT ── */
