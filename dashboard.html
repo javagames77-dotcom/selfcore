@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_24';
+  var V='20260519_25';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1891,13 +1891,41 @@ function foodRenderBJU(data){
 }
 
 async function foodRequestAIAnalysis(){
-  const box=document.getElementById('food-ai-week-box');
+  const box = document.getElementById('food-ai-week-box');
   if(!box) return;
-  box.textContent='Загружаю анализ...';
-  setTimeout(()=>{
-    box.dataset.loaded='1';
-    box.innerHTML='<strong>Общая картина хорошая.</strong> Калории в норме. Белков недобираешь (~80% от цели) — добавь яйца или творог. Жиры и углеводы в балансе.';
-  },1200);
+  box.textContent = t('fLoading');
+  box.dataset.loaded = '1';
+  try{
+    // Собираем текущие stats данные
+    const statsBody = JSON.stringify({ token: getToken(), action:'get_stats', days: foodChartPeriod });
+    const statsR = await fetch(NUTRITION_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: statsBody });
+    const statsText = await statsR.text();
+    const statsD = statsText ? JSON.parse(statsText) : {};
+    if(!statsD.success || !statsD.days || !statsD.days.length){
+      box.textContent = t('fAiWeekDefault');
+      return;
+    }
+    // Шлём на анализ
+    const body = JSON.stringify({
+      token: getToken(),
+      action: 'ai_analysis',
+      days: foodChartPeriod,
+      stats: statsD.days,
+      goal: FOOD_GOAL,
+      lang: currentLang
+    });
+    const r = await fetch(NUTRITION_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body });
+    const text = await r.text();
+    const d = text ? JSON.parse(text) : {};
+    if(d.success && d.analysis){
+      box.innerHTML = d.analysis;
+    } else {
+      box.textContent = t('fAiWeekDefault');
+    }
+  }catch(e){
+    console.error('AI analysis error', e);
+    box.textContent = t('errConnection');
+  }
 }
 
 /* ── Goals tab ── */
