@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_8';
+  var V='20260519_9';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -562,10 +562,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
               <input type="text" id="food-ai-dish-name" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1.5px solid var(--accent);background:var(--input-bg);color:var(--text);font-family:inherit">
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px">
-              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">ккал</div><input type="number" id="food-ai-kcal" style="width:100%;font-size:13px;font-weight:500;color:#D85A30;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-ai-kcal-lbl"></div><input type="number" id="food-ai-kcal" style="width:100%;font-size:13px;font-weight:500;color:#D85A30;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
               <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-prot-short"></div><input type="number" id="food-ai-prot" style="width:100%;font-size:13px;font-weight:500;color:#1D9E75;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
               <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-fat-short"></div><input type="number" id="food-ai-fat" style="width:100%;font-size:13px;font-weight:500;color:#BA7517;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
-              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">углев. г</div><input type="number" id="food-ai-carb-val" style="width:100%;font-size:13px;font-weight:500;color:#185FA5;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-ai-carb-lbl"></div><input type="number" id="food-ai-carb-val" style="width:100%;font-size:13px;font-weight:500;color:#185FA5;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
             </div>
             <div id="food-ai-notes" style="font-size:11px;color:var(--muted);line-height:1.5;background:var(--bg3);border-radius:8px;padding:8px 10px;margin-bottom:10px"></div>
             <button class="btn-accent" onclick="foodConfirmAI()" id="t-f-confirm-btn"></button>
@@ -586,8 +586,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
               <span id="t-f-today-title"></span>
             </div>
             <div id="food-meals-list"></div>
-            <div style="height:6px;background:#e8e8e4;border-radius:3px;overflow:hidden;margin-top:10px">
-              <div id="food-kcal-bar" style="height:100%;border-radius:3px;background:var(--accent);width:0%"></div>
+            <div style="height:7px;background:#d0d0cc;border-radius:4px;overflow:hidden;margin-top:12px">
+              <div id="food-kcal-bar" style="height:100%;border-radius:4px;background:var(--accent);width:0%"></div>
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
               <span id="food-bar-eaten"></span><span id="food-bar-goal"></span>
@@ -904,7 +904,7 @@ const i18n = {
     fMealTypeLabel:'Приём пищи', fDishLabel:'Блюдо / продукт',
     fOptBreakfast:'Завтрак', fOptLunch:'Обед', fOptDinner:'Ужин', fOptSnack:'Перекус',
     fInpKcal:'Калории (ккал)', fInpProt:'Белки (г)', fInpFat:'Жиры (г)', fInpCarb:'Углеводы (г)',
-    fSaveBtn:'Сохранить приём пищи',
+    fAiKcalLbl:'ккал', fAiCarbLbl:'углев. г',
     fAiRecognized:'GPT-4o распознал блюдо', fProtShort:'белки', fFatShort:'жиры',
     fConfirmBtn:'Подтвердить и сохранить', fRetryBtn:'Ввести по-другому',
     fSaved:'Сохранено', fSavedSub:'Данные обновлены · TG уведомление отправлено',
@@ -985,7 +985,7 @@ const i18n = {
     fMealTypeLabel:'Прийом їжі', fDishLabel:'Страва / продукт',
     fOptBreakfast:'Сніданок', fOptLunch:'Обід', fOptDinner:'Вечеря', fOptSnack:'Перекус',
     fInpKcal:'Калорії (ккал)', fInpProt:'Білки (г)', fInpFat:'Жири (г)', fInpCarb:'Вуглеводи (г)',
-    fSaveBtn:'Зберегти прийом їжі',
+    fAiKcalLbl:'ккал', fAiCarbLbl:'вугл. г',
     fAiRecognized:'GPT-4o розпізнав страву', fProtShort:'білки', fFatShort:'жири',
     fConfirmBtn:'Підтвердити і зберегти', fRetryBtn:'Ввести по-іншому',
     fSaved:'Збережено', fSavedSub:'Дані оновлено · TG сповіщення надіслано',
@@ -1066,7 +1066,7 @@ const i18n = {
     fMealTypeLabel:'Meal type', fDishLabel:'Dish / product',
     fOptBreakfast:'Breakfast', fOptLunch:'Lunch', fOptDinner:'Dinner', fOptSnack:'Snack',
     fInpKcal:'Calories (kcal)', fInpProt:'Protein (g)', fInpFat:'Fat (g)', fInpCarb:'Carbs (g)',
-    fSaveBtn:'Save meal',
+    fAiKcalLbl:'kcal', fAiCarbLbl:'carbs g',
     fAiRecognized:'GPT-4o recognized the dish', fProtShort:'protein', fFatShort:'fat',
     fConfirmBtn:'Confirm and save', fRetryBtn:'Enter differently',
     fSaved:'Saved', fSavedSub:'Data updated · TG notification sent',
@@ -1215,6 +1215,7 @@ function applyLang(){
   fe('t-f-inp-kcal','fInpKcal'); fe('t-f-inp-prot','fInpProt');
   fe('t-f-inp-fat','fInpFat'); fe('t-f-inp-carb','fInpCarb');
   fe('t-f-save-btn','fSaveBtn');
+  fe('t-f-ai-kcal-lbl','fAiKcalLbl'); fe('t-f-ai-carb-lbl','fAiCarbLbl');
   fe('t-f-photo-title','fPhotoTitle'); fe('t-f-photo-sub','fPhotoSub'); fe('t-f-or','fOr');
   fe('t-f-analyzing','fAnalyzing'); fe('t-f-ai-recognized','fAiRecognized');
   fe('t-f-prot-short','fProtShort'); fe('t-f-fat-short','fFatShort');
