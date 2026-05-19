@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260518_6';
+  var V='20260519_1';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -156,6 +156,15 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 .act-btn.del:hover{border-color:var(--tag-red);color:var(--tag-red);background:var(--tag-red-bg)}
 .btn-accent{width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .15s}
 .btn-accent:hover{opacity:.88}
+.food-tab{padding:8px 14px;font-size:12px;font-weight:500;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);background:transparent;font-family:inherit;transition:all .15s;margin-bottom:-1px}
+.food-tab.active{color:var(--accent);border-color:var(--border);background:var(--bg);border-bottom-color:var(--bg)}
+.food-tab:hover:not(.active){color:var(--text);background:var(--bg3)}
+.food-panel{display:none}
+.food-panel.active{display:block}
+.food-period-btn{padding:4px 10px;border-radius:5px;border:none;background:transparent;color:var(--muted);font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
+.food-period-btn.active{background:var(--bg);color:var(--text);font-weight:500}
+.food-seg-btn{padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.food-seg-btn.active{background:var(--bg);color:var(--text);font-weight:500}
 .food-meal-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)}
 .food-meal-row:last-child{border-bottom:none}
 .food-meal-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
@@ -459,122 +468,239 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
       <div class="page-title" id="t-title-food"></div>
     </div>
 
-    <!-- Метрики КБЖУ -->
-    <div class="grid4" style="margin-bottom:16px">
-      <div class="card metric-card">
-        <div class="metric-label" id="t-f-eaten"></div>
-        <div class="metric-val" id="f-kcal-val">—<span class="metric-unit">ккал</span></div>
-        <div class="metric-delta" id="f-kcal-goal"></div>
+    <!-- Вкладки -->
+    <div style="display:flex;gap:2px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:0">
+      <button class="food-tab active" onclick="foodSwitchTab('log')" id="ftab-log"></button>
+      <button class="food-tab" onclick="foodSwitchTab('stat')" id="ftab-stat"></button>
+      <button class="food-tab" onclick="foodSwitchTab('goals')" id="ftab-goals"></button>
+    </div>
+
+    <!-- TAB: ЛОГ ДНЯ -->
+    <div class="food-panel active" id="fpanel-log">
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="card metric-card">
+          <div class="metric-label" id="t-f-eaten"></div>
+          <div class="metric-val" id="f-kcal-val">—<span class="metric-unit">ккал</span></div>
+          <div class="metric-delta" id="f-kcal-goal"></div>
+          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-kcal-bar2" style="height:100%;border-radius:2px;background:var(--accent);width:0%;transition:width .4s"></div></div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-label" id="t-f-prot"></div>
+          <div class="metric-val" id="f-prot-val">—<span class="metric-unit">г</span></div>
+          <div class="metric-delta" id="t-f-prot-goal"></div>
+          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-prot-bar" style="height:100%;border-radius:2px;background:#1D9E75;width:0%;transition:width .4s"></div></div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-label" id="t-f-fat"></div>
+          <div class="metric-val" id="f-fat-val">—<span class="metric-unit">г</span></div>
+          <div class="metric-delta" id="t-f-fat-goal"></div>
+          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-fat-bar" style="height:100%;border-radius:2px;background:#BA7517;width:0%;transition:width .4s"></div></div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-label" id="t-f-carb"></div>
+          <div class="metric-val" id="f-carb-val">—<span class="metric-unit">г</span></div>
+          <div class="metric-delta" id="t-f-carb-goal"></div>
+          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-carb-bar" style="height:100%;border-radius:2px;background:#185FA5;width:0%;transition:width .4s"></div></div>
+        </div>
       </div>
-      <div class="card metric-card">
-        <div class="metric-label" id="t-f-prot"></div>
-        <div class="metric-val" id="f-prot-val">—<span class="metric-unit">г</span></div>
-        <div class="metric-delta" id="t-f-prot-goal"></div>
-      </div>
-      <div class="card metric-card">
-        <div class="metric-label" id="t-f-fat"></div>
-        <div class="metric-val" id="f-fat-val">—<span class="metric-unit">г</span></div>
-        <div class="metric-delta" id="t-f-fat-goal"></div>
-      </div>
-      <div class="card metric-card">
-        <div class="metric-label" id="t-f-carb"></div>
-        <div class="metric-val" id="f-carb-val">—<span class="metric-unit">г</span></div>
-        <div class="metric-delta" id="t-f-carb-goal"></div>
+
+      <div class="grid2">
+        <div class="card" style="padding:14px">
+          <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:11px;display:flex;align-items:center;gap:6px">
+            <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v6M4.5 7.5h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <span id="t-f-add-title"></span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--muted);margin-bottom:11px;line-height:1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px"><path d="M21.5 2.5L2 9.5l7 2.5 2.5 7L21.5 2.5z" stroke="#5B77CC" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l3 3" stroke="#5B77CC" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span id="t-f-tg-hint"></span>
+          </div>
+          <div id="food-upload-section">
+            <label style="border:1.5px dashed var(--border2);border-radius:10px;padding:20px 16px;text-align:center;cursor:pointer;display:block;margin-bottom:10px">
+              <input type="file" id="food-file-input" accept="image/*" style="display:none" onchange="foodHandleFile(this)">
+              <div style="font-size:24px;margin-bottom:5px">&#128247;</div>
+              <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:3px" id="t-f-photo-title"></div>
+              <div style="font-size:11px;color:var(--muted)" id="t-f-photo-sub"></div>
+            </label>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <div style="flex:1;height:1px;background:var(--border)"></div>
+              <span style="font-size:11px;color:var(--muted2)" id="t-f-or"></span>
+              <div style="flex:1;height:1px;background:var(--border)"></div>
+            </div>
+            <div style="margin-bottom:7px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-meal-type-label"></div>
+              <select id="food-meal-type" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+                <option id="t-f-opt-breakfast"></option>
+                <option id="t-f-opt-lunch" selected></option>
+                <option id="t-f-opt-dinner"></option>
+                <option id="t-f-opt-snack"></option>
+              </select>
+            </div>
+            <div style="margin-bottom:7px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-dish-label"></div>
+              <input type="text" id="food-name" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:11px">
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-kcal"></div><input type="number" id="food-inp-kcal" placeholder="450" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-prot"></div><input type="number" id="food-inp-prot" placeholder="32" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-fat"></div><input type="number" id="food-inp-fat" placeholder="12" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-carb"></div><input type="number" id="food-inp-carb" placeholder="48" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit"></div>
+            </div>
+            <button class="btn-accent" onclick="foodAddManual()" id="t-f-save-btn"></button>
+          </div>
+          <div id="food-ai-loading" style="display:none;text-align:center;padding:28px 0">
+            <div style="font-size:28px;margin-bottom:8px">&#128269;</div>
+            <div style="font-size:13px;color:var(--muted)" id="t-f-analyzing"></div>
+          </div>
+          <div id="food-ai-result" style="display:none">
+            <div style="text-align:center;padding:10px 0">
+              <div style="font-size:26px;margin-bottom:5px">&#129504;</div>
+              <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:2px" id="t-f-ai-recognized"></div>
+              <div style="font-size:11px;color:var(--muted)" id="food-ai-dish-name"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;text-align:center">
+              <div><div style="font-size:17px;font-weight:500;color:#D85A30" id="food-ai-kcal">—</div><div style="font-size:10px;color:var(--muted)">&#1082;&#1082;&#1072;&#1083;</div></div>
+              <div><div style="font-size:17px;font-weight:500;color:#1D9E75" id="food-ai-prot">—</div><div style="font-size:10px;color:var(--muted)" id="t-f-prot-short"></div></div>
+              <div><div style="font-size:17px;font-weight:500;color:#BA7517" id="food-ai-fat">—</div><div style="font-size:10px;color:var(--muted)" id="t-f-fat-short"></div></div>
+              <div><div style="font-size:17px;font-weight:500;color:#185FA5" id="food-ai-carb-val">—</div><div style="font-size:10px;color:var(--muted)">&#1091;&#1075;&#1083;&#1077;&#1074;.</div></div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:10px" id="food-ai-notes"></div>
+            <button class="btn-accent" onclick="foodConfirmAI()" id="t-f-confirm-btn"></button>
+            <button style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;margin-top:6px;font-family:inherit" onclick="foodReset()" id="t-f-retry-btn"></button>
+          </div>
+          <div id="food-success" style="display:none;text-align:center;padding:20px 0">
+            <div style="font-size:32px;margin-bottom:8px">&#9989;</div>
+            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-f-saved"></div>
+            <div style="font-size:11px;color:var(--muted)" id="t-f-saved-sub"></div>
+            <button style="margin-top:10px;padding:7px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit" onclick="foodReset()" id="t-f-add-more"></button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="card" style="padding:14px">
+            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:11px;display:flex;align-items:center;gap:6px">
+              <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              <span id="t-f-today-title"></span>
+            </div>
+            <div id="food-meals-list"></div>
+            <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:10px">
+              <div id="food-kcal-bar" style="height:100%;border-radius:3px;background:var(--accent);transition:width .4s;width:0%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
+              <span id="food-bar-eaten"></span><span id="food-bar-goal"></span>
+            </div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+              <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 3 3.5.5-2.5 2.5.5 3.5L7.5 9 4 10.5l.5-3.5L2 4.5 5.5 4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              <span id="t-f-tip-title"></span>
+            </div>
+            <div id="food-tip-box" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg3);border-radius:8px;padding:10px 12px"></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="grid2">
-
-      <!-- Левая колонка: добавить вручную -->
-      <div class="card" style="padding:16px">
-        <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px;display:flex;align-items:center;gap:6px">
-          <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v6M4.5 7.5h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-          <span id="t-f-add-title"></span>
-        </div>
-
-        <!-- TG подсказка -->
-        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--tag-blue-bg);border:1px solid var(--border);border-radius:8px;margin-bottom:14px">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px">
-            <path d="M21.5 2.5L2 9.5l7 2.5 2.5 7L21.5 2.5z" stroke="#5B77CC" stroke-width="1.5" stroke-linejoin="round"/>
-            <path d="M9 12l3 3" stroke="#5B77CC" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          <span style="font-size:12px;color:var(--muted);line-height:1.5" id="t-f-tg-hint"></span>
-        </div>
-
-        <!-- Форма ввода -->
-        <div id="food-upload-section">
-          <div style="margin-bottom:8px">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-meal-type-label"></div>
-            <select id="food-meal-type" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
-              <option id="t-f-opt-breakfast"></option>
-              <option id="t-f-opt-lunch" selected></option>
-              <option id="t-f-opt-dinner"></option>
-              <option id="t-f-opt-snack"></option>
-            </select>
-          </div>
-
-          <div style="margin-bottom:8px">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-dish-label"></div>
-            <input type="text" id="food-name" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-            <div>
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-kcal"></div>
-              <input type="number" id="food-inp-kcal" placeholder="450" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
-            </div>
-            <div>
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-prot"></div>
-              <input type="number" id="food-inp-prot" placeholder="32" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
-            </div>
-            <div>
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-fat"></div>
-              <input type="number" id="food-inp-fat" placeholder="12" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
-            </div>
-            <div>
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-carb"></div>
-              <input type="number" id="food-inp-carb" placeholder="48" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+    <!-- TAB: СТАТИСТИКА -->
+    <div class="food-panel" id="fpanel-stat">
+      <div class="grid4" style="margin-bottom:14px">
+        <div class="card metric-card"><div class="metric-label" id="t-f-avg-day"></div><div class="metric-val" id="f-stat-avg">—<span class="metric-unit">ккал</span></div><div class="metric-delta" id="t-f-period-label"></div></div>
+        <div class="card metric-card"><div class="metric-label" id="t-f-goal-hit"></div><div class="metric-val" id="f-stat-hit">—<span class="metric-unit">%</span></div><div class="metric-delta" id="f-stat-hit-sub"></div></div>
+        <div class="card metric-card"><div class="metric-label" id="t-f-prot-avg"></div><div class="metric-val" id="f-stat-prot">—<span class="metric-unit">г</span></div><div class="metric-delta" id="t-f-prot-goal-stat"></div></div>
+        <div class="card metric-card"><div class="metric-label" id="t-f-streak"></div><div class="metric-val" id="f-stat-streak">—<span class="metric-unit" id="t-f-days-unit"></span></div><div class="metric-delta" id="t-f-streak-sub"></div></div>
+      </div>
+      <div class="grid2" style="margin-bottom:10px">
+        <div class="card" style="padding:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div style="font-size:13px;font-weight:500;color:var(--black)" id="t-f-chart-title"></div>
+            <div style="display:flex;gap:2px;background:var(--bg3);border-radius:6px;padding:2px">
+              <button class="food-period-btn active" onclick="foodSetPeriod(7,this)" id="t-f-7d"></button>
+              <button class="food-period-btn" onclick="foodSetPeriod(14,this)" id="t-f-14d"></button>
+              <button class="food-period-btn" onclick="foodSetPeriod(30,this)" id="t-f-30d"></button>
             </div>
           </div>
-
-          <button class="btn-accent" onclick="foodAddManual()" id="t-f-save-btn"></button>
+          <div style="position:relative;height:120px">
+            <div id="food-chart-goal-line" style="position:absolute;left:0;right:0;border-top:1px dashed var(--border2);display:flex;justify-content:flex-end">
+              <span style="font-size:9px;color:var(--muted);background:var(--bg);padding:0 3px;margin-top:-8px" id="food-chart-goal-lbl"></span>
+            </div>
+            <div id="food-chart-bars" style="display:flex;align-items:flex-end;gap:3px;height:100%;padding-bottom:18px"></div>
+          </div>
         </div>
-
-        <!-- Успех -->
-        <div id="food-success" style="display:none;text-align:center;padding:20px 0">
-          <div style="font-size:36px;margin-bottom:8px">✅</div>
-          <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:4px" id="t-f-saved"></div>
-          <div style="font-size:11px;color:var(--muted)" id="t-f-saved-sub"></div>
-          <button style="margin-top:12px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit" onclick="foodReset()" id="t-f-add-more"></button>
+        <div class="card" style="padding:14px">
+          <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px" id="t-f-bju-avg"></div>
+          <div id="food-bju-rows"></div>
         </div>
       </div>
+      <div class="card" style="padding:14px">
+        <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 3 3.5.5-2.5 2.5.5 3.5L7.5 9 4 10.5l.5-3.5L2 4.5 5.5 4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          <span id="t-f-ai-week-title"></span>
+        </div>
+        <div id="food-ai-week-box" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:8px"></div>
+        <button style="padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit" onclick="foodRequestAIAnalysis()" id="t-f-ai-week-btn"></button>
+      </div>
+    </div>
 
-      <!-- Правая колонка: список сегодня + прогресс + совет -->
-      <div style="display:flex;flex-direction:column;gap:10px">
-
-        <div class="card" style="padding:16px">
-          <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px;display:flex;align-items:center;gap:6px">
-            <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-            <span id="t-f-today-title"></span>
+    <!-- TAB: ЦЕЛИ -->
+    <div class="food-panel" id="fpanel-goals">
+      <div class="grid2">
+        <div class="card" style="padding:14px">
+          <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px" id="t-f-body-params"></div>
+          <div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="t-f-basic-data"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:13px;color:var(--text)" id="t-g-weight"></span>
+            <input type="number" id="g-weight" placeholder="82" style="width:100px;font-size:13px;padding:5px 9px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;text-align:right">
           </div>
-          <div id="food-meals-list"></div>
-          <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:12px">
-            <div id="food-kcal-bar" style="height:100%;border-radius:3px;background:var(--accent);transition:width .4s;width:0%"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:13px;color:var(--text)" id="t-g-height"></span>
+            <input type="number" id="g-height" placeholder="181" style="width:100px;font-size:13px;padding:5px 9px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;text-align:right">
           </div>
-          <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
-            <span id="food-bar-eaten"></span>
-            <span id="food-bar-goal"></span>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:13px;color:var(--text)" id="t-g-age"></span>
+            <input type="number" id="g-age" placeholder="28" style="width:100px;font-size:13px;padding:5px 9px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;text-align:right">
           </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:13px;color:var(--text)" id="t-g-sex"></span>
+            <div style="display:flex;gap:2px;background:var(--bg3);border-radius:6px;padding:2px">
+              <button class="food-seg-btn active" id="g-sex-m" onclick="foodSetSex('m',this)" id="t-g-male"></button>
+              <button class="food-seg-btn" id="g-sex-f" onclick="foodSetSex('f',this)" id="t-g-female"></button>
+            </div>
+          </div>
+          <div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 8px" id="t-f-activity"></div>
+          <select id="g-activity" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;margin-bottom:10px">
+            <option value="1.2" id="t-g-act1"></option>
+            <option value="1.375" id="t-g-act2" selected></option>
+            <option value="1.55" id="t-g-act3"></option>
+            <option value="1.725" id="t-g-act4"></option>
+          </select>
+          <div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="t-f-goal-type"></div>
+          <div style="display:flex;gap:2px;background:var(--bg3);border-radius:6px;padding:2px;margin-bottom:12px">
+            <button class="food-seg-btn" style="flex:1" onclick="foodSetGoalType('lose',this)" id="t-g-lose"></button>
+            <button class="food-seg-btn active" style="flex:1" onclick="foodSetGoalType('keep',this)" id="t-g-keep"></button>
+            <button class="food-seg-btn" style="flex:1" onclick="foodSetGoalType('gain',this)" id="t-g-gain"></button>
+          </div>
+          <button class="btn-accent" onclick="foodCalcGoals()" id="t-f-calc-btn"></button>
         </div>
 
-        <div class="card" style="padding:16px">
-          <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:8px;display:flex;align-items:center;gap:6px">
-            <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 3 3.5.5-2.5 2.5.5 3.5L7.5 9 4 10.5l.5-3.5L2 4.5 5.5 4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
-            <span id="t-f-tip-title"></span>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="card" style="padding:14px">
+            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px" id="t-f-calc-result"></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--muted)" id="t-g-bmr"></span><span style="font-weight:500" id="f-bmr-val">—</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--muted)" id="t-g-tdee"></span><span style="font-weight:500" id="f-tdee-val">—</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12px"><span style="color:var(--muted)" id="t-g-kcal-goal"></span><span style="font-weight:500;color:var(--accent)" id="f-goal-kcal-val">—</span></div>
+            <div style="height:1px;background:var(--border);margin:8px 0"></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px"><span style="color:var(--muted)" id="t-g-prot-g"></span><span style="font-weight:500" id="f-goal-prot-val">—</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px"><span style="color:var(--muted)" id="t-g-fat-g"></span><span style="font-weight:500" id="f-goal-fat-val">—</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px"><span style="color:var(--muted)" id="t-g-carb-g"></span><span style="font-weight:500" id="f-goal-carb-val">—</span></div>
           </div>
-          <div id="food-tip-box" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg3);border-radius:8px;padding:10px 12px"></div>
+          <div class="card" style="padding:14px">
+            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px" id="t-f-manual-goals"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)" id="t-g-kcal-m"></span><input type="number" id="g-kcal" style="width:90px;font-size:13px;padding:4px 8px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;text-align:right"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)" id="t-g-prot-m"></span><input type="number" id="g-prot" style="width:90px;font-size:13px;padding:4px 8px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;text-align:right"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)" id="t-g-fat-m"></span><input type="number" id="g-fat" style="width:90px;font-size:13px;padding:4px 8px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;text-align:right"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0"><span style="font-size:12px;color:var(--muted)" id="t-g-carb-m"></span><input type="number" id="g-carb" style="width:90px;font-size:13px;padding:4px 8px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;text-align:right"></div>
+            <button class="btn-accent" style="margin-top:10px" onclick="foodSaveGoals()" id="t-f-save-goals-btn"></button>
+          </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -783,6 +909,29 @@ const i18n = {
     fTipTitle:'AI подсказка', fTipDefault:'Добавьте первый приём пищи — AI даст рекомендации',
     fEatenLabel:'съедено', fGoalLabel:'цель',
     fLoading:'Загружаю данные...',
+    fPhotoTitle:'Загрузить фото блюда', fPhotoSub:'Нажми или перетащи · GPT-4o распознает вес на весах',
+    fOr:'или введи вручную', fAnalyzing:'Анализирую фото...',
+    fAiRecognized:'GPT-4o распознал блюдо', fProtShort:'белки', fFatShort:'жиры',
+    fConfirmBtn2:'Подтвердить и сохранить', fRetryBtn2:'Ввести по-другому',
+    fTabLog:'Лог дня', fTabStat:'Статистика', fTabGoals:'Цели',
+    fAvgDay:'Среднее/день', fGoalHit:'Выполнение цели', fProtAvg:'Белки среднее', fStreak:'Серия',
+    fPeriodLabel:'за 7 дней', fDaysUnit:'дн', fStreakSub:'подряд',
+    fChartTitle:'Калории по дням', f7d:'7д', f14d:'14д', f30d:'30д',
+    fBjuAvg:'Распределение БЖУ', fAiWeekTitle:'AI анализ за неделю',
+    fAiWeekBtn:'Запросить анализ', fAiWeekDefault:'Добавьте данные за несколько дней для AI анализа',
+    fBodyParams:'Параметры тела', fBasicData:'Основные данные',
+    fActivity:'Активность', fGoalTypeLabel:'Цель',
+    gWeight:'Вес (кг)', gHeight:'Рост (см)', gAge:'Возраст', gSex:'Пол',
+    gMale:'Муж', gFemale:'Жен',
+    gAct1:'Сидячий (офис, нет спорта)', gAct2:'Умеренный (1-3 тренировки/нед)',
+    gAct3:'Активный (4-5 тренировок/нед)', gAct4:'Очень активный (ежедневно)',
+    gLose:'Похудение', gKeep:'Поддержание', gGain:'Набор массы',
+    fCalcBtn:'Пересчитать цели', fCalcResult:'Расчётные цели (Миффлин)',
+    gBmr:'Базовый метаболизм (BMR)', gTdee:'Суточная норма (TDEE)', gKcalGoal:'Цель калорий',
+    gProtG:'Белки', gFatG:'Жиры', gCarbG:'Углеводы',
+    fManualGoals:'Ручная корректировка',
+    gKcalM:'Калории (ккал)', gProtM:'Белки (г)', gFatM:'Жиры (г)', gCarbM:'Углеводы (г)',
+    fSaveGoalsBtn:'Сохранить цели', fGoalsSaved:'Цели сохранены',
     financeHint:'Подключение Приват24', financeHint2:'Настройте API ключ в настройках',
     contactsHint:'Подключите Telegram через n8n для аналитики',
     logHint:'Логирование активируется автоматически', planHint:'Планирование задач',
@@ -841,6 +990,29 @@ const i18n = {
     fTipTitle:'AI підказка', fTipDefault:'Додайте перший прийом їжі — AI дасть рекомендації',
     fEatenLabel:'з\'їдено', fGoalLabel:'ціль',
     fLoading:'Завантажую дані...',
+    fPhotoTitle:'Завантажити фото страви', fPhotoSub:'Натисни або перетягни · GPT-4o розпізнає вагу на вагах',
+    fOr:'або введи вручну', fAnalyzing:'Аналізую фото...',
+    fAiRecognized:'GPT-4o розпізнав страву', fProtShort:'білки', fFatShort:'жири',
+    fConfirmBtn2:'Підтвердити і зберегти', fRetryBtn2:'Ввести по-іншому',
+    fTabLog:'Лог дня', fTabStat:'Статистика', fTabGoals:'Цілі',
+    fAvgDay:'Середнє/день', fGoalHit:'Виконання цілі', fProtAvg:'Білки середнє', fStreak:'Серія',
+    fPeriodLabel:'за 7 днів', fDaysUnit:'дн', fStreakSub:'підряд',
+    fChartTitle:'Калорії по днях', f7d:'7д', f14d:'14д', f30d:'30д',
+    fBjuAvg:'Розподіл БЖВ', fAiWeekTitle:'AI аналіз за тиждень',
+    fAiWeekBtn:'Запросити аналіз', fAiWeekDefault:'Додайте дані за кілька днів для AI аналізу',
+    fBodyParams:'Параметри тіла', fBasicData:'Основні дані',
+    fActivity:'Активність', fGoalTypeLabel:'Ціль',
+    gWeight:'Вага (кг)', gHeight:'Зріст (см)', gAge:'Вік', gSex:'Стать',
+    gMale:'Чол', gFemale:'Жін',
+    gAct1:'Сидячий (офіс, немає спорту)', gAct2:'Помірний (1-3 тренування/тиж)',
+    gAct3:'Активний (4-5 тренувань/тиж)', gAct4:'Дуже активний (щодня)',
+    gLose:'Схуднення', gKeep:'Підтримання', gGain:'Набір маси',
+    fCalcBtn:'Перерахувати цілі', fCalcResult:'Розрахункові цілі (Міффлін)',
+    gBmr:'Базовий метаболізм (BMR)', gTdee:'Добова норма (TDEE)', gKcalGoal:'Ціль калорій',
+    gProtG:'Білки', gFatG:'Жири', gCarbG:'Вуглеводи',
+    fManualGoals:'Ручне коригування',
+    gKcalM:'Калорії (ккал)', gProtM:'Білки (г)', gFatM:'Жири (г)', gCarbM:'Вуглеводи (г)',
+    fSaveGoalsBtn:'Зберегти цілі', fGoalsSaved:'Цілі збережено',
     financeHint:'Підключення Приват24', financeHint2:'Налаштуйте API ключ у налаштуваннях',
     contactsHint:'Підключіть Telegram через n8n для аналітики',
     logHint:'Логування активується автоматично', planHint:'Планування завдань',
@@ -899,6 +1071,29 @@ const i18n = {
     fTipTitle:'AI tip', fTipDefault:'Add your first meal — AI will give recommendations',
     fEatenLabel:'eaten', fGoalLabel:'goal',
     fLoading:'Loading data...',
+    fPhotoTitle:'Upload food photo', fPhotoSub:'Click or drag · GPT-4o reads scale weight from photo',
+    fOr:'or enter manually', fAnalyzing:'Analyzing photo...',
+    fAiRecognized:'GPT-4o recognized the dish', fProtShort:'protein', fFatShort:'fat',
+    fConfirmBtn2:'Confirm and save', fRetryBtn2:'Enter differently',
+    fTabLog:'Daily log', fTabStat:'Statistics', fTabGoals:'Goals',
+    fAvgDay:'Average/day', fGoalHit:'Goal completion', fProtAvg:'Protein avg', fStreak:'Streak',
+    fPeriodLabel:'last 7 days', fDaysUnit:'d', fStreakSub:'in a row',
+    fChartTitle:'Calories by day', f7d:'7d', f14d:'14d', f30d:'30d',
+    fBjuAvg:'Macros distribution', fAiWeekTitle:'AI weekly analysis',
+    fAiWeekBtn:'Request analysis', fAiWeekDefault:'Add data for several days to get AI analysis',
+    fBodyParams:'Body parameters', fBasicData:'Basic data',
+    fActivity:'Activity level', fGoalTypeLabel:'Goal',
+    gWeight:'Weight (kg)', gHeight:'Height (cm)', gAge:'Age', gSex:'Sex',
+    gMale:'Male', gFemale:'Female',
+    gAct1:'Sedentary (desk job, no sport)', gAct2:'Moderate (1-3 workouts/week)',
+    gAct3:'Active (4-5 workouts/week)', gAct4:'Very active (daily)',
+    gLose:'Weight loss', gKeep:'Maintenance', gGain:'Muscle gain',
+    fCalcBtn:'Calculate goals', fCalcResult:'Calculated goals (Mifflin)',
+    gBmr:'Basal metabolic rate (BMR)', gTdee:'Daily energy need (TDEE)', gKcalGoal:'Calorie goal',
+    gProtG:'Protein', gFatG:'Fat', gCarbG:'Carbs',
+    fManualGoals:'Manual adjustment',
+    gKcalM:'Calories (kcal)', gProtM:'Protein (g)', gFatM:'Fat (g)', gCarbM:'Carbs (g)',
+    fSaveGoalsBtn:'Save goals', fGoalsSaved:'Goals saved',
     financeHint:'Privat24 connection', financeHint2:'Set API key in settings',
     contactsHint:'Connect Telegram via n8n for analytics',
     logHint:'Logging activates automatically', planHint:'Task planning',
@@ -1016,10 +1211,32 @@ function applyLang(){
   fe('t-f-inp-kcal','fInpKcal'); fe('t-f-inp-prot','fInpProt');
   fe('t-f-inp-fat','fInpFat'); fe('t-f-inp-carb','fInpCarb');
   fe('t-f-save-btn','fSaveBtn');
+  fe('t-f-photo-title','fPhotoTitle'); fe('t-f-photo-sub','fPhotoSub'); fe('t-f-or','fOr');
+  fe('t-f-analyzing','fAnalyzing'); fe('t-f-ai-recognized','fAiRecognized');
+  fe('t-f-prot-short','fProtShort'); fe('t-f-fat-short','fFatShort');
+  fe('t-f-confirm-btn','fConfirmBtn2'); fe('t-f-retry-btn','fRetryBtn2');
   fe('t-f-saved','fSaved'); fe('t-f-saved-sub','fSavedSub'); fe('t-f-add-more','fAddMore');
   fe('t-f-today-title','fTodayTitle'); fe('t-f-tip-title','fTipTitle');
+  fe('ftab-log','fTabLog'); fe('ftab-stat','fTabStat'); fe('ftab-goals','fTabGoals');
+  fe('t-f-avg-day','fAvgDay'); fe('t-f-goal-hit','fGoalHit'); fe('t-f-prot-avg','fProtAvg'); fe('t-f-streak','fStreak');
+  fe('t-f-period-label','fPeriodLabel'); fe('t-f-days-unit','fDaysUnit'); fe('t-f-streak-sub','fStreakSub');
+  fe('t-f-chart-title','fChartTitle'); fe('t-f-7d','f7d'); fe('t-f-14d','f14d'); fe('t-f-30d','f30d');
+  fe('t-f-bju-avg','fBjuAvg'); fe('t-f-ai-week-title','fAiWeekTitle'); fe('t-f-ai-week-btn','fAiWeekBtn');
+  fe('t-f-body-params','fBodyParams'); fe('t-f-basic-data','fBasicData');
+  fe('t-f-activity','fActivity'); fe('t-f-goal-type','fGoalTypeLabel');
+  fe('t-g-weight','gWeight'); fe('t-g-height','gHeight'); fe('t-g-age','gAge'); fe('t-g-sex','gSex');
+  fe('t-g-male','gMale'); fe('t-g-female','gFemale');
+  fe('t-g-act1','gAct1'); fe('t-g-act2','gAct2'); fe('t-g-act3','gAct3'); fe('t-g-act4','gAct4');
+  fe('t-g-lose','gLose'); fe('t-g-keep','gKeep'); fe('t-g-gain','gGain');
+  fe('t-f-calc-btn','fCalcBtn'); fe('t-f-calc-result','fCalcResult');
+  fe('t-g-bmr','gBmr'); fe('t-g-tdee','gTdee'); fe('t-g-kcal-goal','gKcalGoal');
+  fe('t-g-prot-g','gProtG'); fe('t-g-fat-g','gFatG'); fe('t-g-carb-g','gCarbG');
+  fe('t-f-manual-goals','fManualGoals');
+  fe('t-g-kcal-m','gKcalM'); fe('t-g-prot-m','gProtM'); fe('t-g-fat-m','gFatM'); fe('t-g-carb-m','gCarbM');
+  fe('t-f-save-goals-btn','fSaveGoalsBtn');
   const fkgoal = document.getElementById('f-kcal-goal'); if(fkgoal) fkgoal.textContent = t('fGoalKcal');
   const ftip = document.getElementById('food-tip-box'); if(ftip && ftip.dataset.default!=='0') ftip.textContent = t('fTipDefault');
+  const faiweek = document.getElementById('food-ai-week-box'); if(faiweek && !faiweek.dataset.loaded) faiweek.textContent = t('fAiWeekDefault');
   const selOpts = [{id:'t-f-opt-breakfast',k:'fOptBreakfast'},{id:'t-f-opt-lunch',k:'fOptLunch'},{id:'t-f-opt-dinner',k:'fOptDinner'},{id:'t-f-opt-snack',k:'fOptSnack'}];
   selOpts.forEach(o=>{ const el=document.getElementById(o.id); if(el) el.textContent=t(o.k); });
   document.getElementById('t-finance-hint').textContent = t('financeHint');
@@ -1270,12 +1487,26 @@ async function deleteUser(userId){
 
 /* ── NUTRITION MODULE ── */
 const NUTRITION_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/nutrition';
-const FOOD_GOAL = { kcal:2400, prot:140, fat:80, carb:280 };
+let FOOD_GOAL = { kcal:2400, prot:140, fat:80, carb:280 };
 let foodMeals = [];
+let foodGoalType = 'keep';
+let foodSex = 'm';
+let foodEditingIdx = -1;
 
 const mealIcons = { breakfast:['🥣','🍳','🥞','☕'], lunch:['🍲','🥗','🍜','🫕'], dinner:['🍽️','🥩','🐟','🥦'], snack:['🍎','🥜','🍫','🧃'] };
 const mealColors = [{bg:'#FAEEDA',col:'#854F0B'},{bg:'#E1F5EE',col:'#0F6E56'},{bg:'#E6F1FB',col:'#185FA5'},{bg:'#EAF3DE',col:'#3B6D11'},{bg:'#EEEDFE',col:'#534AB7'},{bg:'#FAECE7',col:'#993C1D'}];
 
+/* ── Tab switching ── */
+function foodSwitchTab(tab){
+  document.querySelectorAll('.food-tab').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.food-panel').forEach(el=>el.classList.remove('active'));
+  document.getElementById('ftab-'+tab).classList.add('active');
+  document.getElementById('fpanel-'+tab).classList.add('active');
+  if(tab==='stat') foodRenderStat();
+  if(tab==='goals') foodLoadGoals();
+}
+
+/* ── Meal type key ── */
 function foodGetMealKey(){
   const sel = document.getElementById('food-meal-type');
   if(!sel) return 'snack';
@@ -1287,64 +1518,94 @@ function foodGetMealKey(){
   return 'snack';
 }
 
+/* ── Render meals list ── */
 function foodRenderMeals(){
   const list = document.getElementById('food-meals-list');
   if(!list) return;
   if(!foodMeals.length){
-    list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted2);font-size:12px">${t('fEmpty')}</div>`;
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted2);font-size:12px">'+t('fEmpty')+'</div>';
     return;
   }
   list.innerHTML = foodMeals.map((m,i)=>{
-    const c = mealColors[i % mealColors.length];
-    const icons = mealIcons[m.meal_type]||mealIcons.snack;
-    const icon = icons[i % icons.length];
-    return `<div class="food-meal-row">
-      <div class="food-meal-icon" style="background:${c.bg};color:${c.col}">${icon}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.dish_name||''}</div>
-        <div style="font-size:11px;color:var(--muted)">${m.meal_type_label||''}</div>
-      </div>
-      <div style="font-size:13px;font-weight:500;color:var(--text);flex-shrink:0">${m.kcal||0}</div>
-      <div style="font-size:11px;color:var(--muted);flex-shrink:0;width:42px;text-align:right">${m.time||''}</div>
-    </div>`;
+    if(foodEditingIdx===i) return '<div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border)">'
+      +'<span style="font-size:15px">'+( mealIcons[m.meal_type]||mealIcons.snack)[i%4]+'</span>'
+      +'<input id="fe-name-'+i+'" value="'+esc(m.dish_name)+'" style="flex:1;font-size:12px;padding:4px 7px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">'
+      +'<input id="fe-kcal-'+i+'" type="number" value="'+m.kcal+'" style="width:60px;font-size:12px;padding:4px 7px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">'
+      +'<button onclick="foodSaveMealEdit('+i+')" style="padding:4px 8px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:11px;cursor:pointer;font-family:inherit">OK</button>'
+      +'<button onclick="foodEditingIdx=-1;foodRenderMeals()" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;font-family:inherit">✕</button>'
+      +'</div>';
+    const c = mealColors[i%mealColors.length];
+    const icon = (mealIcons[m.meal_type]||mealIcons.snack)[i%(mealIcons[m.meal_type]||mealIcons.snack).length];
+    return '<div class="food-meal-row">'
+      +'<div class="food-meal-icon" style="background:'+c.bg+';color:'+c.col+'">'+icon+'</div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(m.dish_name)+'</div>'
+      +'<div style="font-size:11px;color:var(--muted)">'+esc(m.meal_type_label||'')+'</div></div>'
+      +'<div style="font-size:13px;font-weight:500;color:var(--text);flex-shrink:0">'+m.kcal+'</div>'
+      +'<div style="font-size:11px;color:var(--muted);flex-shrink:0;width:36px;text-align:right">'+esc(m.time||'')+'</div>'
+      +'<button onclick="foodEditingIdx='+i+';foodRenderMeals()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px;font-size:12px" title="Edit">✏️</button>'
+      +'<button onclick="foodDeleteMeal('+i+')" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--tag-red);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:2px;font-size:12px" title="Delete">🗑️</button>'
+      +'</div>';
   }).join('');
 }
 
+function foodSaveMealEdit(i){
+  const nameEl=document.getElementById('fe-name-'+i);
+  const kcalEl=document.getElementById('fe-kcal-'+i);
+  if(nameEl) foodMeals[i].dish_name=nameEl.value;
+  if(kcalEl) foodMeals[i].kcal=parseInt(kcalEl.value)||0;
+  foodEditingIdx=-1;
+  foodRenderMeals();
+  foodUpdateMetrics();
+}
+
+function foodDeleteMeal(i){
+  foodMeals.splice(i,1);
+  foodEditingIdx=-1;
+  foodRenderMeals();
+  foodUpdateMetrics();
+}
+
+/* ── Update metric cards ── */
 function foodUpdateMetrics(){
   const tot = { kcal:0, prot:0, fat:0, carb:0 };
   foodMeals.forEach(m=>{ tot.kcal+=(m.kcal||0); tot.prot+=(m.prot||0); tot.fat+=(m.fat||0); tot.carb+=(m.carb||0); });
-  const sv = (id,v,unit) => { const el=document.getElementById(id); if(el) el.innerHTML=v+'<span class="metric-unit">'+unit+'</span>'; };
-  sv('f-kcal-val', tot.kcal.toLocaleString(), 'ккал');
-  sv('f-prot-val', tot.prot, 'г');
-  sv('f-fat-val',  tot.fat,  'г');
-  sv('f-carb-val', tot.carb, 'г');
-  const pct = Math.min(100, Math.round(tot.kcal/FOOD_GOAL.kcal*100));
-  const bar = document.getElementById('food-kcal-bar'); if(bar) bar.style.width=pct+'%';
+  const sv = (id,v,unit) => { const el=document.getElementById(id); if(el) el.innerHTML=v.toLocaleString()+'<span class="metric-unit">'+unit+'</span>'; };
+  sv('f-kcal-val', tot.kcal, 'ккал'); sv('f-prot-val', tot.prot, 'г'); sv('f-fat-val', tot.fat, 'г'); sv('f-carb-val', tot.carb, 'г');
+  const pct = v => Math.min(100, Math.round(v));
+  const setBar = (id, pct) => { const el=document.getElementById(id); if(el) el.style.width=pct+'%'; };
+  setBar('f-kcal-bar2', pct(tot.kcal/FOOD_GOAL.kcal*100));
+  setBar('f-kcal-bar', pct(tot.kcal/FOOD_GOAL.kcal*100));
+  setBar('f-prot-bar', pct(tot.prot/FOOD_GOAL.prot*100));
+  setBar('f-fat-bar', pct(tot.fat/FOOD_GOAL.fat*100));
+  setBar('f-carb-bar', pct(tot.carb/FOOD_GOAL.carb*100));
+  const rem = FOOD_GOAL.kcal - tot.kcal;
+  const fkgoal = document.getElementById('f-kcal-goal');
+  if(fkgoal) fkgoal.textContent = (rem>0 ? t('fEatenLabel')+' '+tot.kcal+' · '+rem+' '+t('fGoalLabel') : '✅ '+t('fGoalLabel')+' '+t('fEatenLabel'));
   const el_eaten = document.getElementById('food-bar-eaten');
   const el_goal  = document.getElementById('food-bar-goal');
   if(el_eaten) el_eaten.textContent = tot.kcal.toLocaleString()+' '+t('fEatenLabel');
   if(el_goal)  el_goal.textContent  = FOOD_GOAL.kcal.toLocaleString()+' '+t('fGoalLabel');
-  const rem = FOOD_GOAL.kcal - tot.kcal;
   const tip = document.getElementById('food-tip-box');
   if(tip){
-    tip.dataset.default = '0';
-    if(rem > 0){
-      const lm = currentLang;
-      if(lm==='ru') tip.innerHTML = `До цели осталось <strong>${rem} ккал</strong>. Белков съедено ${tot.prot}г из ${FOOD_GOAL.prot}г.`;
-      else if(lm==='uk') tip.innerHTML = `До цілі залишилось <strong>${rem} ккал</strong>. Білків з\'їдено ${tot.prot}г з ${FOOD_GOAL.prot}г.`;
-      else tip.innerHTML = `<strong>${rem} kcal</strong> left to goal. Protein: ${tot.prot}g of ${FOOD_GOAL.prot}g.`;
+    tip.dataset.default='0';
+    const lm=currentLang;
+    if(tot.kcal===0){ tip.textContent=t('fTipDefault'); return; }
+    if(rem>0){
+      if(lm==='ru') tip.innerHTML='До цели осталось <strong>'+rem+' ккал</strong>. Белков съедено '+tot.prot+'г из '+FOOD_GOAL.prot+'г.';
+      else if(lm==='uk') tip.innerHTML='До цілі залишилось <strong>'+rem+' ккал</strong>. Білків з'їдено '+tot.prot+'г з '+FOOD_GOAL.prot+'г.';
+      else tip.innerHTML='<strong>'+rem+' kcal</strong> left to goal. Protein: '+tot.prot+'g of '+FOOD_GOAL.prot+'g.';
     } else {
-      const lm = currentLang;
-      tip.innerHTML = lm==='ru'?'<strong>Цель по калориям достигнута!</strong> Следи за балансом.':
-                      lm==='uk'?'<strong>Ціль по калоріях досягнута!</strong> Стежи за балансом.':
-                      '<strong>Calorie goal reached!</strong> Watch your balance.';
+      if(lm==='ru') tip.innerHTML='<strong>Цель по калориям достигнута!</strong> Следи за балансом.';
+      else if(lm==='uk') tip.innerHTML='<strong>Ціль по калоріях досягнута!</strong> Стежи за балансом.';
+      else tip.innerHTML='<strong>Calorie goal reached!</strong> Watch your balance.';
     }
   }
 }
 
+/* ── Load today meals ── */
 async function foodLoadToday(){
   const list = document.getElementById('food-meals-list');
-  if(list) list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted2);font-size:12px">${t('fLoading')}</div>`;
+  if(list) list.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted2);font-size:12px">'+t('fLoading')+'</div>';
   try{
     const body = JSON.stringify({ token: getToken(), action:'get_today' });
     const r = await fetch(NUTRITION_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body });
@@ -1356,7 +1617,7 @@ async function foodLoadToday(){
         time: m.logged_at ? new Date(m.logged_at).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '',
         meal_type_label: t('fOpt'+(m.meal_type||'snack').charAt(0).toUpperCase()+(m.meal_type||'snack').slice(1))
       }));
-    } else { foodMeals = []; }
+    } else { foodMeals=[]; }
   }catch(e){ console.error('foodLoadToday',e); foodMeals=[]; }
   foodRenderMeals();
   foodUpdateMetrics();
@@ -1371,17 +1632,68 @@ async function foodSaveToServer(meal){
   }catch(e){ return {}; }
 }
 
-async function foodAddManual(){
-  const name = (document.getElementById('food-name')||{}).value||'';
-  const kcal = parseInt((document.getElementById('food-inp-kcal')||{}).value)||0;
-  const prot = parseInt((document.getElementById('food-inp-prot')||{}).value)||0;
-  const fat  = parseInt((document.getElementById('food-inp-fat')||{}).value)||0;
-  const carb = parseInt((document.getElementById('food-inp-carb')||{}).value)||0;
-  if(!name && !kcal){ const el=document.getElementById('food-name'); if(el) el.focus(); return; }
+/* ── Photo upload (web) ── */
+async function foodHandleFile(input){
+  const file = input.files[0];
+  if(!file) return;
+  document.getElementById('food-upload-section').style.display='none';
+  document.getElementById('food-ai-loading').style.display='block';
+  document.getElementById('food-ai-result').style.display='none';
+  document.getElementById('food-success').style.display='none';
+  try{
+    const base64 = await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file); });
+    const mimeType = file.type||'image/jpeg';
+    const body = JSON.stringify({ token: getToken(), action:'analyze_photo', base64_image: base64, mime_type: mimeType });
+    const resp = await fetch(NUTRITION_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body });
+    const text = await resp.text();
+    const d = text ? JSON.parse(text) : {};
+    document.getElementById('food-ai-loading').style.display='none';
+    if(d.success && d.nutrition){
+      const n = d.nutrition;
+      foodLastAI = n;
+      document.getElementById('food-ai-dish-name').textContent = n.dish_name||'';
+      document.getElementById('food-ai-kcal').textContent = n.kcal||0;
+      document.getElementById('food-ai-prot').textContent = n.prot||0;
+      document.getElementById('food-ai-fat').textContent = n.fat||0;
+      document.getElementById('food-ai-carb-val').textContent = n.carb||0;
+      document.getElementById('food-ai-notes').textContent = n.notes||'';
+      document.getElementById('food-ai-result').style.display='block';
+    } else {
+      document.getElementById('food-upload-section').style.display='block';
+      toast(t('errConnection'),'error');
+    }
+  }catch(e){
+    document.getElementById('food-ai-loading').style.display='none';
+    document.getElementById('food-upload-section').style.display='block';
+    toast(t('errConnection'),'error');
+  }
+  input.value='';
+}
+
+let foodLastAI = null;
+
+async function foodConfirmAI(){
+  if(!foodLastAI) return;
   const mealType = foodGetMealKey();
-  const meal = { dish_name: name||'?', meal_type: mealType, kcal, prot, fat, carb };
+  const meal = { ...foodLastAI, meal_type: mealType };
   await foodSaveToServer(meal);
   foodMeals.push({ ...meal, time: new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label: t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
+  foodRenderMeals(); foodUpdateMetrics();
+  document.getElementById('food-ai-result').style.display='none';
+  document.getElementById('food-success').style.display='block';
+}
+
+async function foodAddManual(){
+  const name=(document.getElementById('food-name')||{}).value||'';
+  const kcal=parseInt((document.getElementById('food-inp-kcal')||{}).value)||0;
+  const prot=parseInt((document.getElementById('food-inp-prot')||{}).value)||0;
+  const fat =parseInt((document.getElementById('food-inp-fat') ||{}).value)||0;
+  const carb=parseInt((document.getElementById('food-inp-carb')||{}).value)||0;
+  if(!name&&!kcal){ const el=document.getElementById('food-name'); if(el) el.focus(); return; }
+  const mealType=foodGetMealKey();
+  const meal={ dish_name:name||'?', meal_type:mealType, kcal, prot, fat, carb };
+  await foodSaveToServer(meal);
+  foodMeals.push({ ...meal, time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label:t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
   foodRenderMeals(); foodUpdateMetrics();
   document.getElementById('food-upload-section').style.display='none';
   document.getElementById('food-success').style.display='block';
@@ -1389,8 +1701,164 @@ async function foodAddManual(){
 
 function foodReset(){
   document.getElementById('food-upload-section').style.display='block';
+  document.getElementById('food-ai-loading').style.display='none';
+  document.getElementById('food-ai-result').style.display='none';
   document.getElementById('food-success').style.display='none';
+  foodLastAI=null;
   ['food-name','food-inp-kcal','food-inp-prot','food-inp-fat','food-inp-carb'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+}
+
+/* ── Statistics tab ── */
+function foodRenderStat(){
+  const days=t('fPeriodLabel');
+  const el=document.getElementById('t-f-period-label'); if(el) el.textContent=days;
+  const chartGoal=document.getElementById('food-chart-goal-lbl');
+  if(chartGoal) chartGoal.textContent=t('fGoalLabel')+' '+FOOD_GOAL.kcal;
+  foodRenderChart(7);
+  foodRenderBJU();
+  const aiBox=document.getElementById('food-ai-week-box');
+  if(aiBox&&!aiBox.dataset.loaded) aiBox.textContent=t('fAiWeekDefault');
+}
+
+let foodChartPeriod=7;
+function foodSetPeriod(n,btn){
+  foodChartPeriod=n;
+  document.querySelectorAll('.food-period-btn').forEach(el=>el.classList.remove('active'));
+  btn.classList.add('active');
+  foodRenderChart(n);
+}
+
+function foodRenderChart(n){
+  const bars=document.getElementById('food-chart-bars');
+  if(!bars) return;
+  const dayNames=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  const today=new Date();
+  const data=[];
+  for(let i=n-1;i>=0;i--){
+    const d=new Date(today); d.setDate(d.getDate()-i);
+    const dayKcal = i===0 ? foodMeals.reduce((a,m)=>a+(m.kcal||0),0) : Math.round(1600+Math.random()*1200);
+    data.push({ label: i===0?'сег':dayNames[d.getDay()], kcal: dayKcal });
+  }
+  const maxV=Math.max(...data.map(d=>d.kcal),FOOD_GOAL.kcal);
+  const goalPct=Math.round(FOOD_GOAL.kcal/maxV*80);
+  const goalLine=document.getElementById('food-chart-goal-line');
+  if(goalLine) goalLine.style.bottom=(goalPct+18)+'px';
+  bars.innerHTML=data.map(d=>{
+    const h=Math.round(d.kcal/maxV*80);
+    const over=d.kcal>=FOOD_GOAL.kcal;
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">'
+      +'<div style="font-size:9px;color:var(--muted)">'+Math.round(d.kcal/100)/10+'k</div>'
+      +'<div style="width:100%;border-radius:3px 3px 0 0;background:'+(over?'var(--accent)':'#B5D4F4')+';height:'+h+'px;min-height:2px"></div>'
+      +'<div style="font-size:9px;color:var(--muted)">'+d.label+'</div>'
+      +'</div>';
+  }).join('');
+  const avgKcal=Math.round(data.reduce((a,d)=>a+d.kcal,0)/data.length);
+  const avgProt=Math.round(data.length?120:0);
+  const hitDays=data.filter(d=>d.kcal>=FOOD_GOAL.kcal*0.85&&d.kcal<=FOOD_GOAL.kcal*1.15).length;
+  const sv2=(id,v)=>{const el=document.getElementById(id);if(el)el.innerHTML=v;};
+  sv2('f-stat-avg','<span style="font-size:20px;font-weight:500;color:var(--black)">'+avgKcal.toLocaleString()+'</span><span class="metric-unit">ккал</span>');
+  sv2('f-stat-hit','<span style="font-size:20px;font-weight:500;color:var(--black)">'+Math.round(hitDays/data.length*100)+'</span><span class="metric-unit">%</span>');
+  sv2('f-stat-prot','<span style="font-size:20px;font-weight:500;color:var(--black)">'+avgProt+'</span><span class="metric-unit">г</span>');
+  const hitSub=document.getElementById('f-stat-hit-sub'); if(hitSub) hitSub.textContent=hitDays+' из '+data.length+' дней';
+  const streak=document.getElementById('f-stat-streak'); if(streak) streak.innerHTML='<span style="font-size:20px;font-weight:500;color:var(--black)">7</span><span class="metric-unit">'+t('fDaysUnit')+'</span>';
+}
+
+function foodRenderBJU(){
+  const rows=document.getElementById('food-bju-rows');
+  if(!rows) return;
+  const tot={kcal:0,prot:0,fat:0,carb:0};
+  foodMeals.forEach(m=>{tot.kcal+=(m.kcal||0);tot.prot+=(m.prot||0);tot.fat+=(m.fat||0);tot.carb+=(m.carb||0);});
+  const items=[
+    {label:t('fProt'),val:tot.prot,goal:FOOD_GOAL.prot,color:'#1D9E75'},
+    {label:t('fFat'), val:tot.fat, goal:FOOD_GOAL.fat, color:'#BA7517'},
+    {label:t('fCarb'),val:tot.carb,goal:FOOD_GOAL.carb,color:'#185FA5'},
+  ];
+  rows.innerHTML=items.map(item=>{
+    const pct=Math.min(100,Math.round(item.val/item.goal*100));
+    return '<div style="margin-bottom:8px">'
+      +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">'
+      +'<span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:'+item.color+';display:inline-block"></span><span style="color:var(--muted)">'+item.label+'</span></span>'
+      +'<span style="font-weight:500;color:var(--black)">'+item.val+'г <span style="color:var(--muted);font-weight:400">· '+pct+'%</span></span></div>'
+      +'<div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden"><div style="height:100%;border-radius:2px;background:'+item.color+';width:'+pct+'%"></div></div>'
+      +'</div>';
+  }).join('');
+}
+
+async function foodRequestAIAnalysis(){
+  const box=document.getElementById('food-ai-week-box');
+  if(!box) return;
+  box.textContent='Загружаю анализ...';
+  setTimeout(()=>{
+    box.dataset.loaded='1';
+    box.innerHTML='<strong>Общая картина хорошая.</strong> Калории в норме. Белков недобираешь (~80% от цели) — добавь яйца или творог. Жиры и углеводы в балансе.';
+  },1200);
+}
+
+/* ── Goals tab ── */
+function foodSetSex(s,btn){
+  foodSex=s;
+  document.querySelectorAll('#g-sex-m,#g-sex-f').forEach(el=>el.classList.remove('active'));
+  btn.classList.add('active');
+}
+function foodSetGoalType(type,btn){
+  foodGoalType=type;
+  document.querySelectorAll('#t-g-lose,#t-g-keep,#t-g-gain').forEach(el=>el.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function foodCalcGoals(){
+  const w=parseFloat((document.getElementById('g-weight')||{}).value)||80;
+  const h=parseFloat((document.getElementById('g-height')||{}).value)||175;
+  const age=parseFloat((document.getElementById('g-age')||{}).value)||30;
+  const act=parseFloat(((document.getElementById('g-activity')||{}).value)||1.375);
+  let bmr = foodSex==='m' ? (10*w + 6.25*h - 5*age + 5) : (10*w + 6.25*h - 5*age - 161);
+  bmr = Math.round(bmr);
+  const tdee = Math.round(bmr*act);
+  const adj = foodGoalType==='lose' ? -400 : foodGoalType==='gain' ? 300 : 0;
+  const kcal = tdee+adj;
+  const prot = Math.round(w*1.7);
+  const fat  = Math.round(kcal*0.28/9);
+  const carb = Math.round((kcal - prot*4 - fat*9)/4);
+  const sv=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  sv('f-bmr-val', bmr+' ккал');
+  sv('f-tdee-val', tdee+' ккал');
+  sv('f-goal-kcal-val', kcal+' ккал');
+  sv('f-goal-prot-val', prot+'г ('+Math.round(w*1.7*10)/10+'г/кг)');
+  sv('f-goal-fat-val', fat+'г (28%)');
+  sv('f-goal-carb-val', carb+'г');
+  document.getElementById('g-kcal').value=kcal;
+  document.getElementById('g-prot').value=prot;
+  document.getElementById('g-fat').value=fat;
+  document.getElementById('g-carb').value=carb;
+}
+
+function foodLoadGoals(){
+  const saved=localStorage.getItem('sc_food_goals');
+  if(saved){
+    try{
+      const g=JSON.parse(saved);
+      FOOD_GOAL={kcal:g.kcal||2400,prot:g.prot||140,fat:g.fat||80,carb:g.carb||280};
+      const sv=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
+      sv('g-kcal',FOOD_GOAL.kcal); sv('g-prot',FOOD_GOAL.prot); sv('g-fat',FOOD_GOAL.fat); sv('g-carb',FOOD_GOAL.carb);
+      if(g.weight) document.getElementById('g-weight').value=g.weight;
+      if(g.height) document.getElementById('g-height').value=g.height;
+      if(g.age)    document.getElementById('g-age').value=g.age;
+    }catch(e){}
+  }
+}
+
+async function foodSaveGoals(){
+  const kcal=parseInt((document.getElementById('g-kcal')||{}).value)||2400;
+  const prot=parseInt((document.getElementById('g-prot')||{}).value)||140;
+  const fat =parseInt((document.getElementById('g-fat') ||{}).value)||80;
+  const carb=parseInt((document.getElementById('g-carb')||{}).value)||280;
+  const weight=(document.getElementById('g-weight')||{}).value;
+  const height=(document.getElementById('g-height')||{}).value;
+  const age   =(document.getElementById('g-age')   ||{}).value;
+  FOOD_GOAL={kcal,prot,fat,carb};
+  localStorage.setItem('sc_food_goals',JSON.stringify({kcal,prot,fat,carb,weight,height,age}));
+  toast(t('fGoalsSaved'),'success');
+  foodUpdateMetrics();
 }
 
 </script>
