@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_14';
+  var V='20260519_15';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -585,7 +585,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
               <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
               <span id="t-f-today-title"></span>
             </div>
-            <div id="food-meals-list"></div>
+            <div id="food-meals-list" style="max-height:260px;overflow-y:auto;scrollbar-width:thin"></div>
             <div style="height:7px;background:#d0d0cc;border-radius:4px;overflow:hidden;margin-top:12px">
               <div id="food-kcal-bar" style="height:100%;border-radius:4px;background:var(--accent);width:0%;transition:none"></div>
             </div>
