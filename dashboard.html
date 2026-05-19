@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_4';
+  var V='20260519_5';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1317,7 +1317,7 @@ function showView(name){
   const mb=document.getElementById('mob-'+name);
   if(mb) mb.classList.add('active');
   if(name==='users'){ loadPendingUsers(); loadAllUsers(); }
-  if(name==='food'){ foodLoadGoals(); foodLoadToday(); }
+  if(name==='food'){ foodLoadGoals(); setTimeout(foodLoadToday, 50); }
 }
 
 /* ── LOGOUT ── */
@@ -1558,15 +1558,42 @@ function foodSaveMealEdit(i){
   if(nameEl) foodMeals[i].dish_name=nameEl.value;
   if(kcalEl) foodMeals[i].kcal=parseInt(kcalEl.value)||0;
   foodEditingIdx=-1;
+  // Сохраняем изменение в БД
+  if(foodMeals[i].id){
+    foodUpdateMealOnServer(foodMeals[i].id, { dish_name: foodMeals[i].dish_name, kcal: foodMeals[i].kcal });
+  }
   foodRenderMeals();
   foodUpdateMetrics();
 }
 
+async function foodUpdateMealOnServer(id, data){
+  try{
+    const body = JSON.stringify({ token: getToken(), action:'update_meal', meal_id: id, ...data });
+    const r = await fetch(NUTRITION_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body });
+    const text = await r.text();
+    return text ? JSON.parse(text) : {};
+  }catch(e){ console.error('foodUpdateMealOnServer', e); return {}; }
+}
+
 function foodDeleteMeal(i){
+  const meal = foodMeals[i];
   foodMeals.splice(i,1);
   foodEditingIdx=-1;
+  // Удаляем из БД
+  if(meal && meal.id){
+    foodDeleteMealOnServer(meal.id);
+  }
   foodRenderMeals();
   foodUpdateMetrics();
+}
+
+async function foodDeleteMealOnServer(id){
+  try{
+    const body = JSON.stringify({ token: getToken(), action:'delete_meal', meal_id: id });
+    const r = await fetch(NUTRITION_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body });
+    const text = await r.text();
+    return text ? JSON.parse(text) : {};
+  }catch(e){ console.error('foodDeleteMealOnServer', e); return {}; }
 }
 
 /* ── Update metric cards ── */
