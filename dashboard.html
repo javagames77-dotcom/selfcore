@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_6';
+  var V='20260519_8';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -586,8 +586,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
               <span id="t-f-today-title"></span>
             </div>
             <div id="food-meals-list"></div>
-            <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:10px">
-              <div id="food-kcal-bar" style="height:100%;border-radius:3px;background:var(--accent);transition:width .4s;width:0%"></div>
+            <div style="height:6px;background:#e8e8e4;border-radius:3px;overflow:hidden;margin-top:10px">
+              <div id="food-kcal-bar" style="height:100%;border-radius:3px;background:var(--accent);width:0%"></div>
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
               <span id="food-bar-eaten"></span><span id="food-bar-goal"></span>
@@ -1294,7 +1294,20 @@ function applyLang(){
   });
 }
 
-function setLang(lang){ currentLang=lang; localStorage.setItem('sc_lang',lang); applyLang(); }
+function setLang(lang){
+  currentLang=lang;
+  localStorage.setItem('sc_lang',lang);
+  applyLang();
+  // Сохраняем язык в БД чтобы GPT-4o отвечал на нужном языке
+  const token = getToken();
+  if(token){
+    fetch(NUTRITION_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ token, action:'update_lang', lang })
+    }).catch(()=>{});
+  }
+}
 
 /* ── THEME ── */
 function toggleTheme(){
@@ -1603,7 +1616,12 @@ function foodUpdateMetrics(){
   const sv = (id,v,unit) => { const el=document.getElementById(id); if(el) el.innerHTML=v.toLocaleString()+'<span class="metric-unit">'+unit+'</span>'; };
   sv('f-kcal-val', tot.kcal, 'ккал'); sv('f-prot-val', tot.prot, 'г'); sv('f-fat-val', tot.fat, 'г'); sv('f-carb-val', tot.carb, 'г');
   const pct = v => Math.min(100, Math.max(0, Math.round(v)));
-  const setBar = (id, p) => { const el=document.getElementById(id); if(el){ el.style.width=p+'%'; el.style.minWidth=p>0?'3px':'0'; } };
+  const setBar = (id, p) => {
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.style.width='0%';
+    requestAnimationFrame(()=>{ el.style.width=p+'%'; });
+  };
   const kcalPct = pct(FOOD_GOAL.kcal>0 ? tot.kcal/FOOD_GOAL.kcal*100 : 0);
   const protPct = pct(FOOD_GOAL.prot>0 ? tot.prot/FOOD_GOAL.prot*100 : 0);
   const fatPct  = pct(FOOD_GOAL.fat >0 ? tot.fat /FOOD_GOAL.fat *100 : 0);
@@ -1623,8 +1641,8 @@ function foodUpdateMetrics(){
   const tip = document.getElementById('food-tip-box');
   if(tip){
     tip.dataset.default='0';
-    const lm=currentLang;
     if(tot.kcal===0){ tip.textContent=t('fTipDefault'); return; }
+    const lm=currentLang;
     if(rem>0){
       if(lm==='ru') tip.innerHTML='До цели осталось <strong>'+rem+' ккал</strong>. Белков съедено '+tot.prot+'г из '+FOOD_GOAL.prot+'г.';
       else if(lm==='uk') tip.innerHTML='До цілі залишилось <strong>'+rem+' ккал</strong>. Білків з\'їдено '+tot.prot+'г з '+FOOD_GOAL.prot+'г.';
@@ -1697,7 +1715,10 @@ async function foodHandleFile(input){
       st('food-ai-notes', n.notes||'');
       // Уверенность AI
       const conf = document.getElementById('food-ai-confidence');
-      if(conf && n.confidence) conf.textContent = '🎯 ' + (currentLang==='en'?'Confidence':'Уверенность') + ': ' + n.confidence + '%' + (n.weight_g ? ' · ' + (currentLang==='en'?'Weight':'Вес') + ': ' + n.weight_g + 'г' : '');
+      if(conf && n.confidence){
+        const weightTxt = n.weight_g ? ' · ' + t('gWeight').replace(' (кг)','').replace(' (kg)','') + ': ' + n.weight_g + 'г' : '';
+        conf.textContent = '🎯 ' + (currentLang==='en'?'Confidence':currentLang==='uk'?'Впевненість':'Уверенность') + ': ' + n.confidence + '%' + weightTxt;
+      }
       document.getElementById('food-ai-result').style.display='block';
     } else {
       document.getElementById('food-upload-section').style.display='block';
