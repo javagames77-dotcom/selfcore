@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_22';
+  var V='20260519_23';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -582,7 +582,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
         <div style="display:flex;flex-direction:column;gap:10px;overflow-x:auto">
           <div class="card" style="padding:14px">
             <div id="food-meals-list" style="max-height:300px;overflow-y:scroll;scrollbar-width:thin;-webkit-overflow-scrolling:touch"></div>
-            <div style="height:7px;background:#d0d0cc;border-radius:4px;overflow:hidden;margin-top:12px">
+            <div style="height:7px;background:#d0d0cc;border-radius:4px;overflow:hidden;margin-top:12px;display:flex">
               <div id="food-kcal-bar-normal" style="height:100%;background:var(--accent);transition:none"></div><div id="food-kcal-bar-over" style="height:100%;background:#E24B4A;transition:none;width:0%"></div>
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
@@ -1633,9 +1633,9 @@ function foodUpdateMetrics(){
       normalBar.style.width = pct(kcalPct)+'%';
       overBar.style.width   = '0%';
     } else {
-      const overPct = Math.min(pct(kcalPct)-100, 100);
-      normalBar.style.width = '92%';
-      overBar.style.width   = Math.min(overPct/100*8, 8)+'%';
+      const overPct = Math.min((tot.kcal - FOOD_GOAL.kcal) / FOOD_GOAL.kcal * 100, 100);
+      normalBar.style.width = (100 - overPct)+'%';
+      overBar.style.width   = overPct+'%';
     }
   }
   const rem = FOOD_GOAL.kcal - tot.kcal;
