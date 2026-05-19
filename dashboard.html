@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260519_1';
+  var V='20260519_2';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1592,7 +1592,7 @@ function foodUpdateMetrics(){
     if(tot.kcal===0){ tip.textContent=t('fTipDefault'); return; }
     if(rem>0){
       if(lm==='ru') tip.innerHTML='До цели осталось <strong>'+rem+' ккал</strong>. Белков съедено '+tot.prot+'г из '+FOOD_GOAL.prot+'г.';
-      else if(lm==='uk') tip.innerHTML='До цілі залишилось <strong>'+rem+' ккал</strong>. Білків з'їдено '+tot.prot+'г з '+FOOD_GOAL.prot+'г.';
+      else if(lm==='uk') tip.innerHTML='До цілі залишилось <strong>'+rem+' ккал</strong>. Білків з\'їдено '+tot.prot+'г з '+FOOD_GOAL.prot+'г.';
       else tip.innerHTML='<strong>'+rem+' kcal</strong> left to goal. Protein: '+tot.prot+'g of '+FOOD_GOAL.prot+'g.';
     } else {
       if(lm==='ru') tip.innerHTML='<strong>Цель по калориям достигнута!</strong> Следи за балансом.';
