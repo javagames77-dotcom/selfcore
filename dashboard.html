@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_23';
+  var V='20260525_24';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -709,8 +709,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
           <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
             <span style="font-size:13px;color:var(--text)" id="t-g-sex"></span>
             <div style="display:flex;gap:2px;background:var(--bg3);border-radius:6px;padding:2px">
-              <button class="food-seg-btn active" id="g-sex-m" onclick="foodSetSex('m',this)" id="t-g-male"></button>
-              <button class="food-seg-btn" id="g-sex-f" onclick="foodSetSex('f',this)" id="t-g-female"></button>
+              <button class="food-seg-btn active" id="g-sex-m" onclick="foodSetSex('m',this)"></button>
+              <button class="food-seg-btn" id="g-sex-f" onclick="foodSetSex('f',this)"></button>
             </div>
           </div>
           <div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:12px 0 8px" id="t-f-activity"></div>
@@ -1328,7 +1328,7 @@ function applyLang(){
   fe('t-f-body-params','fBodyParams'); fe('t-f-basic-data','fBasicData');
   fe('t-f-activity','fActivity'); fe('t-f-goal-type','fGoalTypeLabel');
   fe('t-g-weight','gWeight'); fe('t-g-height','gHeight'); fe('t-g-age','gAge'); fe('t-g-sex','gSex');
-  fe('t-g-male','gMale'); fe('t-g-female','gFemale');
+  fe('g-sex-m','gMale'); fe('g-sex-f','gFemale');
   fe('t-g-act1','gAct1'); fe('t-g-act2','gAct2'); fe('t-g-act3','gAct3'); fe('t-g-act4','gAct4');
   fe('t-g-lose','gLose'); fe('t-g-keep','gKeep'); fe('t-g-gain','gGain');
   fe('t-f-calc-btn','fCalcBtn'); fe('t-f-calc-result','fCalcResult');
