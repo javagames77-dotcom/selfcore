@@ -510,6 +510,20 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
         <span style="font-size:11px;color:var(--muted2)">· норма 25–30г</span>
       </div>
 
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:var(--card-bg);border:1px solid var(--border);border-radius:10px">
+        <span style="font-size:18px">💧</span>
+        <span style="font-size:11px;color:var(--muted);flex-shrink:0" id="t-w-label"></span>
+        <span style="font-size:13px;font-weight:600;color:var(--accent);flex-shrink:0" id="w-val">0</span>
+        <span style="font-size:11px;color:var(--muted);flex-shrink:0" id="t-w-unit"></span>
+        <div style="flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;min-width:40px">
+          <div id="w-bar" style="height:100%;border-radius:3px;background:#3B82F6;width:0%;transition:width .3s"></div>
+        </div>
+        <span style="font-size:11px;color:var(--muted2);flex-shrink:0" id="w-goal-lbl"></span>
+        <button onclick="waterAdd(250)" style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;flex-shrink:0">+250</button>
+        <button onclick="waterAdd(500)" style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;flex-shrink:0">+500</button>
+        <button onclick="waterReset()" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:11px;cursor:pointer;font-family:inherit;flex-shrink:0" title="Сбросить">↺</button>
+      </div>
+
       <div class="grid2">
         <div class="card" style="padding:14px">
           <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:11px;display:flex;align-items:center;gap:6px">
@@ -897,7 +911,7 @@ const i18n = {
     titleAnalytics:'AI аналитика', titleSettings:'Настройки',
     comingSoon:'В разработке', connectZepp:'Подключите Zepp Life и Apple Health через n8n',
     foodHint:'Отправьте фото еды в Telegram бот', foodHint2:'@selfcore_bot',
-    fEaten:'Съедено', fProt:'Белки', fFat:'Жиры', fCarb:'Углеводы', fFiber:'Клетчатка:',
+    fEaten:'Съедено', fProt:'Белки', fFat:'Жиры', fCarb:'Углеводы', fFiber:'Клетчатка:', wLabel:'Вода:', wUnit:'мл · цель',
     fGoalKcal:'Цель: 2 400 ккал', fGoalProt:'Цель: 140 г', fGoalFat:'Цель: 80 г', fGoalCarb:'Цель: 280 г',
     fAddTitle:'Добавить приём пищи',
     fTgHint:'Быстро? Отправь фото в @selfcore_bot — AI посчитает калории автоматически',
@@ -978,7 +992,7 @@ const i18n = {
     titleAnalytics:'AI аналітика', titleSettings:'Налаштування',
     comingSoon:'У розробці', connectZepp:'Підключіть Zepp Life та Apple Health через n8n',
     foodHint:'Надішліть фото їжі в Telegram бот', foodHint2:'@selfcore_bot',
-    fEaten:'З\'їдено', fProt:'Білки', fFat:'Жири', fCarb:'Вуглеводи', fFiber:'Клітковина:',
+    fEaten:'З\'їдено', fProt:'Білки', fFat:'Жири', fCarb:'Вуглеводи', fFiber:'Клітковина:', wLabel:'Вода:', wUnit:'мл · ціль',
     fGoalKcal:'Ціль: 2 400 ккал', fGoalProt:'Ціль: 140 г', fGoalFat:'Ціль: 80 г', fGoalCarb:'Ціль: 280 г',
     fAddTitle:'Додати прийом їжі',
     fTgHint:'Швидко? Відправ фото в @selfcore_bot — AI порахує калорії автоматично',
@@ -1059,7 +1073,7 @@ const i18n = {
     titleAnalytics:'AI analytics', titleSettings:'Settings',
     comingSoon:'In development', connectZepp:'Connect Zepp Life and Apple Health via n8n',
     foodHint:'Send food photo to Telegram bot', foodHint2:'@selfcore_bot',
-    fEaten:'Eaten', fProt:'Protein', fFat:'Fat', fCarb:'Carbs', fFiber:'Fiber:',
+    fEaten:'Eaten', fProt:'Protein', fFat:'Fat', fCarb:'Carbs', fFiber:'Fiber:', wLabel:'Water:', wUnit:'ml · goal',
     fGoalKcal:'Goal: 2 400 kcal', fGoalProt:'Goal: 140 g', fGoalFat:'Goal: 80 g', fGoalCarb:'Goal: 280 g',
     fAddTitle:'Add meal',
     fTgHint:'Quick? Send a photo to @selfcore_bot — AI will count calories automatically',
@@ -1211,6 +1225,8 @@ function applyLang(){
   // Food module
   const fe = (id, key) => { const el=document.getElementById(id); if(el) el.textContent=t(key); };
   fe('t-f-eaten','fEaten'); fe('t-f-prot','fProt'); fe('t-f-fat','fFat'); fe('t-f-carb','fCarb'); fe('t-f-fiber','fFiber');
+  fe('t-w-label','wLabel'); fe('t-w-unit','wUnit');
+  waterRender();
   fe('t-f-prot-goal','fGoalProt'); fe('t-f-fat-goal','fGoalFat'); fe('t-f-carb-goal','fGoalCarb');
   fe('t-f-add-title','fAddTitle'); fe('t-f-tg-hint','fTgHint');
   fe('t-f-meal-type-label','fMealTypeLabel'); fe('t-f-dish-label','fDishLabel'); fe('t-f-dish-label2','fDishLabel');
@@ -2046,6 +2062,42 @@ async function foodSaveGoals(){
   localStorage.setItem('sc_food_goals',JSON.stringify({kcal,prot,fat,carb,weight,height,age}));
   toast(t('fGoalsSaved'),'success');
   foodUpdateMetrics();
+}
+
+
+/* ── WATER TRACKER ── */
+const WATER_GOAL = 2500; // мл в день
+
+function waterKey(){
+  // Ключ привязан к дате — автосброс каждый день
+  const d = new Date();
+  return 'sc_water_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function waterGet(){
+  return parseInt(localStorage.getItem(waterKey()) || '0') || 0;
+}
+
+function waterAdd(ml){
+  const cur = waterGet();
+  localStorage.setItem(waterKey(), cur + ml);
+  waterRender();
+}
+
+function waterReset(){
+  localStorage.setItem(waterKey(), '0');
+  waterRender();
+}
+
+function waterRender(){
+  const val = waterGet();
+  const pct = Math.min(100, Math.round(val / WATER_GOAL * 100));
+  const el = document.getElementById('w-val');
+  const bar = document.getElementById('w-bar');
+  const goal = document.getElementById('w-goal-lbl');
+  if(el) el.textContent = val;
+  if(bar) bar.style.width = pct + '%';
+  if(goal) goal.textContent = WATER_GOAL + ' мл';
 }
 
 </script>
