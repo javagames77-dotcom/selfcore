@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Selfcore — Планирование v2.0</title>
-<meta name="version" content="2.0.0">
+<meta name="version" content="2.0.1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -420,14 +420,14 @@ const hn=h=>h.name[lang]||h.name.ru||Object.values(h.name)[0];
 const tn=x=>x.name?(x.name[lang]||x.name.ru||Object.values(x.name)[0]):(x[lang]||x.ru||x);
 const txn=tx=>typeof tx==='object'?(tx[lang]||tx.ru||Object.values(tx)[0]):tx;
 
-let habits=ld('sc5_h',[{id:1,name:{ru:'Утренняя молитва',uk:'Ранкова молитва',en:'Morning prayer'},freq:'daily',anchor:true,streak:14},{id:2,name:{ru:'Полуденная молитва',uk:'Полуденна молитва',en:'Midday prayer'},freq:'daily',anchor:true,streak:14},{id:3,name:{ru:'Вечерняя молитва',uk:'Вечірня молитва',en:'Evening prayer'},freq:'daily',anchor:true,streak:14},{id:4,name:{ru:'Ночная молитва',uk:'Нічна молитва',en:'Night prayer'},freq:'daily',anchor:true,streak:14},{id:5,name:{ru:'Семья',uk:"Сім'я",en:'Family'},freq:'daily',anchor:false,streak:7},{id:6,name:{ru:'English',uk:'English',en:'English'},freq:'daily',anchor:false,streak:5},{id:7,name:{ru:'Тренировка',uk:'Тренування',en:'Workout'},freq:'custom',anchor:false,streak:3},{id:8,name:{ru:'Сон до 23:30',uk:'Сон до 23:30',en:'Sleep by 23:30'},freq:'daily',anchor:false,streak:4},{id:9,name:{ru:'Прогулка',uk:'Прогулянка',en:'Walk'},freq:'custom',anchor:false,streak:2}]);
+let habits=ld('sc5_h',[]);
 function genLog(){const log={};habits.forEach(h=>{log[h.id]={};for(let i=0;i<84;i++){const d=new Date();d.setDate(d.getDate()-i);log[h.id][dk(d)]=Math.random()<(h.anchor?0.94:0.72);}log[h.id][today]=h.anchor;});return log;}
 let hlog=ld('sc5_hl',null)||genLog();
-let tasks=ld('sc5_t',[{id:1,text:{ru:'Звонок клиенту',uk:'Дзвінок клієнту',en:'Client call'},date:today,done:false,priority:1},{id:2,text:{ru:'Прочитать главу',uk:'Прочитати розділ',en:'Read chapter'},date:today,done:false,priority:3},{id:3,text:{ru:'Ответить на письма',uk:'Відповісти на листи',en:'Reply emails'},date:today,done:true,priority:2}]);
+let tasks=ld('sc5_t',[]);
 let templates=ld('sc5_tmpl',[{id:1,name:{ru:'Силовая А',uk:'Силова А',en:'Strength A'},type:'strength',exercises:[{id:101,name:{ru:'Жим лёжа',uk:'Жим лежачи',en:'Bench press'},type:'weight'},{id:102,name:{ru:'Приседания',uk:'Присідання',en:'Squats'},type:'weight'},{id:103,name:{ru:'Подтягивания',uk:'Підтягування',en:'Pull-ups'},type:'reps'}]},{id:2,name:{ru:'Кардио',uk:'Кардіо',en:'Cardio'},type:'cardio',exercises:[{id:201,name:{ru:'Бег',uk:'Біг',en:'Running'},type:'cardio'},{id:202,name:{ru:'Велосипед',uk:'Велосипед',en:'Cycling'},type:'cardio'}]}]);
-let woHist=ld('sc5_woh',[{id:1,templateId:1,date:dk(new Date(Date.now()-172800000)),duration:58,sets:{101:[{reps:8,weight:80},{reps:8,weight:80},{reps:7,weight:80}],102:[{reps:10,weight:70},{reps:10,weight:70}],103:[{reps:8,weight:0},{reps:7,weight:0}]}},{id:2,templateId:1,date:dk(new Date(Date.now()-432000000)),duration:52,sets:{101:[{reps:8,weight:77.5},{reps:8,weight:77.5},{reps:8,weight:77.5}],102:[{reps:10,weight:67.5},{reps:10,weight:67.5}],103:[{reps:7,weight:0},{reps:6,weight:0}]}}]);
-let schedWo=ld('sc5_swo',[{id:1,templateId:1,date:today,note:''}]);
-let goals=ld('sc5_goals',[{id:1,name:{ru:'Жим лёжа 100 кг',uk:'Жим лежачи 100 кг',en:'Bench press 100kg'},cat:'sport',deadline:'2025-12-31',cur:80,target:100},{id:2,name:{ru:'English B2',uk:'English B2',en:'English B2'},cat:'study',deadline:'2025-09-01',cur:40,target:100},{id:3,name:{ru:'Библия 90 дней',uk:'Біблія 90 днів',en:'Bible 90 days'},cat:'spirit',deadline:'2025-08-01',cur:14,target:90}]);
+let woHist=ld('sc5_woh',[]);
+let schedWo=ld('sc5_swo',[]);
+let goals=ld('sc5_goals',[]);
 function saveAll(){sv('sc5_h',habits);sv('sc5_hl',hlog);sv('sc5_t',tasks);sv('sc5_tmpl',templates);sv('sc5_woh',woHist);sv('sc5_swo',schedWo);sv('sc5_goals',goals);}
 
 function calcMetrics(){
@@ -751,13 +751,11 @@ function tgTheme(){const h=document.documentElement;const dark=h.getAttribute('d
 function logout(){['sc_token','sc_user'].forEach(k=>{localStorage.removeItem(k);sessionStorage.removeItem(k);});window.location.href='/index.html';}
 (function(){
   const th=localStorage.getItem('sc_theme');if(th){document.documentElement.setAttribute('data-theme',th);el('isun').style.display=th==='dark'?'none':'block';el('imoon').style.display=th==='dark'?'block':'none';}
-  applyLang();goTab('today');setTimeout(renderReview,100);
+  applyLang();initFromAPI();
 })();
-
 
 /* ════════════════════════════════════════════════════════
    REAL API — подключение к n8n Planning API
-   Заменяет localStorage на реальные данные из БД
 ════════════════════════════════════════════════════════ */
 
 const PLANNING_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/planning';
@@ -987,10 +985,24 @@ editGoal = function(id){
   apiUpdateGoal(id, g.cur).catch(console.error);
 };
 
-/* ── Инициализация с реальными данными ── */
-const _origGoTab = goTab;
+/* ── Главный init — загружает реальные данные ── */
+async function initFromAPI(){
+  applyLang();
+  // Show skeleton
+  el('tc-today').classList.add('on');
+  el('tab-today').classList.add('on');
+  el('mob-today').classList.add('on');
+  activeTab = 'today';
+  try {
+    await loadTodayFromAPI();
+  } catch(e){ console.error(e); }
+  renderToday();
+  renderReview();
+}
+
+/* ── Переопределяем goTab для API ── */
+const _goTabSync = goTab;
 goTab = async function(name){
-  // Show loading state
   document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
   document.querySelectorAll('.tc').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.mb2').forEach(b=>b.classList.remove('on'));
@@ -998,28 +1010,13 @@ goTab = async function(name){
   el('tc-'+name)?.classList.add('on');
   el('mob-'+name)?.classList.add('on');
   activeTab = name;
-
   try {
-    if(name === 'today'){
-      await loadTodayFromAPI();
-      renderToday(); renderReview();
-    } else if(name === 'calendar'){
-      renderCal();
-    } else if(name === 'workouts'){
-      await loadWorkoutsFromAPI();
-      renderWorkouts();
-    } else if(name === 'habits'){
-      await loadHabitsFromAPI();
-      renderHabits();
-    } else if(name === 'goals'){
-      await loadGoalsFromAPI();
-      renderGoals();
-    }
-  } catch(e) {
-    console.error('Load error:', e);
-    // Fallback to localStorage data
-    renderAll();
-  }
+    if(name==='today'){ await loadTodayFromAPI(); renderToday(); renderReview(); }
+    else if(name==='calendar'){ renderCal(); }
+    else if(name==='workouts'){ await loadWorkoutsFromAPI(); renderWorkouts(); }
+    else if(name==='habits'){ await loadHabitsFromAPI(); renderHabits(); }
+    else if(name==='goals'){ await loadGoalsFromAPI(); renderGoals(); }
+  } catch(e){ console.error('Tab load error:',e); renderAll(); }
 };
 
 </script>
