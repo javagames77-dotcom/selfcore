@@ -1807,8 +1807,9 @@ async function foodConfirmAI(){
   const kcal = parseInt((document.getElementById('food-ai-kcal')||{}).value) || foodLastAI.kcal;
   const prot = parseInt((document.getElementById('food-ai-prot')||{}).value) || foodLastAI.prot;
   const fat  = parseInt((document.getElementById('food-ai-fat') ||{}).value) || foodLastAI.fat;
-  const carb = parseInt((document.getElementById('food-ai-carb-val')||{}).value) || foodLastAI.carb;
-  const meal = { dish_name, meal_type: mealType, kcal, prot, fat, carb };
+  const carb  = parseInt((document.getElementById('food-ai-carb-val')||{}).value) || foodLastAI.carb;
+  const fiber = parseInt(foodLastAI.fiber) || 0;
+  const meal = { dish_name, meal_type: mealType, kcal, prot, fat, carb, fiber };
   await foodSaveToServer(meal);
   foodMeals.push({ ...meal, time: new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label: t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
   foodRenderMeals(); foodUpdateMetrics();
