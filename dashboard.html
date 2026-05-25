@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_02';
+  var V='20260525_03';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1385,7 +1385,7 @@ function showView(name){
   const mb=document.getElementById('mob-'+name);
   if(mb) mb.classList.add('active');
   if(name==='users'){ loadPendingUsers(); loadAllUsers(); }
-  if(name==='food'){ foodLoadGoals(); setTimeout(()=>{ foodLoadToday(); setTimeout(foodUpdateMetrics, 100); }, 50); }
+  if(name==='food'){ foodLoadGoals(); waterLoad(); setTimeout(()=>{ foodLoadToday(); setTimeout(foodUpdateMetrics, 100); }, 50); }
 }
 
 /* ── LOGOUT ── */
@@ -1419,7 +1419,6 @@ const ADMIN_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/ad
   }
   applyLang();
   loadPendingBadge();
-  waterLoad();
 })();
 
 function getToken(){
