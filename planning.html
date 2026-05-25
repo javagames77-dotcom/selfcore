@@ -753,6 +753,275 @@ function logout(){['sc_token','sc_user'].forEach(k=>{localStorage.removeItem(k);
   const th=localStorage.getItem('sc_theme');if(th){document.documentElement.setAttribute('data-theme',th);el('isun').style.display=th==='dark'?'none':'block';el('imoon').style.display=th==='dark'?'block':'none';}
   applyLang();goTab('today');setTimeout(renderReview,100);
 })();
+
+
+/* ════════════════════════════════════════════════════════
+   REAL API — подключение к n8n Planning API
+   Заменяет localStorage на реальные данные из БД
+════════════════════════════════════════════════════════ */
+
+const PLANNING_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/planning';
+
+function getToken(){
+  return localStorage.getItem('sc_token') || sessionStorage.getItem('sc_token') || '';
+}
+
+async function api(action, body={}){
+  try {
+    const r = await fetch(PLANNING_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({token: getToken(), action, ...body})
+    });
+    return await r.json();
+  } catch(e) {
+    console.error('API error:', e);
+    return {success: false, error: e.message};
+  }
+}
+
+/* ── Загрузка данных "Сегодня" из реального API ── */
+async function loadTodayFromAPI(){
+  const res = await api('get_today');
+  if (!res.success) return null;
+  const d = res.data;
+
+  // Обновляем tasks из БД
+  if (d.tasks) {
+    tasks = d.tasks.map(t => ({
+      id: t.id,
+      text: {ru: t.title, uk: t.title, en: t.title},
+      date: today,
+      done: t.done,
+      priority: t.priority || 2,
+      completion_note: t.completion_note || '',
+      source: t.source
+    }));
+  }
+
+  // Обновляем привычки из БД
+  if (d.habits) {
+    habits = d.habits.map(h => ({
+      id: h.id,
+      name: {ru: h.name, uk: h.name_uk || h.name, en: h.name_en || h.name},
+      freq: h.freq,
+      anchor: h.is_anchor,
+      streak: h.streak_7d || 0
+    }));
+    // Обновляем hlog для today
+    d.habits.forEach(h => {
+      if (!hlog[h.id]) hlog[h.id] = {};
+      hlog[h.id][today] = h.done_today;
+    });
+  }
+
+  return d;
+}
+
+/* ── Загрузка привычек с 30-дневной статистикой ── */
+async function loadHabitsFromAPI(){
+  const res = await api('get_habits');
+  if (!res.success) return;
+  habits = res.habits.map(h => ({
+    id: h.id,
+    name: {ru: h.name, uk: h.name_uk || h.name, en: h.name_en || h.name},
+    freq: h.freq,
+    anchor: h.is_anchor,
+    streak: h.streak_7d || 0,
+    done_30d: h.done_30d || 0
+  }));
+  res.habits.forEach(h => {
+    if (!hlog[h.id]) hlog[h.id] = {};
+    hlog[h.id][today] = h.done_today;
+  });
+}
+
+/* ── Загрузка тренировок ── */
+async function loadWorkoutsFromAPI(){
+  const res = await api('get_workouts', {days: 30});
+  if (!res.success) return;
+  woHist = res.workouts.map(w => ({
+    id: w.id,
+    templateId: null,
+    date: w.date ? w.date.slice(0,10) : today,
+    duration: w.duration_min || 0,
+    type: w.type,
+    sets: w.exercises_json || {},
+    feel: w.feel_score || 0,
+    note: w.session_note || '',
+    completed: !!w.completed_at
+  }));
+}
+
+/* ── Загрузка целей ── */
+async function loadGoalsFromAPI(){
+  const res = await api('get_goals');
+  if (!res.success) return;
+  goals = res.goals.map(g => ({
+    id: g.id,
+    name: {ru: g.title, uk: g.title_uk || g.title, en: g.title_en || g.title},
+    cat: g.category,
+    cur: parseFloat(g.current_value) || 0,
+    target: parseFloat(g.target_value) || 100,
+    deadline: g.deadline ? g.deadline.slice(0,10) : ''
+  }));
+}
+
+/* ── Загрузка статистики недели ── */
+async function loadWeekStatsFromAPI(){
+  const res = await api('get_week_stats');
+  if (!res.success) return null;
+  return res.week;
+}
+
+/* ── API: отметить задачу ── */
+async function apiToggleTask(id, done, note=''){
+  const res = await api('update_task', {id, done, completion_note: note});
+  return res.success;
+}
+
+/* ── API: добавить задачу ── */
+async function apiAddTask(title, priority=2, date=today){
+  const res = await api('add_task', {title, priority, date});
+  if (res.success && res.task) {
+    tasks.push({
+      id: res.task.id,
+      text: {ru: title, uk: title, en: title},
+      date: today, done: false, priority, completion_note: '', source: 'dashboard'
+    });
+  }
+  return res.success;
+}
+
+/* ── API: удалить задачу ── */
+async function apiDeleteTask(id){
+  const res = await api('delete_task', {id});
+  return res.success;
+}
+
+/* ── API: отметить привычку ── */
+async function apiLogHabit(habitId, done){
+  return await api('log_habit', {habit_id: habitId, done});
+}
+
+/* ── API: обновить цель ── */
+async function apiUpdateGoal(id, current_value){
+  const res = await api('update_goal', {id, current_value});
+  return res.success;
+}
+
+/* ── Перегружаем функции чтобы использовать API ── */
+
+// Override tgTask — использует API
+const _origTgTask = tgTask;
+tgTask = function(id){
+  const x = tasks.find(t2=>t2.id===id);
+  if(!x) return;
+  x.done = !x.done;
+  renderToday();
+  if(x.done){
+    el('tn-taskname').textContent = txn(x.text);
+    el('tn-note').value = x.completion_note || '';
+    window._noteTaskId = id;
+    openOv('ov-tasknote');
+  }
+  // Sync to API in background
+  apiToggleTask(id, x.done).catch(console.error);
+};
+
+// Override saveTaskNote — sync note to API
+const _origSaveTaskNote = saveTaskNote;
+saveTaskNote = function(){
+  const note = el('tn-note').value.trim();
+  const x = tasks.find(t2=>t2.id===window._noteTaskId);
+  if(x && note) x.completion_note = note;
+  closeOv('ov-tasknote');
+  renderToday();
+  toast(t('done'),'tok');
+  if(window._noteTaskId) apiToggleTask(window._noteTaskId, true, note).catch(console.error);
+};
+
+// Override addTask — use API
+const _origAddTask = addTask;
+addTask = async function(){
+  const v = el('tinp').value.trim();
+  if(!v) return;
+  const p = parseInt(el('tprio').value) || 2;
+  el('tinp').value = '';
+  const ok = await apiAddTask(v, p, today);
+  if(!ok){
+    // Fallback to localStorage
+    tasks.push({id: Date.now(), text:{ru:v,uk:v,en:v}, date:today, done:false, priority:p, completion_note:'', source:'dashboard'});
+  }
+  renderToday();
+  toast(t('added'), 'tok');
+};
+
+// Override delTask — use API
+const _origDelTask = deleteTask;
+deleteTask = async function(id){
+  tasks = tasks.filter(x=>x.id!==id);
+  renderToday();
+  apiDeleteTask(id).catch(console.error);
+};
+
+// Override tgHab — sync to API
+const _origTgHab = tgHab;
+tgHab = function(id){
+  if(!hlog[id]) hlog[id]={};
+  hlog[id][today] = !hlog[id][today];
+  if(hlog[id][today]){ const h=habits.find(x=>x.id===id); if(h) h.streak=(h.streak||0)+1; }
+  renderToday();
+  if(hlog[id][today]) toast(t('done'),'tok');
+  apiLogHabit(id, hlog[id][today]).catch(console.error);
+};
+
+// Override editGoal — sync to API
+const _origEditGoal = editGoal;
+editGoal = function(id){
+  const g = goals.find(x=>x.id===id); if(!g) return;
+  const v = prompt(t('mgcur')+' (/ '+g.target+')', g.cur);
+  if(v===null) return;
+  g.cur = parseFloat(v) || 0;
+  renderGoals();
+  apiUpdateGoal(id, g.cur).catch(console.error);
+};
+
+/* ── Инициализация с реальными данными ── */
+const _origGoTab = goTab;
+goTab = async function(name){
+  // Show loading state
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tc').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.mb2').forEach(b=>b.classList.remove('on'));
+  el('tab-'+name)?.classList.add('on');
+  el('tc-'+name)?.classList.add('on');
+  el('mob-'+name)?.classList.add('on');
+  activeTab = name;
+
+  try {
+    if(name === 'today'){
+      await loadTodayFromAPI();
+      renderToday(); renderReview();
+    } else if(name === 'calendar'){
+      renderCal();
+    } else if(name === 'workouts'){
+      await loadWorkoutsFromAPI();
+      renderWorkouts();
+    } else if(name === 'habits'){
+      await loadHabitsFromAPI();
+      renderHabits();
+    } else if(name === 'goals'){
+      await loadGoalsFromAPI();
+      renderGoals();
+    }
+  } catch(e) {
+    console.error('Load error:', e);
+    // Fallback to localStorage data
+    renderAll();
+  }
+};
+
 </script>
 </body>
 </html>
