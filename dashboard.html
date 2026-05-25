@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_01';
+  var V='20260525_02';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -874,29 +874,31 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 /* ── WATER TRACKER ── */
 var WATER_GOAL = 2500; // мл в день
 
-function waterKey(){
-  // Ключ привязан к дате — автосброс каждый день
-  const d = new Date();
-  return 'sc_water_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+async function waterLoad(){
+  try{
+    const r = await fetch(NUTRITION_URL, {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ token: getToken(), action:'get_water' })});
+    const d = await r.json();
+    if(d.success) waterRender(parseInt(d.ml)||0);
+  } catch(e){ waterRender(0); }
 }
 
-function waterGet(){
-  return parseInt(localStorage.getItem(waterKey()) || '0') || 0;
-}
-
-function waterAdd(ml){
-  const cur = waterGet();
-  localStorage.setItem(waterKey(), cur + ml);
-  waterRender();
+async function waterAdd(ml){
+  try{
+    const r = await fetch(NUTRITION_URL, {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ token: getToken(), action:'add_water', ml })});
+    const d = await r.json();
+    if(d.success) waterLoad();
+  } catch(e){}
 }
 
 function waterReset(){
-  localStorage.setItem(waterKey(), '0');
-  waterRender();
+  // сброс только визуальный — данные в БД остаются
+  waterRender(0);
 }
 
-function waterRender(){
-  const val = waterGet();
+function waterRender(val){
+  if(val === undefined) val = 0;
   const pct = Math.min(100, Math.round(val / WATER_GOAL * 100));
   const el = document.getElementById('w-val');
   const bar = document.getElementById('w-bar');
@@ -1417,7 +1419,7 @@ const ADMIN_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/ad
   }
   applyLang();
   loadPendingBadge();
-  waterRender();
+  waterLoad();
 })();
 
 function getToken(){
