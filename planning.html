@@ -717,7 +717,7 @@ function renderReview(){
   if(doneTasks.length===todayTasks.length&&todayTasks.length>0){
     insight=lang==='en'?'All tasks completed today. Great discipline!':lang==='uk'?'Всі завдання виконані. Відмінна дисципліна!':'Все задачи выполнены. Отличная дисциплина!';
   } else if(doneTasks.length===0&&todayTasks.length>0){
-    insight=lang==='en'?'Tasks pending — there's still time to finish at least one.':lang==='uk'?'Завдання чекають — ще є час виконати хоча б одне.':'Задачи ещё ждут — есть время закрыть хотя бы одну.';
+    insight=lang==='en'?'Tasks pending — there\'s still time to finish at least one.':lang==='uk'?'Завдання чекають — ще є час виконати хоча б одне.':'Задачи ещё ждут — есть время закрыть хотя бы одну.';
   } else if(doneHab/totalHab>=0.8){
     insight=lang==='en'?'Strong habit day — over 80% complete.':lang==='uk'?'Сильний день звичок — більше 80% виконано.':'Сильный день по привычкам — больше 80% выполнено.';
   } else {
