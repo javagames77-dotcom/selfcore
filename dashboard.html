@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_11';
+  var V='20260525_12';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -511,7 +511,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
         <span style="font-size:13px;font-weight:600;color:var(--tag-green);flex-shrink:0" id="f-fiber-val">0</span>
         <span style="font-size:11px;color:var(--muted);flex-shrink:0">г</span>
         <div style="flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;min-width:40px;display:flex">
-          <div id="f-fiber-bar" style="height:100%;background:var(--tag-green);width:0%;transition:width .3s"></div>
+          <div id="f-fiber-bar-normal" style="height:100%;background:var(--tag-green);width:0%;transition:width .3s"></div><div id="f-fiber-bar-over" style="height:100%;background:#E24B4A;width:0%;transition:width .3s"></div>
         </div>
         <span style="font-size:11px;color:var(--muted2);flex-shrink:0">30 г</span>
       </div>
@@ -1753,8 +1753,23 @@ function foodUpdateMetrics(){
   const sv = (id,v,unit) => { const el=document.getElementById(id); if(el) el.innerHTML=v.toLocaleString()+'<span class="metric-unit">'+unit+'</span>'; };
   sv('f-kcal-val', tot.kcal, 'ккал'); sv('f-prot-val', tot.prot, 'г'); sv('f-fat-val', tot.fat, 'г'); sv('f-carb-val', tot.carb, 'г');
   const fiberEl = document.getElementById('f-fiber-val'); if(fiberEl) fiberEl.textContent = tot.fiber;
-  const fiberBar = document.getElementById('f-fiber-bar');
-  if(fiberBar) fiberBar.style.width = Math.min(100, Math.round((tot.fiber||0)/30*100))+'%';
+  const fiberBarNorm = document.getElementById('f-fiber-bar-normal');
+  const fiberBarOver = document.getElementById('f-fiber-bar-over');
+  const fiberValEl   = document.getElementById('f-fiber-val');
+  if(fiberBarNorm && fiberBarOver){
+    const fiberGoal = 30;
+    const fiberPct  = (tot.fiber||0) / fiberGoal * 100;
+    if(fiberPct <= 100){
+      fiberBarNorm.style.width = Math.round(fiberPct)+'%';
+      fiberBarOver.style.width = '0%';
+      if(fiberValEl) fiberValEl.style.color = 'var(--tag-green)';
+    } else {
+      const op = Math.min(Math.round((tot.fiber - fiberGoal) / fiberGoal * 100), 100);
+      fiberBarNorm.style.width = (100-op)+'%';
+      fiberBarOver.style.width = op+'%';
+      if(fiberValEl) fiberValEl.style.color = '#E24B4A';
+    }
+  }
   const pct = v => Math.min(100, Math.max(0, Math.round(v)));
   const setBar = (id, p) => {
     const el = document.getElementById(id);
