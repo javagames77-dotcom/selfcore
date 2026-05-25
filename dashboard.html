@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_06';
+  var V='20260525_07';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1596,7 +1596,12 @@ let foodGoalType = 'keep';
 let foodSex = 'm';
 let foodEditingIdx = -1;
 
-const mealIcons = { breakfast:['🥣','🍳','🥞','☕'], lunch:['🍲','🥗','🍜','🫕'], dinner:['🍽️','🥩','🐟','🥦'], snack:['🍎','🥜','🍫','🧃'] };
+const mealIcons = {
+  breakfast: ['<svg width="14" height="14" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="8" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M5 4.5C5 3 6 2 7.5 2S10 3 10 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'],
+  lunch:     ['<svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'],
+  dinner:    ['<svg width="14" height="14" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M5 7.5h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'],
+  snack:     ['<svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M7.5 2a5 5 0 100 10A5 5 0 007.5 2z" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 5v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>']
+};
 const mealColors = [{bg:'#FAEEDA',col:'#854F0B'},{bg:'#E1F5EE',col:'#0F6E56'},{bg:'#E6F1FB',col:'#185FA5'},{bg:'#EAF3DE',col:'#3B6D11'},{bg:'#EEEDFE',col:'#534AB7'},{bg:'#FAECE7',col:'#993C1D'}];
 
 /* ── Tab switching ── */
@@ -1911,7 +1916,7 @@ async function foodAddManual(){
   const carb=parseInt((document.getElementById('food-inp-carb')||{}).value)||0;
   if(!name&&!kcal){ const el=document.getElementById('food-name'); if(el) el.focus(); return; }
   const mealType=foodGetMealKey();
-  const meal={ dish_name:name||'?', meal_type:mealType, kcal, prot, fat, carb };
+  const meal={ dish_name:name||'?', meal_type:mealType, kcal, prot, fat, carb, fiber:0 };
   await foodSaveToServer(meal);
   foodMeals.push({ ...meal, time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label:t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
   foodRenderMeals(); foodUpdateMetrics();
