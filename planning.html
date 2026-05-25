@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selfcore — Планирование</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="light"]{--bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0f0ed;--border:#e8e8e4;--border2:#d0d0ca;--text:#1a1a1a;--muted:#6b6b6b;--muted2:#b0b0b0;--black:#0a0a0a;--nav-bg:rgba(255,255,255,.96);--sidebar-bg:#ffffff;--input-bg:#fafaf8;--theme-btn-bg:#f0f0ed;--theme-btn-color:#6b6b6b;--card-bg:#ffffff;--card-shadow:0 1px 3px rgba(0,0,0,.06);--tbl-hover:#fafafa;--accent:#1D9E75;--accent-hover:#0F6E56;--accent-light:#E1F5EE;--tag-green-bg:#f0fdf4;--tag-green:#16a34a;--tag-red-bg:#fff0f0;--tag-red:#c0392b;--tag-amber-bg:#fffbeb;--tag-amber:#b45309;--tag-blue-bg:#eff6ff;--tag-blue:#1d4ed8;--tag-purple-bg:#f5f3ff;--tag-purple:#6d28d9}
+[data-theme="dark"]{--bg:#0f0f0f;--bg2:#161616;--bg3:#1e1e1e;--border:#2a2a2a;--border2:#3d3d3d;--text:#f0f0f0;--muted:#888;--muted2:#555;--black:#f0f0f0;--nav-bg:rgba(15,15,15,.97);--sidebar-bg:#0f0f0f;--input-bg:#161616;--theme-btn-bg:#1e1e1e;--theme-btn-color:#888;--card-bg:#161616;--card-shadow:0 1px 3px rgba(0,0,0,.3);--tbl-hover:#1e1e1e;--accent:#1D9E75;--accent-hover:#5DCAA5;--accent-light:#04342C;--tag-green-bg:#0a2010;--tag-green:#4ade80;--tag-red-bg:#2a1010;--tag-red:#ff7070;--tag-amber-bg:#2a1800;--tag-amber:#fbbf24;--tag-blue-bg:#0c1a3a;--tag-blue:#93c5fd;--tag-purple-bg:#1a0a3a;--tag-purple:#c084fc}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:var(--text);font-size:13px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+
+/* NAV */
+.nav{height:48px;background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:200;backdrop-filter:blur(10px)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.logo-icon{display:grid;grid-template-columns:repeat(4,5px);grid-template-rows:repeat(4,5px);gap:1.5px}
+.lc{width:5px;height:5px;border-radius:1.2px}
+.logo-text-wrap{display:flex;flex-direction:column;position:relative;height:24px;width:44px}
+.logo-self{position:absolute;top:2px;left:0;font-size:11px;font-weight:300;letter-spacing:-.2px;color:var(--muted2);line-height:.73}
+.logo-core{position:absolute;bottom:0;left:0;font-size:14px;font-weight:600;letter-spacing:-.4px;color:var(--black);line-height:.73}
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nav-badge{font-size:10px;font-weight:500;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;letter-spacing:.02em}
+.nav-divider{width:1px;height:18px;background:var(--border)}
+.nav-btn{font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit;transition:all .12s}
+.nav-btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg2)}
+.theme-toggle{width:32px;height:32px;background:var(--theme-btn-bg);border:1px solid var(--border);border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--theme-btn-color)}
+.theme-toggle:hover{border-color:var(--border2)}
+.lang-switcher{display:flex;align-items:center;gap:2px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:3px}
+.lang-btn{padding:3px 8px;border:none;border-radius:5px;background:transparent;color:var(--muted);font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;letter-spacing:.02em}
+.lang-btn.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* LAYOUT */
+.layout{display:flex;height:calc(100vh - 48px)}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-user{padding:14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.sidebar-user-name{font-size:12px;font-weight:500;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-user-role{font-size:10px;color:var(--muted2)}
+.sidebar-section{padding:14px 12px 6px;font-size:10px;font-weight:500;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase}
+.sitem{display:flex;align-items:center;gap:9px;padding:7px 12px;margin:1px 6px;border:none;border-radius:7px;background:transparent;color:var(--muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .12s;text-align:left;width:calc(100% - 12px);text-decoration:none}
+.sitem:hover{background:var(--bg3);color:var(--text)}
+.sitem.active{background:var(--accent-light);color:var(--accent)}
+.sitem svg{flex-shrink:0;width:15px;height:15px}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:24px}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.page-title{font-size:16px;font-weight:600;color:var(--black);letter-spacing:-.02em}
+
+/* CARD */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--card-shadow)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+
+/* METRIC */
+.metric-card{padding:14px 16px}
+.metric-label{font-size:11px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.metric-label svg{color:var(--accent)}
+.metric-val{font-size:22px;font-weight:500;color:var(--black);line-height:1}
+.metric-unit{font-size:12px;font-weight:400;color:var(--muted);margin-left:2px}
+.metric-delta{font-size:11px;margin-top:5px;color:var(--muted)}
+.delta-up{color:var(--tag-green)}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab-btn{padding:9px 16px;font-size:12px;font-weight:500;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-family:inherit;cursor:pointer;transition:all .15s;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
+.tab-btn svg{width:13px;height:13px}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn:hover:not(.active){color:var(--text)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* SECTION TITLE */
+.section-title{font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.section-title svg{color:var(--accent);width:14px;height:14px}
+
+/* TASK ITEM */
+.task-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:.5px solid var(--border);transition:background .1s}
+.task-item:last-child{border-bottom:none}
+.task-item:hover{background:var(--bg2)}
+.task-check{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
+.task-check:hover{border-color:var(--accent)}
+.task-check.done{background:var(--accent);border-color:var(--accent)}
+.task-text{flex:1;font-size:13px;color:var(--text);line-height:1.4}
+.task-text.done{text-decoration:line-through;color:var(--muted2)}
+.task-energy{font-size:10px;font-weight:500;padding:2px 7px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;gap:3px}
+.e-morning{background:var(--tag-amber-bg);color:var(--tag-amber)}
+.e-afternoon{background:var(--tag-blue-bg);color:var(--tag-blue)}
+.e-evening{background:var(--bg3);color:var(--muted)}
+.priority-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.p1{background:var(--tag-red)}
+.p2{background:var(--tag-amber)}
+.p3{background:var(--border2)}
+
+/* ADD TASK */
+.add-task-row{display:flex;gap:8px;padding:10px 16px;border-top:.5px solid var(--border)}
+.add-task-input{flex:1;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;outline:none;transition:border-color .15s}
+.add-task-input:focus{border-color:var(--accent)}
+.btn-sm{padding:7px 12px;border-radius:7px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .15s;display:flex;align-items:center;gap:4px}
+.btn-sm:hover{opacity:.88}
+.btn-ghost{padding:7px 12px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .12s}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+
+/* HABIT ITEM */
+.habit-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:.5px solid var(--border);transition:background .1s}
+.habit-item:last-child{border-bottom:none}
+.habit-item:hover{background:var(--bg2)}
+.habit-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
+.habit-check:hover{border-color:var(--accent)}
+.habit-check.done{background:var(--accent);border-color:var(--accent)}
+.habit-check.anchor{background:var(--tag-purple-bg);border-color:var(--tag-purple);cursor:default}
+.habit-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.habit-icon svg{width:14px;height:14px}
+.habit-name{flex:1;font-size:13px;color:var(--text);font-weight:500}
+.habit-name.done{text-decoration:line-through;color:var(--muted2)}
+.habit-meta{font-size:11px;color:var(--muted);margin-top:1px}
+.anchor-badge{font-size:10px;color:var(--tag-purple);background:var(--tag-purple-bg);padding:2px 7px;border-radius:5px;font-weight:500;display:flex;align-items:center;gap:3px;flex-shrink:0}
+.anchor-badge svg{width:10px;height:10px}
+.streak-badge{font-size:11px;font-weight:600;color:var(--tag-amber);background:var(--tag-amber-bg);padding:2px 8px;border-radius:6px;flex-shrink:0}
+
+/* WORKOUT ITEM */
+.workout-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:.5px solid var(--border);transition:background .1s}
+.workout-item:last-child{border-bottom:none}
+.workout-item:hover{background:var(--bg2)}
+.workout-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.workout-icon svg{width:15px;height:15px}
+.workout-info{flex:1;min-width:0}
+.workout-name{font-size:13px;font-weight:500;color:var(--black)}
+.workout-meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:8px}
+.workout-meta svg{width:11px;height:11px}
+.status-btn{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid;transition:all .12s;display:flex;align-items:center;gap:4px}
+.status-btn svg{width:11px;height:11px}
+.status-planned{border-color:var(--border2);color:var(--muted);background:var(--bg2)}
+.status-done{border-color:var(--tag-green);color:var(--tag-green);background:var(--tag-green-bg)}
+.status-skip{border-color:var(--border);color:var(--muted2);background:transparent}
+
+/* WEEK STRIP */
+.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px}
+.week-day{text-align:center}
+.week-day-label{font-size:10px;color:var(--muted2);margin-bottom:4px;font-weight:500;text-transform:uppercase}
+.week-day-num{font-size:12px;font-weight:500;color:var(--muted);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;transition:all .15s}
+.week-day-num.today{background:var(--accent);color:#fff}
+.week-day-num.active{border:1.5px solid var(--accent);color:var(--accent);cursor:pointer}
+.week-dots{display:flex;flex-direction:column;gap:3px}
+.wdot{height:4px;border-radius:2px;background:var(--bg3)}
+.wdot.done{background:var(--accent)}
+.wdot.anchor{background:var(--tag-purple)}
+.wdot.workout{background:var(--tag-blue)}
+
+/* PROGRESS BAR */
+.progress-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.progress-label{font-size:12px;color:var(--muted);width:100px;flex-shrink:0;display:flex;align-items:center;gap:5px}
+.progress-label svg{width:12px;height:12px;color:var(--accent)}
+.progress-track{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .4s}
+.progress-val{font-size:11px;color:var(--muted);width:36px;text-align:right;flex-shrink:0}
+
+/* HEATMAP */
+.heatmap{display:flex;gap:3px}
+.heatmap-col{display:flex;flex-direction:column;gap:3px}
+.hcell{width:11px;height:11px;border-radius:2px;background:var(--bg3);cursor:pointer;transition:transform .1s}
+.hcell:hover{transform:scale(1.3)}
+.hcell.h1{background:#9FE1CB}.hcell.h2{background:#5DCAA5}.hcell.h3{background:#1D9E75}.hcell.h4{background:#0F6E56}
+
+/* AI INSIGHT */
+.ai-box{background:var(--accent-light);border:1px solid #9FE1CB;border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.ai-box-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ai-box-header svg{width:14px;height:14px;color:var(--accent)}
+.ai-box-title{font-size:12px;font-weight:600;color:var(--accent-hover)}
+.ai-box-text{font-size:12px;color:var(--accent-hover);line-height:1.6}
+
+/* TOAST */
+#toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:99999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
+.toast{padding:.7rem 1.1rem;border-radius:10px;font-size:13px;font-weight:500;color:#fff;max-width:320px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-success{background:#16a34a}
+.toast-info{background:var(--accent)}
+
+/* MOB NAV */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--nav-bg);border-top:1px solid var(--border);z-index:199;backdrop-filter:blur(10px)}
+.mob-nav-items{display:flex;height:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.mob-nav-items::-webkit-scrollbar{display:none}
+.mob-nav-btn{min-width:52px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;color:var(--muted);font-size:9px;font-weight:500;font-family:inherit;cursor:pointer;transition:color .15s;text-decoration:none}
+.mob-nav-btn.active{color:var(--accent)}
+
+@media(max-width:768px){
+  .sidebar{display:none}
+  .mob-nav{display:block}
+  .main{padding:16px;padding-bottom:72px}
+  .grid4{grid-template-columns:repeat(2,1fr)}
+  .nav-badge,.nav-divider{display:none}
+  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap}
+  .tab-btn{white-space:nowrap}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/dashboard.html" class="nav-logo">
+    <div class="logo-icon">
+      <div class="lc" style="background:#1D9E75"></div><div class="lc" style="background:#1D9E75;opacity:.65"></div><div class="lc" style="background:#1D9E75;opacity:.32"></div><div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.8"></div><div class="lc" style="background:#1D9E75;opacity:.42"></div><div class="lc" style="background:#1D9E75;opacity:.16"></div><div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.5"></div><div class="lc" style="background:#1D9E75;opacity:.2"></div><div class="lc" style="background:#e0e0e0"></div><div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.22"></div><div class="lc" style="background:#e0e0e0"></div><div class="lc" style="background:#e0e0e0"></div><div class="lc" style="background:#e0e0e0"></div>
+    </div>
+    <div class="logo-text-wrap"><span class="logo-self">self</span><span class="logo-core">core</span></div>
+  </a>
+  <div class="nav-right">
+    <span class="nav-badge" id="navBadge"></span>
+    <div class="nav-divider"></div>
+    <div class="lang-switcher">
+      <button class="lang-btn" onclick="setLang('uk')">UA</button>
+      <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <svg id="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v1.8M8 12.7v1.8M1.5 8h1.8M12.7 8h1.8M3.6 3.6l1.3 1.3M11.1 11.1l1.3 1.3M3.6 12.4l1.3-1.3M11.1 4.9l1.3-1.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <svg id="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:none"><path d="M13.5 10A6 6 0 015 2.5a6 6 0 108 8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="nav-btn" onclick="logout()" id="t-logout">Выход</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-user">
+    <div class="sidebar-avatar" id="sidebarAvatar">U</div>
+    <div>
+      <div class="sidebar-user-name" id="sidebarName">—</div>
+      <div class="sidebar-user-role" id="sidebarRole"></div>
+    </div>
+  </div>
+
+  <div class="sidebar-section" id="t-nav-main">Главное</div>
+  <a class="sitem" href="/dashboard.html">
+    <svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+    <span id="t-nav-overview">Дашборд</span>
+  </a>
+  <button class="sitem active">
+    <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 1.5v2M10 1.5v2M1.5 6h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-plan">Планирование</span>
+  </button>
+
+  <div class="sidebar-section" id="t-nav-modules">Модули</div>
+  <a class="sitem" href="/dashboard.html?view=health">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M7.5 13S2 9.5 2 5.5a3 3 0 015.5-1.5A3 3 0 0113 5.5C13 9.5 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+    <span id="t-nav-health">Здоровье</span>
+  </a>
+  <a class="sitem" href="/dashboard.html?view=food">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-food">Питание</span>
+  </a>
+  <a class="sitem" href="/dashboard.html?view=finance">
+    <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5h12" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="9.5" r=".8" fill="currentColor"/></svg>
+    <span id="t-nav-finance">Финансы</span>
+  </a>
+  <a class="sitem" href="/dashboard.html?view=analytics">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <span id="t-nav-analytics">Аналитика</span>
+  </a>
+
+  <div class="sidebar-section" id="t-nav-system">Система</div>
+  <a class="sitem" href="/dashboard.html?view=settings">
+    <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7.5 1.5v1.3M7.5 12.2v1.3M1.5 7.5h1.3M12.2 7.5h1.3M3.4 3.4l.9.9M10.7 10.7l.9.9M3.4 11.6l.9-.9M10.7 4.3l.9-.9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-settings">Настройки</span>
+  </a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="page-header">
+    <div class="page-title" id="t-page-title">Планирование</div>
+    <button class="btn-ghost" id="t-ai-plan-btn" onclick="requestAIPlan()">
+      <svg width="13" height="13" viewBox="0 0 15 15" fill="none" style="display:inline;vertical-align:-1px"><path d="M7.5 1L9.5 5.5H14L10.5 8.5L12 13L7.5 10L3 13L4.5 8.5L1 5.5H5.5L7.5 1Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      AI план недели
+    </button>
+  </div>
+
+  <!-- METRICS -->
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="card metric-card">
+      <div class="metric-label">
+        <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="t-m-habits">Привычки</span>
+      </div>
+      <div class="metric-val"><span id="m-habits-done">0</span><span class="metric-unit" id="t-m-of"> / </span><span id="m-habits-total">0</span></div>
+      <div class="metric-delta delta-up" id="m-habits-pct">0%</div>
+    </div>
+    <div class="card metric-card">
+      <div class="metric-label">
+        <svg viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span id="t-m-tasks">Задачи</span>
+      </div>
+      <div class="metric-val"><span id="m-tasks-done">0</span><span class="metric-unit"> / </span><span id="m-tasks-total">0</span></div>
+      <div class="metric-delta" id="t-m-tasks-sub">сегодня</div>
+    </div>
+    <div class="card metric-card">
+      <div class="metric-label">
+        <svg viewBox="0 0 15 15" fill="none"><path d="M7.5 2C5 4.5 3 6.5 3 9a4.5 4.5 0 009 0c0-2.5-2-4.5-4.5-6.5z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+        <span id="t-m-workout">Тренировка</span>
+      </div>
+      <div class="metric-val" id="m-workout-status" style="font-size:13px;padding-top:4px">—</div>
+      <div class="metric-delta" id="m-workout-sub">сегодня</div>
+    </div>
+    <div class="card metric-card">
+      <div class="metric-label">
+        <svg viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <span id="t-m-week">Неделя</span>
+      </div>
+      <div class="metric-val"><span id="m-week-pct">0</span><span class="metric-unit">%</span></div>
+      <div class="metric-delta" id="t-m-week-sub">выполнение</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('today')" id="tab-today">
+      <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-tab-today">Сегодня</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('week')" id="tab-week">
+      <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 1.5v2M10 1.5v2M1.5 6h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-tab-week">Неделя</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('habits')" id="tab-habits">
+      <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="t-tab-habits">Привычки</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('workouts')" id="tab-workouts">
+      <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-tab-workouts">Тренировки</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('stats')" id="tab-stats">
+      <svg viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <span id="t-tab-stats">Прогресс</span>
+    </button>
+  </div>
+
+  <!-- ══ TAB: TODAY ══ -->
+  <div class="tab-panel active" id="panel-today">
+    <div id="ai-insight-box"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="today-grid">
+
+      <!-- Tasks -->
+      <div class="card" style="overflow:hidden">
+        <div style="padding:14px 16px 10px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <div class="section-title" style="margin:0">
+            <svg viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span id="t-tasks-title">Задачи дня</span>
+          </div>
+          <span style="font-size:11px;color:var(--muted)" id="tasks-date"></span>
+        </div>
+        <div id="tasks-list"></div>
+        <div class="add-task-row">
+          <input class="add-task-input" id="new-task-input" type="text" placeholder="Добавить задачу..." onkeydown="if(event.key==='Enter')addTask()">
+          <button class="btn-sm" onclick="addTask()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Habits today -->
+      <div class="card" style="overflow:hidden">
+        <div style="padding:14px 16px 10px;border-bottom:.5px solid var(--border)">
+          <div class="section-title" style="margin:0">
+            <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="t-habits-today-title">Привычки</span>
+          </div>
+        </div>
+        <div id="habits-today-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ TAB: WEEK ══ -->
+  <div class="tab-panel" id="panel-week">
+    <div class="card" style="padding:16px;margin-bottom:14px">
+      <div class="section-title">
+        <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 1.5v2M10 1.5v2M1.5 6h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span id="t-week-title">Обзор недели</span>
+      </div>
+      <div class="week-strip" id="week-strip"></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:4px">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:4px;border-radius:2px;background:var(--accent);display:inline-block"></span><span id="t-leg-habits">Привычки</span></span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:4px;border-radius:2px;background:var(--tag-purple);display:inline-block"></span><span id="t-leg-anchors">Якоря</span></span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:4px;border-radius:2px;background:var(--tag-blue);display:inline-block"></span><span id="t-leg-workout">Тренировка</span></span>
+      </div>
+    </div>
+
+    <div class="card" style="overflow:hidden">
+      <div style="padding:14px 16px;border-bottom:.5px solid var(--border)">
+        <div class="section-title" style="margin:0">
+          <svg viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span id="t-week-tasks-title">Задачи недели</span>
+        </div>
+      </div>
+      <div id="week-tasks-list"></div>
+      <div class="add-task-row">
+        <input class="add-task-input" id="new-week-task-input" type="text" placeholder="Добавить задачу..." onkeydown="if(event.key==='Enter')addWeekTask()">
+        <button class="btn-sm" onclick="addWeekTask()">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: HABITS ══ -->
+  <div class="tab-panel" id="panel-habits">
+    <div class="card" style="overflow:hidden;margin-bottom:14px">
+      <div style="padding:14px 16px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div class="section-title" style="margin:0">
+          <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="t-all-habits-title">Все привычки</span>
+        </div>
+        <button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="toggleAddHabit()" id="t-add-habit-btn">+ Добавить</button>
+      </div>
+      <div id="all-habits-list"></div>
+
+      <!-- Add habit form -->
+      <div id="add-habit-form" style="display:none;padding:14px 16px;border-top:.5px solid var(--border);background:var(--bg2)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.04em" id="t-form-name">Название</div>
+            <input class="add-task-input" id="new-habit-name" type="text" placeholder="Утренняя молитва">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.04em" id="t-form-freq">Частота</div>
+            <select id="new-habit-freq" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+              <option value="daily" id="t-freq-daily">Ежедневно</option>
+              <option value="custom" id="t-freq-custom">Несколько раз в неделю</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--muted)">
+            <input type="checkbox" id="new-habit-anchor" style="accent-color:var(--tag-purple)">
+            <span id="t-form-anchor">Якорь (приоритет)</span>
+          </label>
+          <button class="btn-sm" onclick="saveHabit()" id="t-save-habit" style="margin-left:auto">Сохранить</button>
+          <button class="btn-ghost" style="font-size:11px" onclick="toggleAddHabit()" id="t-cancel-habit">Отмена</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Heatmap -->
+    <div class="card" style="padding:16px">
+      <div class="section-title">
+        <svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+        <span id="t-heatmap-title">Активность за 12 недель</span>
+      </div>
+      <div style="overflow-x:auto"><div class="heatmap" id="heatmap-grid"></div></div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:10px;font-size:10px;color:var(--muted2)">
+        <span id="t-less">Меньше</span>
+        <span style="width:10px;height:10px;border-radius:2px;background:var(--bg3);display:inline-block"></span>
+        <span style="width:10px;height:10px;border-radius:2px;background:#9FE1CB;display:inline-block"></span>
+        <span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;display:inline-block"></span>
+        <span style="width:10px;height:10px;border-radius:2px;background:#0F6E56;display:inline-block"></span>
+        <span id="t-more">Больше</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: WORKOUTS ══ -->
+  <div class="tab-panel" id="panel-workouts">
+    <div class="card" style="overflow:hidden;margin-bottom:14px">
+      <div style="padding:14px 16px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div class="section-title" style="margin:0">
+          <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span id="t-workouts-title">Тренировки</span>
+        </div>
+        <button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="toggleAddWorkout()" id="t-add-workout-btn">+ Добавить</button>
+      </div>
+      <div id="workouts-list"></div>
+
+      <!-- Add workout form -->
+      <div id="add-workout-form" style="display:none;padding:14px 16px;border-top:.5px solid var(--border);background:var(--bg2)">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.04em" id="t-wf-type">Тип</div>
+            <select id="new-workout-type" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+              <option value="strength" id="t-wt-strength">Силовая</option>
+              <option value="cardio" id="t-wt-cardio">Кардио</option>
+              <option value="flexibility" id="t-wt-flex">Растяжка</option>
+              <option value="other" id="t-wt-other">Другое</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.04em" id="t-wf-duration">Длительность</div>
+            <input id="new-workout-duration" type="number" min="10" max="180" value="60" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.04em" id="t-wf-date">Дата</div>
+            <input id="new-workout-date" type="date" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn-sm" onclick="saveWorkout()" id="t-save-workout">Сохранить</button>
+          <button class="btn-ghost" style="font-size:11px" onclick="toggleAddWorkout()" id="t-cancel-workout">Отмена</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workout stats -->
+    <div class="card" style="padding:16px">
+      <div class="section-title">
+        <svg viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <span id="t-workout-stats-title">Статистика за месяц</span>
+      </div>
+      <div id="workout-stats"></div>
+    </div>
+  </div>
+
+  <!-- ══ TAB: STATS ══ -->
+  <div class="tab-panel" id="panel-stats">
+    <div class="card" style="padding:16px;margin-bottom:14px">
+      <div class="section-title">
+        <svg viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <span id="t-progress-title">Выполнение привычек</span>
+      </div>
+      <div id="habits-progress"></div>
+    </div>
+    <div class="card" style="padding:16px">
+      <div class="section-title">
+        <svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1L9 5.5H14L10 8.5L11.5 13L7.5 10L3.5 13L5 8.5L1 5.5H6L7.5 1Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        <span id="t-streaks-title">Серии</span>
+      </div>
+      <div id="streaks-list"></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- MOB NAV -->
+<nav class="mob-nav">
+  <div class="mob-nav-items">
+    <a class="mob-nav-btn" href="/dashboard.html" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+      <span id="t-mob-home">Главная</span>
+    </a>
+    <button class="mob-nav-btn active" onclick="switchTab('today')" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-mob-today">Сегодня</span>
+    </button>
+    <button class="mob-nav-btn" onclick="switchTab('habits')" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="t-mob-habits">Привычки</span>
+    </button>
+    <button class="mob-nav-btn" onclick="switchTab('workouts')" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-mob-workouts">Тренировки</span>
+    </button>
+    <button class="mob-nav-btn" onclick="switchTab('stats')" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <span id="t-mob-stats">Прогресс</span>
+    </button>
+    <a class="mob-nav-btn" href="/dashboard.html?view=food" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-mob-food">Питание</span>
+    </a>
+  </div>
+</nav>
+
+<div id="toast-container"></div>
+
+<script>
+/* ══════════════════════════════════
+   i18n
+══════════════════════════════════ */
+const i18n = {
+  ru:{
+    logout:'Выход', pageTitle:'Планирование', aiPlanBtn:'AI план недели',
+    navMain:'Главное', navModules:'Модули', navSystem:'Система',
+    navOverview:'Дашборд', navPlan:'Планирование', navHealth:'Здоровье',
+    navFood:'Питание', navFinance:'Финансы', navAnalytics:'Аналитика', navSettings:'Настройки',
+    mHabits:'Привычки', mTasks:'Задачи', mWorkout:'Тренировка', mWeek:'Неделя',
+    mTasksSub:'сегодня', mWorkoutSub:'сегодня', mWeekSub:'выполнение',
+    tabToday:'Сегодня', tabWeek:'Неделя', tabHabits:'Привычки', tabWorkouts:'Тренировки', tabStats:'Прогресс',
+    tasksTitle:'Задачи дня', habitsTodayTitle:'Привычки',
+    weekTitle:'Обзор недели', weekTasksTitle:'Задачи недели',
+    legHabits:'Привычки', legAnchors:'Якоря', legWorkout:'Тренировка',
+    allHabitsTitle:'Все привычки', addHabitBtn:'+ Добавить',
+    formName:'Название', formFreq:'Частота', formAnchor:'Якорь (приоритет)',
+    saveHabit:'Сохранить', cancelHabit:'Отмена',
+    freqDaily:'Ежедневно', freqCustom:'Несколько раз в неделю',
+    heatmapTitle:'Активность за 12 недель', less:'Меньше', more:'Больше',
+    workoutsTitle:'Тренировки', addWorkoutBtn:'+ Добавить',
+    wfType:'Тип', wfDuration:'Длительность (мин)', wfDate:'Дата',
+    wtStrength:'Силовая', wtCardio:'Кардио', wtFlex:'Растяжка', wtOther:'Другое',
+    saveWorkout:'Сохранить', cancelWorkout:'Отмена',
+    workoutStatsTitle:'Статистика за месяц',
+    progressTitle:'Выполнение привычек', streaksTitle:'Серии',
+    anchorLabel:'якорь', streakLabel:'серия', daysLabel:'дн',
+    workoutDone:'Выполнено', workoutPlanned:'Запланировано', workoutSkip:'Пропущено',
+    markDone:'Отмечено', taskAdded:'Задача добавлена', taskDone:'Готово',
+    habitSaved:'Привычка добавлена', workoutSaved:'Тренировка добавлена',
+    aiInsight:'По пятницам у тебя низкая энергия — тяжёлые задачи лучше на вторник. Тренировки идут хорошо — 3 из 3 на этой неделе.',
+    mobHome:'Главная', mobToday:'Сегодня', mobHabits:'Привычки', mobWorkouts:'Тренировки', mobStats:'Прогресс', mobFood:'Питание',
+    noWorkouts:'Нет запланированных тренировок', noTasks:'Нет задач',
+    wkMon:'Пн', wkTue:'Вт', wkWed:'Ср', wkThu:'Чт', wkFri:'Пт', wkSat:'Сб', wkSun:'Вс',
+  },
+  uk:{
+    logout:'Вихід', pageTitle:'Планування', aiPlanBtn:'AI план тижня',
+    navMain:'Головне', navModules:'Модулі', navSystem:'Система',
+    navOverview:'Дашборд', navPlan:'Планування', navHealth:'Здоров\'я',
+    navFood:'Харчування', navFinance:'Фінанси', navAnalytics:'Аналітика', navSettings:'Налаштування',
+    mHabits:'Звички', mTasks:'Завдання', mWorkout:'Тренування', mWeek:'Тиждень',
+    mTasksSub:'сьогодні', mWorkoutSub:'сьогодні', mWeekSub:'виконання',
+    tabToday:'Сьогодні', tabWeek:'Тиждень', tabHabits:'Звички', tabWorkouts:'Тренування', tabStats:'Прогрес',
+    tasksTitle:'Завдання дня', habitsTodayTitle:'Звички',
+    weekTitle:'Огляд тижня', weekTasksTitle:'Завдання тижня',
+    legHabits:'Звички', legAnchors:'Якоря', legWorkout:'Тренування',
+    allHabitsTitle:'Всі звички', addHabitBtn:'+ Додати',
+    formName:'Назва', formFreq:'Частота', formAnchor:'Якір (пріоритет)',
+    saveHabit:'Зберегти', cancelHabit:'Скасувати',
+    freqDaily:'Щодня', freqCustom:'Кілька разів на тиждень',
+    heatmapTitle:'Активність за 12 тижнів', less:'Менше', more:'Більше',
+    workoutsTitle:'Тренування', addWorkoutBtn:'+ Додати',
+    wfType:'Тип', wfDuration:'Тривалість (хв)', wfDate:'Дата',
+    wtStrength:'Силова', wtCardio:'Кардіо', wtFlex:'Розтяжка', wtOther:'Інше',
+    saveWorkout:'Зберегти', cancelWorkout:'Скасувати',
+    workoutStatsTitle:'Статистика за місяць',
+    progressTitle:'Виконання звичок', streaksTitle:'Серії',
+    anchorLabel:'якір', streakLabel:'серія', daysLabel:'дн',
+    workoutDone:'Виконано', workoutPlanned:'Заплановано', workoutSkip:'Пропущено',
+    markDone:'Відмічено', taskAdded:'Завдання додано', taskDone:'Готово',
+    habitSaved:'Звичку додано', workoutSaved:'Тренування додано',
+    aiInsight:'У п\'ятницю в тебе низька енергія — важкі завдання краще на вівторок.',
+    mobHome:'Головна', mobToday:'Сьогодні', mobHabits:'Звички', mobWorkouts:'Тренування', mobStats:'Прогрес', mobFood:'Їжа',
+    noWorkouts:'Немає запланованих тренувань', noTasks:'Немає завдань',
+    wkMon:'Пн', wkTue:'Вт', wkWed:'Ср', wkThu:'Чт', wkFri:'Пт', wkSat:'Сб', wkSun:'Нд',
+  },
+  en:{
+    logout:'Sign out', pageTitle:'Planning', aiPlanBtn:'AI week plan',
+    navMain:'Main', navModules:'Modules', navSystem:'System',
+    navOverview:'Dashboard', navPlan:'Planning', navHealth:'Health',
+    navFood:'Nutrition', navFinance:'Finance', navAnalytics:'Analytics', navSettings:'Settings',
+    mHabits:'Habits', mTasks:'Tasks', mWorkout:'Workout', mWeek:'Week',
+    mTasksSub:'today', mWorkoutSub:'today', mWeekSub:'completion',
+    tabToday:'Today', tabWeek:'Week', tabHabits:'Habits', tabWorkouts:'Workouts', tabStats:'Progress',
+    tasksTitle:'Today\'s tasks', habitsTodayTitle:'Habits',
+    weekTitle:'Week overview', weekTasksTitle:'Week tasks',
+    legHabits:'Habits', legAnchors:'Anchors', legWorkout:'Workout',
+    allHabitsTitle:'All habits', addHabitBtn:'+ Add',
+    formName:'Name', formFreq:'Frequency', formAnchor:'Anchor (priority)',
+    saveHabit:'Save', cancelHabit:'Cancel',
+    freqDaily:'Daily', freqCustom:'Several times a week',
+    heatmapTitle:'Activity — last 12 weeks', less:'Less', more:'More',
+    workoutsTitle:'Workouts', addWorkoutBtn:'+ Add',
+    wfType:'Type', wfDuration:'Duration (min)', wfDate:'Date',
+    wtStrength:'Strength', wtCardio:'Cardio', wtFlex:'Flexibility', wtOther:'Other',
+    saveWorkout:'Save', cancelWorkout:'Cancel',
+    workoutStatsTitle:'Monthly stats',
+    progressTitle:'Habit completion', streaksTitle:'Streaks',
+    anchorLabel:'anchor', streakLabel:'streak', daysLabel:'d',
+    workoutDone:'Done', workoutPlanned:'Planned', workoutSkip:'Skipped',
+    markDone:'Marked', taskAdded:'Task added', taskDone:'Done',
+    habitSaved:'Habit added', workoutSaved:'Workout added',
+    aiInsight:'Fridays tend to be low-energy — move heavy tasks to Tuesday. Workouts are on track — 3 of 3 this week.',
+    mobHome:'Home', mobToday:'Today', mobHabits:'Habits', mobWorkouts:'Workouts', mobStats:'Progress', mobFood:'Food',
+    noWorkouts:'No workouts planned', noTasks:'No tasks',
+    wkMon:'Mo', wkTue:'Tu', wkWed:'We', wkThu:'Th', wkFri:'Fr', wkSat:'Sa', wkSun:'Su',
+  }
+};
+let currentLang = localStorage.getItem('sc_lang') || 'ru';
+function t(k){ return (i18n[currentLang]||i18n.ru)[k]||k; }
+
+/* ══ DATA ══ */
+function dateKey(d){ return d.toISOString().slice(0,10); }
+const todayKey = dateKey(new Date());
+
+let tasks = JSON.parse(localStorage.getItem('sc_tasks_v2') || 'null') || [
+  {id:1, text:{ru:'Позвонить клиенту', uk:'Зателефонувати клієнту', en:'Call the client'}, date:todayKey, done:false, energy:'morning', priority:1},
+  {id:2, text:{ru:'Прочитать главу книги', uk:'Прочитати розділ книги', en:'Read a book chapter'}, date:todayKey, done:false, energy:'evening', priority:3},
+  {id:3, text:{ru:'Ответить на письма', uk:'Відповісти на листи', en:'Reply to emails'}, date:todayKey, done:true, energy:'afternoon', priority:2},
+];
+
+let habits = JSON.parse(localStorage.getItem('sc_habits_v2') || 'null') || [
+  {id:1, name:{ru:'Утренняя молитва', uk:'Ранкова молитва', en:'Morning prayer'}, freq:'daily', anchor:true, streak:14},
+  {id:2, name:{ru:'Полуденная молитва', uk:'Полуденна молитва', en:'Midday prayer'}, freq:'daily', anchor:true, streak:14},
+  {id:3, name:{ru:'Вечерняя молитва', uk:'Вечірня молитва', en:'Evening prayer'}, freq:'daily', anchor:true, streak:14},
+  {id:4, name:{ru:'Семья', uk:'Сім\'я', en:'Family time'}, freq:'daily', anchor:false, streak:7},
+  {id:5, name:{ru:'English', uk:'English', en:'English'}, freq:'daily', anchor:false, streak:5},
+  {id:6, name:{ru:'Тренировка', uk:'Тренування', en:'Workout'}, freq:'custom', anchor:false, streak:3},
+  {id:7, name:{ru:'Сон до 23:30', uk:'Сон до 23:30', en:'Sleep by 23:30'}, freq:'daily', anchor:false, streak:4},
+  {id:8, name:{ru:'Прогулка', uk:'Прогулянка', en:'Walk'}, freq:'custom', anchor:false, streak:2},
+];
+
+function genLog(){
+  const log={};
+  const today=new Date();
+  habits.forEach(h=>{
+    log[h.id]={};
+    for(let i=0;i<84;i++){
+      const d=new Date(today); d.setDate(d.getDate()-i);
+      log[h.id][dateKey(d)] = Math.random()<(h.anchor?0.95:0.75);
+    }
+    log[h.id][todayKey] = h.anchor;
+  });
+  return log;
+}
+let habitLog = JSON.parse(localStorage.getItem('sc_habit_log_v2')||'null') || genLog();
+
+let workouts = JSON.parse(localStorage.getItem('sc_workouts_v2')||'null') || [
+  {id:1, type:'strength', duration:60, date:todayKey, status:'planned'},
+  {id:2, type:'cardio',   duration:40, date:dateKey(new Date(Date.now()-86400000)), status:'done'},
+  {id:3, type:'strength', duration:60, date:dateKey(new Date(Date.now()-86400000*3)), status:'done'},
+];
+
+let weekTasks = JSON.parse(localStorage.getItem('sc_week_tasks')||'null') || [
+  {id:1, text:{ru:'Подготовить презентацию', uk:'Підготувати презентацію', en:'Prepare presentation'}, done:false},
+  {id:2, text:{ru:'Записаться к врачу', uk:'Записатись до лікаря', en:'Book a doctor appointment'}, done:false},
+];
+
+function saveAll(){
+  localStorage.setItem('sc_tasks_v2', JSON.stringify(tasks));
+  localStorage.setItem('sc_habits_v2', JSON.stringify(habits));
+  localStorage.setItem('sc_habit_log_v2', JSON.stringify(habitLog));
+  localStorage.setItem('sc_workouts_v2', JSON.stringify(workouts));
+  localStorage.setItem('sc_week_tasks', JSON.stringify(weekTasks));
+}
+
+function taskText(t){ return typeof t === 'object' ? (t[currentLang]||t.ru||Object.values(t)[0]) : t; }
+function habitName(h){ return typeof h.name === 'object' ? (h.name[currentLang]||h.name.ru||Object.values(h.name)[0]) : h.name; }
+
+/* ══ METRICS ══ */
+function calcMetrics(){
+  const todayHabits = habits.filter(h=>habitLog[h.id]?.[todayKey]);
+  const todayTasks = tasks.filter(x=>x.date===todayKey);
+  const doneTasks = todayTasks.filter(x=>x.done);
+  const todayWorkout = workouts.find(w=>w.date===todayKey);
+
+  const days=[]; for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(dateKey(d));}
+  let wDone=0,wTotal=0;
+  days.forEach(dk=>{ habits.forEach(h=>{ wTotal++; if(habitLog[h.id]?.[dk]) wDone++; }); });
+
+  document.getElementById('m-habits-done').textContent = todayHabits.length;
+  document.getElementById('m-habits-total').textContent = habits.length;
+  document.getElementById('m-habits-pct').textContent = habits.length ? Math.round(todayHabits.length/habits.length*100)+'%' : '0%';
+  document.getElementById('m-tasks-done').textContent = doneTasks.length;
+  document.getElementById('m-tasks-total').textContent = todayTasks.length;
+  document.getElementById('m-workout-status').textContent = todayWorkout
+    ? (todayWorkout.status==='done' ? '✓ '+t('workoutDone') : t('workoutPlanned'))
+    : '—';
+  document.getElementById('m-workout-sub').style.color = todayWorkout?.status==='done' ? 'var(--tag-green)' : 'var(--muted)';
+  document.getElementById('m-week-pct').textContent = wTotal ? Math.round(wDone/wTotal*100) : 0;
+}
+
+/* ══ TASKS ══ */
+function renderTasks(){
+  const today = new Date();
+  const opts = {weekday:'long',day:'numeric',month:'long'};
+  document.getElementById('tasks-date').textContent = today.toLocaleDateString(
+    currentLang==='en'?'en-US':currentLang==='uk'?'uk-UA':'ru-RU', opts);
+  const list = document.getElementById('tasks-list');
+  const todayTasks = tasks.filter(x=>x.date===todayKey);
+  if(!todayTasks.length){
+    list.innerHTML=`<div style="padding:20px 16px;color:var(--muted2);font-size:12px;text-align:center">${t('noTasks')}</div>`; return;
+  }
+  const energyColors = {morning:'e-morning', afternoon:'e-afternoon', evening:'e-evening'};
+  const energyLabels = {
+    ru:{morning:'Утро',afternoon:'День',evening:'Вечер'},
+    uk:{morning:'Ранок',afternoon:'День',evening:'Вечір'},
+    en:{morning:'Morning',afternoon:'Afternoon',evening:'Evening'}
+  };
+  list.innerHTML = todayTasks.map(task=>`
+    <div class="task-item">
+      <div class="priority-dot p${task.priority||3}"></div>
+      <div class="task-check${task.done?' done':''}" onclick="toggleTask(${task.id})">
+        ${task.done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
+      </div>
+      <div class="task-text${task.done?' done':''}">${taskText(task.text)}</div>
+      <span class="task-energy ${energyColors[task.energy]||'e-evening'}">${(energyLabels[currentLang]||energyLabels.ru)[task.energy]||''}</span>
+      <div onclick="deleteTask(${task.id})" style="cursor:pointer;color:var(--muted2);padding:2px 4px;transition:color .1s" onmouseover="this.style.color='var(--tag-red)'" onmouseout="this.style.color='var(--muted2)'">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+    </div>`).join('');
+}
+
+function toggleTask(id){
+  const t=tasks.find(x=>x.id===id); if(!t) return;
+  t.done=!t.done; saveAll(); renderAll();
+  if(t.done) toast(t('taskDone'),'success');
+}
+function deleteTask(id){ tasks=tasks.filter(x=>x.id!==id); saveAll(); renderAll(); }
+function addTask(){
+  const inp=document.getElementById('new-task-input');
+  const val=inp.value.trim(); if(!val) return;
+  const energyOpts=['morning','afternoon','evening'];
+  const h=new Date().getHours();
+  const energy=h<12?'morning':h<18?'afternoon':'evening';
+  tasks.push({id:Date.now(),text:{ru:val,uk:val,en:val},date:todayKey,done:false,energy,priority:2});
+  inp.value=''; saveAll(); renderAll(); toast(t('taskAdded'),'success');
+}
+
+/* ══ WEEK TASKS ══ */
+function renderWeekTasks(){
+  const list=document.getElementById('week-tasks-list');
+  if(!weekTasks.length){
+    list.innerHTML=`<div style="padding:20px 16px;color:var(--muted2);font-size:12px;text-align:center">${t('noTasks')}</div>`; return;
+  }
+  list.innerHTML=weekTasks.map(task=>`
+    <div class="task-item">
+      <div class="task-check${task.done?' done':''}" onclick="toggleWeekTask(${task.id})">
+        ${task.done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
+      </div>
+      <div class="task-text${task.done?' done':''}">${taskText(task.text)}</div>
+      <div onclick="deleteWeekTask(${task.id})" style="cursor:pointer;color:var(--muted2);padding:2px 4px" onmouseover="this.style.color='var(--tag-red)'" onmouseout="this.style.color='var(--muted2)'">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+    </div>`).join('');
+}
+function toggleWeekTask(id){ const t=weekTasks.find(x=>x.id===id); if(t){t.done=!t.done;saveAll();renderWeekTasks();} }
+function deleteWeekTask(id){ weekTasks=weekTasks.filter(x=>x.id!==id); saveAll(); renderWeekTasks(); }
+function addWeekTask(){
+  const inp=document.getElementById('new-week-task-input');
+  const val=inp.value.trim(); if(!val) return;
+  weekTasks.push({id:Date.now(),text:{ru:val,uk:val,en:val},done:false});
+  inp.value=''; saveAll(); renderWeekTasks(); toast(t('taskAdded'),'success');
+}
+
+/* ══ HABITS TODAY ══ */
+function renderHabitsToday(){
+  const list=document.getElementById('habits-today-list');
+  const icons = {
+    anchor:`<svg viewBox="0 0 15 15" fill="none"><path d="M7.5 5v8M5 11l2.5 2 2.5-2M7.5 3a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM3 7h9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    default:`<svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  };
+  const sorted=[...habits].sort((a,b)=>(b.anchor?1:0)-(a.anchor?1:0));
+  list.innerHTML=sorted.map(h=>{
+    const done=habitLog[h.id]?.[todayKey];
+    return `<div class="habit-item">
+      <div class="habit-check${done?' done':''}${h.anchor?' anchor':''}" onclick="${h.anchor?'':('toggleHabit('+h.id+')')}">
+        ${done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
+        ${h.anchor&&!done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 2v4M6 7.5v1" stroke="#6d28d9" stroke-width="1.5" stroke-linecap="round"/></svg>':''}
+      </div>
+      <div class="habit-icon" style="background:${h.anchor?'var(--tag-purple-bg)':'var(--accent-light)'}; color:${h.anchor?'var(--tag-purple)':'var(--accent)'}">
+        ${h.anchor?icons.anchor:icons.default}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="habit-name${done?' done':''}">${habitName(h)}</div>
+        <div class="habit-meta">${h.freq==='daily'?t('freqDaily'):t('freqCustom')}</div>
+      </div>
+      ${h.anchor?`<span class="anchor-badge"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 4H13l-3.5 2.5 1.5 4.5L7.5 9.5 4 12l1.5-4.5L2 5h4z" stroke="currentColor" stroke-width="1.1"/></svg>${t('anchorLabel')}</span>`:''}
+      ${h.streak>=5&&!h.anchor?`<span class="streak-badge">${h.streak} ${t('daysLabel')}</span>`:''}
+    </div>`;
+  }).join('');
+}
+
+function toggleHabit(id){
+  if(!habitLog[id]) habitLog[id]={};
+  habitLog[id][todayKey]=!habitLog[id][todayKey];
+  if(habitLog[id][todayKey]) habits.find(h=>h.id===id).streak=(habits.find(h=>h.id===id).streak||0)+1;
+  saveAll(); renderAll();
+  if(habitLog[id][todayKey]) toast(t('markDone'),'success');
+}
+
+/* ══ ALL HABITS ══ */
+function renderAllHabits(){
+  const list=document.getElementById('all-habits-list');
+  list.innerHTML=habits.map(h=>`
+    <div class="habit-item">
+      <div class="habit-icon" style="background:${h.anchor?'var(--tag-purple-bg)':'var(--accent-light)'};color:${h.anchor?'var(--tag-purple)':'var(--accent)'}">
+        <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="habit-name">${habitName(h)} ${h.anchor?`<span class="anchor-badge" style="font-size:9px;padding:1px 5px">${t('anchorLabel')}</span>`:''}</div>
+        <div class="habit-meta">${h.freq==='daily'?t('freqDaily'):t('freqCustom')} · ${t('streakLabel')} ${h.streak||0} ${t('daysLabel')}</div>
+      </div>
+      ${!h.anchor?`<div onclick="deleteHabit(${h.id})" style="cursor:pointer;color:var(--muted2);padding:4px" onmouseover="this.style.color='var(--tag-red)'" onmouseout="this.style.color='var(--muted2)'">
+        <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>`:''}
+    </div>`).join('');
+}
+function deleteHabit(id){ habits=habits.filter(h=>h.id!==id); delete habitLog[id]; saveAll(); renderAll(); }
+function toggleAddHabit(){ const f=document.getElementById('add-habit-form'); f.style.display=f.style.display==='none'?'block':'none'; }
+function saveHabit(){
+  const name=document.getElementById('new-habit-name').value.trim(); if(!name) return;
+  const freq=document.getElementById('new-habit-freq').value;
+  const anchor=document.getElementById('new-habit-anchor').checked;
+  const id=Date.now();
+  habits.push({id,name:{ru:name,uk:name,en:name},freq,anchor,streak:0});
+  habitLog[id]={};
+  document.getElementById('new-habit-name').value='';
+  document.getElementById('new-habit-anchor').checked=false;
+  document.getElementById('add-habit-form').style.display='none';
+  saveAll(); renderAll(); toast(t('habitSaved'),'success');
+}
+
+/* ══ WEEK STRIP ══ */
+function renderWeekStrip(){
+  const strip=document.getElementById('week-strip');
+  const dayKeys=[t('wkMon'),t('wkTue'),t('wkWed'),t('wkThu'),t('wkFri'),t('wkSat'),t('wkSun')];
+  const days=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d);}
+  strip.innerHTML=days.map(d=>{
+    const key=dateKey(d);
+    const isToday=key===todayKey;
+    const dow=(d.getDay()+6)%7;
+    const hasWorkout=workouts.some(w=>w.date===key&&w.status==='done');
+    const dots=habits.map(h=>`<div class="wdot${habitLog[h.id]?.[key]?(h.anchor?' anchor':' done'):''}"></div>`).join('');
+    const workoutDot=`<div class="wdot${hasWorkout?' workout':''}"></div>`;
+    return `<div class="week-day">
+      <div class="week-day-label">${dayKeys[dow]}</div>
+      <div class="week-day-num${isToday?' today':''}">${d.getDate()}</div>
+      <div class="week-dots">${dots}${workoutDot}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ══ WORKOUTS ══ */
+function renderWorkouts(){
+  const list=document.getElementById('workouts-list');
+  const typeIcons={
+    strength:`<svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`,
+    cardio:`<svg viewBox="0 0 15 15" fill="none"><path d="M7.5 2C5 4.5 3 6.5 3 9a4.5 4.5 0 009 0c0-2.5-2-4.5-4.5-7z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>`,
+    flexibility:`<svg viewBox="0 0 15 15" fill="none"><path d="M7.5 2v11M4 5c1 1 5 1 7-1M4 10c1-1 5-1 7 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`,
+    other:`<svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 5v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>`
+  };
+  const typeColors={strength:'var(--tag-blue-bg)',cardio:'var(--tag-amber-bg)',flexibility:'var(--tag-green-bg)',other:'var(--bg3)'};
+  const typeTextColors={strength:'var(--tag-blue)',cardio:'var(--tag-amber)',flexibility:'var(--tag-green)',other:'var(--muted)'};
+  const typeNames={
+    ru:{strength:'Силовая',cardio:'Кардио',flexibility:'Растяжка',other:'Другое'},
+    uk:{strength:'Силова',cardio:'Кардіо',flexibility:'Розтяжка',other:'Інше'},
+    en:{strength:'Strength',cardio:'Cardio',flexibility:'Flexibility',other:'Other'}
+  };
+  const sorted=[...workouts].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
+  if(!sorted.length){list.innerHTML=`<div style="padding:20px 16px;color:var(--muted2);font-size:12px;text-align:center">${t('noWorkouts')}</div>`;return;}
+  list.innerHTML=sorted.map(w=>{
+    const tname=(typeNames[currentLang]||typeNames.ru)[w.type]||w.type;
+    const d=new Date(w.date+'T12:00:00');
+    const dateStr=d.toLocaleDateString(currentLang==='en'?'en-US':currentLang==='uk'?'uk-UA':'ru-RU',{day:'numeric',month:'short'});
+    return `<div class="workout-item">
+      <div class="workout-icon" style="background:${typeColors[w.type]||'var(--bg3)'};color:${typeTextColors[w.type]||'var(--muted)'}">
+        ${typeIcons[w.type]||typeIcons.other}
+      </div>
+      <div class="workout-info">
+        <div class="workout-name">${tname}</div>
+        <div class="workout-meta">
+          <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          ${w.duration} ${currentLang==='en'?'min':'мин'} · ${dateStr}
+        </div>
+      </div>
+      <button class="status-btn ${w.status==='done'?'status-done':w.status==='skip'?'status-skip':'status-planned'}" onclick="cycleWorkoutStatus(${w.id})">
+        ${w.status==='done'?`<svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`:''}
+        ${t(w.status==='done'?'workoutDone':w.status==='skip'?'workoutSkip':'workoutPlanned')}
+      </button>
+    </div>`;
+  }).join('');
+
+  // Stats
+  const thisMonth=workouts.filter(w=>w.date.startsWith(new Date().toISOString().slice(0,7)));
+  const done=thisMonth.filter(w=>w.status==='done');
+  const totalMin=done.reduce((a,w)=>a+(w.duration||0),0);
+  const byType={};
+  done.forEach(w=>{ byType[w.type]=(byType[w.type]||0)+1; });
+  const statsEl=document.getElementById('workout-stats');
+  statsEl.innerHTML=`
+    <div class="progress-row">
+      <div class="progress-label"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>${currentLang==='en'?'Sessions':currentLang==='uk'?'Сесії':'Сессии'}</div>
+      <div class="progress-track"><div class="progress-fill" style="width:${Math.min(done.length/12*100,100)}%"></div></div>
+      <div class="progress-val">${done.length}</div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-label"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>${currentLang==='en'?'Minutes':currentLang==='uk'?'Хвилин':'Минут'}</div>
+      <div class="progress-track"><div class="progress-fill" style="width:${Math.min(totalMin/600*100,100)}%"></div></div>
+      <div class="progress-val">${totalMin}</div>
+    </div>`;
+}
+
+function cycleWorkoutStatus(id){
+  const w=workouts.find(x=>x.id===id); if(!w) return;
+  w.status=w.status==='planned'?'done':w.status==='done'?'skip':'planned';
+  saveAll(); renderWorkouts(); calcMetrics();
+}
+
+function toggleAddWorkout(){
+  const f=document.getElementById('add-workout-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+  if(f.style.display==='block') document.getElementById('new-workout-date').value=todayKey;
+}
+function saveWorkout(){
+  const type=document.getElementById('new-workout-type').value;
+  const duration=parseInt(document.getElementById('new-workout-duration').value)||60;
+  const date=document.getElementById('new-workout-date').value||todayKey;
+  workouts.push({id:Date.now(),type,duration,date,status:'planned'});
+  document.getElementById('add-workout-form').style.display='none';
+  saveAll(); renderWorkouts(); calcMetrics(); toast(t('workoutSaved'),'success');
+}
+
+/* ══ STATS ══ */
+function renderStats(){
+  const days=[]; for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(dateKey(d));}
+  const prog=document.getElementById('habits-progress');
+  prog.innerHTML=habits.map(h=>{
+    const done=days.filter(dk=>habitLog[h.id]?.[dk]).length;
+    const pct=Math.round(done/days.length*100);
+    return `<div class="progress-row">
+      <div class="progress-label" style="width:120px">${habitName(h)}</div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${h.anchor?'var(--tag-purple)':'var(--accent)'}"></div></div>
+      <div class="progress-val">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  const streakEl=document.getElementById('streaks-list');
+  const sorted=[...habits].sort((a,b)=>(b.streak||0)-(a.streak||0));
+  streakEl.innerHTML=sorted.map(h=>`
+    <div class="habit-item">
+      <div class="habit-icon" style="background:${h.anchor?'var(--tag-purple-bg)':'var(--accent-light)'};color:${h.anchor?'var(--tag-purple)':'var(--accent)'}">
+        <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div style="flex:1"><div class="habit-name">${habitName(h)}</div></div>
+      <span style="font-size:13px;font-weight:600;color:${(h.streak||0)>=7?'var(--tag-green)':(h.streak||0)>=3?'var(--tag-amber)':'var(--muted)'}">${h.streak||0} ${t('daysLabel')}</span>
+    </div>`).join('');
+}
+
+/* ══ HEATMAP ══ */
+function renderHeatmap(){
+  const grid=document.getElementById('heatmap-grid');
+  const today=new Date();
+  grid.innerHTML='';
+  for(let w=11;w>=0;w--){
+    const col=document.createElement('div'); col.className='heatmap-col';
+    for(let d=6;d>=0;d--){
+      const date=new Date(today); date.setDate(today.getDate()-(w*7+d));
+      const key=dateKey(date);
+      const done=habits.filter(h=>habitLog[h.id]?.[key]).length;
+      const total=habits.length;
+      const level=total?Math.ceil(done/total*3):0;
+      const cell=document.createElement('div');
+      cell.className=`hcell${level?' h'+level:''}`;
+      cell.title=key+': '+done+'/'+total;
+      col.appendChild(cell);
+    }
+    grid.appendChild(col);
+  }
+}
+
+/* ══ AI ══ */
+function requestAIPlan(){
+  const box=document.getElementById('ai-insight-box');
+  box.innerHTML=`<div class="ai-box">
+    <div class="ai-box-header">
+      <svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1L9 5.5H14L10 8.5L11.5 13L7.5 10L3.5 13L5 8.5L1 5.5H6L7.5 1Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      <div class="ai-box-title">AI</div>
+    </div>
+    <div class="ai-box-text">${t('aiInsight')}</div>
+  </div>`;
+  toast('AI анализ готов','success');
+}
+
+/* ══ TABS ══ */
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.remove('active'));
+  const tb=document.getElementById('tab-'+name);
+  const pp=document.getElementById('panel-'+name);
+  if(tb) tb.classList.add('active');
+  if(pp) pp.classList.add('active');
+  const mb=document.getElementById('mob-'+name);
+  if(mb) mb.classList.add('active');
+  if(name==='week'){renderWeekStrip();renderWeekTasks();}
+  if(name==='habits'){renderAllHabits();renderHeatmap();}
+  if(name==='workouts') renderWorkouts();
+  if(name==='stats') renderStats();
+}
+
+/* ══ TOAST ══ */
+function toast(msg,type='info'){
+  if(!msg) return;
+  const c=document.getElementById('toast-container');
+  const el=document.createElement('div');
+  el.className='toast toast-'+type; el.textContent=msg;
+  c.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},2500);
+}
+
+/* ══ THEME ══ */
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  localStorage.setItem('sc_theme',isDark?'light':'dark');
+  document.getElementById('icon-sun').style.display=isDark?'block':'none';
+  document.getElementById('icon-moon').style.display=isDark?'none':'block';
+}
+
+/* ══ LANG ══ */
+function applyLang(){
+  document.documentElement.lang=currentLang;
+  const fe=(id,k)=>{const el=document.getElementById(id);if(el)el.textContent=t(k);};
+  fe('t-logout','logout'); fe('t-page-title','pageTitle'); fe('t-ai-plan-btn','aiPlanBtn');
+  fe('t-nav-main','navMain'); fe('t-nav-modules','navModules'); fe('t-nav-system','navSystem');
+  fe('t-nav-overview','navOverview'); fe('t-nav-plan','navPlan'); fe('t-nav-health','navHealth');
+  fe('t-nav-food','navFood'); fe('t-nav-finance','navFinance');
+  fe('t-nav-analytics','navAnalytics'); fe('t-nav-settings','navSettings');
+  fe('t-m-habits','mHabits'); fe('t-m-tasks','mTasks'); fe('t-m-workout','mWorkout'); fe('t-m-week','mWeek');
+  fe('t-m-tasks-sub','mTasksSub'); fe('t-m-week-sub','mWeekSub');
+  fe('t-tab-today','tabToday'); fe('t-tab-week','tabWeek'); fe('t-tab-habits','tabHabits');
+  fe('t-tab-workouts','tabWorkouts'); fe('t-tab-stats','tabStats');
+  fe('t-tasks-title','tasksTitle'); fe('t-habits-today-title','habitsTodayTitle');
+  fe('t-week-title','weekTitle'); fe('t-week-tasks-title','weekTasksTitle');
+  fe('t-leg-habits','legHabits'); fe('t-leg-anchors','legAnchors'); fe('t-leg-workout','legWorkout');
+  fe('t-all-habits-title','allHabitsTitle'); fe('t-add-habit-btn','addHabitBtn');
+  fe('t-form-name','formName'); fe('t-form-freq','formFreq'); fe('t-form-anchor','formAnchor');
+  fe('t-save-habit','saveHabit'); fe('t-cancel-habit','cancelHabit');
+  fe('t-freq-daily','freqDaily'); fe('t-freq-custom','freqCustom');
+  fe('t-heatmap-title','heatmapTitle'); fe('t-less','less'); fe('t-more','more');
+  fe('t-workouts-title','workoutsTitle'); fe('t-add-workout-btn','addWorkoutBtn');
+  fe('t-wf-type','wfType'); fe('t-wf-duration','wfDuration'); fe('t-wf-date','wfDate');
+  fe('t-wt-strength','wtStrength'); fe('t-wt-cardio','wtCardio');
+  fe('t-wt-flex','wtFlex'); fe('t-wt-other','wtOther');
+  fe('t-save-workout','saveWorkout'); fe('t-cancel-workout','cancelWorkout');
+  fe('t-workout-stats-title','workoutStatsTitle');
+  fe('t-progress-title','progressTitle'); fe('t-streaks-title','streaksTitle');
+  fe('t-mob-home','mobHome'); fe('t-mob-today','mobToday'); fe('t-mob-habits','mobHabits');
+  fe('t-mob-workouts','mobWorkouts'); fe('t-mob-stats','mobStats'); fe('t-mob-food','mobFood');
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    const map={'UA':'uk','RU':'ru','EN':'en'};
+    btn.classList.toggle('active',map[btn.textContent]===currentLang);
+  });
+  renderAll();
+}
+function setLang(lang){ currentLang=lang; localStorage.setItem('sc_lang',lang); applyLang(); }
+
+/* ══ AUTH ══ */
+(function(){
+  const token=localStorage.getItem('sc_token')||sessionStorage.getItem('sc_token');
+  if(!token){window.location.href='/index.html';return;}
+  const user=JSON.parse(localStorage.getItem('sc_user')||sessionStorage.getItem('sc_user')||'{}');
+  document.getElementById('sidebarAvatar').textContent=(user.first_name||'U')[0].toUpperCase();
+  document.getElementById('sidebarName').textContent=(user.first_name||'')+' '+(user.last_name||'');
+  const rm={admin:'Администратор',family:'Семья',friend:'Друг'};
+  document.getElementById('sidebarRole').textContent=rm[user.role]||'';
+  document.getElementById('navBadge').textContent=rm[user.role]||'';
+  document.getElementById('navBadge').style.display=user.role?'':'none';
+})();
+function logout(){localStorage.removeItem('sc_token');localStorage.removeItem('sc_user');sessionStorage.removeItem('sc_token');sessionStorage.removeItem('sc_user');window.location.href='/index.html';}
+
+/* ══ RENDER ALL ══ */
+function renderAll(){
+  calcMetrics();
+  renderTasks();
+  renderHabitsToday();
+  const activeTab=document.querySelector('.tab-btn.active');
+  if(activeTab){
+    const name=activeTab.id.replace('tab-','');
+    if(name==='week'){renderWeekStrip();renderWeekTasks();}
+    if(name==='habits'){renderAllHabits();renderHeatmap();}
+    if(name==='workouts') renderWorkouts();
+    if(name==='stats') renderStats();
+  }
+}
+
+/* ══ RESPONSIVE: сворачиваем 2 колонки в 1 на мобиле ══ */
+(function(){
+  function checkGrid(){
+    const g=document.querySelector('.today-grid');
+    if(g) g.style.gridTemplateColumns=window.innerWidth<768?'1fr':'1fr 1fr';
+  }
+  window.addEventListener('resize',checkGrid);
+  checkGrid();
+})();
+
+/* ══ INIT ══ */
+(function(){
+  const th=localStorage.getItem('sc_theme');
+  if(th){
+    document.documentElement.setAttribute('data-theme',th);
+    document.getElementById('icon-sun').style.display=th==='dark'?'none':'block';
+    document.getElementById('icon-moon').style.display=th==='dark'?'block':'none';
+  }
+  document.getElementById('new-workout-date').value=todayKey;
+  applyLang();
+})();
+</script>
+</body>
+</html>
