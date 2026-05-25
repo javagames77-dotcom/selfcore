@@ -871,6 +871,41 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 <div id="toast-container"></div>
 
 <script>
+/* ── WATER TRACKER ── */
+var WATER_GOAL = 2500; // мл в день
+
+function waterKey(){
+  // Ключ привязан к дате — автосброс каждый день
+  const d = new Date();
+  return 'sc_water_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function waterGet(){
+  return parseInt(localStorage.getItem(waterKey()) || '0') || 0;
+}
+
+function waterAdd(ml){
+  const cur = waterGet();
+  localStorage.setItem(waterKey(), cur + ml);
+  waterRender();
+}
+
+function waterReset(){
+  localStorage.setItem(waterKey(), '0');
+  waterRender();
+}
+
+function waterRender(){
+  const val = waterGet();
+  const pct = Math.min(100, Math.round(val / WATER_GOAL * 100));
+  const el = document.getElementById('w-val');
+  const bar = document.getElementById('w-bar');
+  const goal = document.getElementById('w-goal-lbl');
+  if(el) el.textContent = val;
+  if(bar) bar.style.width = pct + '%';
+  if(goal) goal.textContent = WATER_GOAL + ' мл';
+}
+
 /* ── AUTH CHECK ── */
 (function(){
   const token = localStorage.getItem('sc_token') || sessionStorage.getItem('sc_token');
@@ -1226,7 +1261,6 @@ function applyLang(){
   const fe = (id, key) => { const el=document.getElementById(id); if(el) el.textContent=t(key); };
   fe('t-f-eaten','fEaten'); fe('t-f-prot','fProt'); fe('t-f-fat','fFat'); fe('t-f-carb','fCarb'); fe('t-f-fiber','fFiber');
   fe('t-w-label','wLabel'); fe('t-w-unit','wUnit');
-  waterRender();
   fe('t-f-prot-goal','fGoalProt'); fe('t-f-fat-goal','fGoalFat'); fe('t-f-carb-goal','fGoalCarb');
   fe('t-f-add-title','fAddTitle'); fe('t-f-tg-hint','fTgHint');
   fe('t-f-meal-type-label','fMealTypeLabel'); fe('t-f-dish-label','fDishLabel'); fe('t-f-dish-label2','fDishLabel');
@@ -1383,6 +1417,7 @@ const ADMIN_URL = 'https://primary-production-4b93e.up.railway.app/webhook/sc/ad
   }
   applyLang();
   loadPendingBadge();
+  waterRender();
 })();
 
 function getToken(){
@@ -2062,41 +2097,6 @@ async function foodSaveGoals(){
   localStorage.setItem('sc_food_goals',JSON.stringify({kcal,prot,fat,carb,weight,height,age}));
   toast(t('fGoalsSaved'),'success');
   foodUpdateMetrics();
-}
-
-/* ── WATER TRACKER ── */
-const WATER_GOAL = 2500; // мл в день
-
-function waterKey(){
-  // Ключ привязан к дате — автосброс каждый день
-  const d = new Date();
-  return 'sc_water_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-
-function waterGet(){
-  return parseInt(localStorage.getItem(waterKey()) || '0') || 0;
-}
-
-function waterAdd(ml){
-  const cur = waterGet();
-  localStorage.setItem(waterKey(), cur + ml);
-  waterRender();
-}
-
-function waterReset(){
-  localStorage.setItem(waterKey(), '0');
-  waterRender();
-}
-
-function waterRender(){
-  const val = waterGet();
-  const pct = Math.min(100, Math.round(val / WATER_GOAL * 100));
-  const el = document.getElementById('w-val');
-  const bar = document.getElementById('w-bar');
-  const goal = document.getElementById('w-goal-lbl');
-  if(el) el.textContent = val;
-  if(bar) bar.style.width = pct + '%';
-  if(goal) goal.textContent = WATER_GOAL + ' мл';
 }
 
 </script>
