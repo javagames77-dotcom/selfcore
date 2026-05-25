@@ -182,7 +182,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 
 /* MOB NAV */
 .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--nav-bg);border-top:1px solid var(--border);z-index:199;backdrop-filter:blur(10px)}
-.mob-nav-items{display:flex;height:100%}
+.mob-nav-items{display:flex;height:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.mob-nav-items::-webkit-scrollbar{display:none}
 .mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;color:var(--muted);font-size:9px;font-weight:500;font-family:inherit;cursor:pointer;transition:color .15s}
 .mob-nav-btn.active{color:var(--accent)}
 
@@ -269,10 +270,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
     <svg viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
     <span id="t-nav-log"></span>
   </button>
-  <button class="sitem" onclick="showView('plan')" id="nav-plan">
+  <a class="sitem" href="/planning.html" id="nav-plan">
     <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 1.5v2M10 1.5v2M1.5 6h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
     <span id="t-nav-plan"></span>
-  </button>
+  </a>
 
   <div class="sidebar-section" id="t-nav-modules"></div>
   <button class="sitem" onclick="showView('health')" id="nav-health">
@@ -283,6 +284,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
     <svg viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
     <span id="t-nav-food"></span>
   </button>
+  <a class="sitem" href="/habits.html" id="nav-habits">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span id="t-nav-habits"></span>
+  </a>
   <button class="sitem" onclick="showView('finance')" id="nav-finance">
     <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5h12" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="9.5" r=".8" fill="currentColor"/></svg>
     <span id="t-nav-finance"></span>
@@ -322,7 +327,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
         <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         <span id="t-q-food"></span>
       </button>
-      <button class="quick-btn" onclick="showView('plan')">
+      <button class="quick-btn" onclick="window.location.href='/planning.html'">
         <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 1.5v2M10 1.5v2M1.5 6h12M5 9h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         <span id="t-q-tasks"></span>
       </button>
@@ -871,25 +876,33 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 
 <!-- MOB NAV -->
 <nav class="mob-nav">
-  <div class="mob-nav-items">
-    <button class="mob-nav-btn active" onclick="showView('dashboard')" id="mob-dashboard">
-      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+  <div class="mob-nav-items" style="overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
+    <button class="mob-nav-btn active" onclick="showView('dashboard')" id="mob-dashboard" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
       <span id="t-mob-dashboard"></span>
     </button>
-    <button class="mob-nav-btn" onclick="showView('health')" id="mob-health">
-      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S2 9.5 2 5.5a3 3 0 015.5-1.5A3 3 0 0113 5.5C13 9.5 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+    <a class="mob-nav-btn" href="/planning.html" id="mob-plan" style="min-width:52px;text-decoration:none">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 1.5v2M10 1.5v2M1.5 6h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-mob-plan"></span>
+    </a>
+    <button class="mob-nav-btn" onclick="showView('health')" id="mob-health" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S2 9.5 2 5.5a3 3 0 015.5-1.5A3 3 0 0113 5.5C13 9.5 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
       <span id="t-mob-health"></span>
     </button>
-    <button class="mob-nav-btn" onclick="showView('food')" id="mob-food">
-      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <button class="mob-nav-btn" onclick="showView('food')" id="mob-food" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
       <span id="t-mob-food"></span>
     </button>
-    <button class="mob-nav-btn" onclick="showView('finance')" id="mob-finance">
-      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5h12" stroke="currentColor" stroke-width="1.2"/></svg>
+    <a class="mob-nav-btn" href="/habits.html" id="mob-habits" style="min-width:52px;text-decoration:none">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="t-mob-habits"></span>
+    </a>
+    <button class="mob-nav-btn" onclick="showView('finance')" id="mob-finance" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5h12" stroke="currentColor" stroke-width="1.2"/></svg>
       <span id="t-mob-finance"></span>
     </button>
-    <button class="mob-nav-btn" onclick="showView('contacts')" id="mob-contacts">
-      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><circle cx="5.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1 13c0-2.2 2-4 4.5-4s4.5 1.8 4.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+    <button class="mob-nav-btn" onclick="showView('contacts')" id="mob-contacts" style="min-width:52px">
+      <svg width="18" height="18" viewBox="0 0 15 15" fill="none"><circle cx="5.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1 13c0-2.2 2-4 4.5-4s4.5 1.8 4.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
       <span id="t-mob-contacts"></span>
     </button>
   </div>
@@ -973,7 +986,7 @@ const i18n = {
   ru:{
     logout:'Выход', navMain:'Главное', navModules:'Модули', navSystem:'Система',
     navOverview:'Дашборд', navLog:'Лог дня', navPlan:'Планирование',
-    navHealth:'Здоровье', navFood:'Питание', navFinance:'Финансы',
+    navHealth:'Здоровье', navFood:'Питание', navHabits:'Привычки', navFinance:'Финансы',
     navContacts:'Контакты', navAnalytics:'Аналитика', navSettings:'Настройки',
     welcome:'Привет,', goodMorning:'Доброе утро,', goodDay:'Добрый день,', goodEvening:'Добрый вечер,',
     mHealth:'Индекс здоровья', mHealthDelta:'+4 за неделю',
@@ -1049,12 +1062,12 @@ const i18n = {
     status_active:'Активен', status_pending:'Ожидает', status_blocked:'Заблокирован',
     thName:'Имя', thRole:'Роль', thStatus:'Статус', thDate:'Дата',
     errConnection:'Ошибка соединения',
-    mobDashboard:'Главная', mobHealth:'Здоровье', mobFood:'Питание', mobFinance:'Финансы', mobContacts:'Контакты',
+    mobDashboard:'Главная', mobHealth:'Здоровье', mobFood:'Питание', mobFinance:'Финансы', mobContacts:'Контакты', mobPlan:'Планирование', mobHabits:'Привычки',
   },
   uk:{
     logout:'Вихід', navMain:'Головне', navModules:'Модулі', navSystem:'Система',
     navOverview:'Дашборд', navLog:'Лог дня', navPlan:'Планування',
-    navHealth:'Здоров\'я', navFood:'Харчування', navFinance:'Фінанси',
+    navHealth:'Здоров\'я', navFood:'Харчування', navHabits:'Звички', navFinance:'Фінанси',
     navContacts:'Контакти', navAnalytics:'Аналітика', navSettings:'Налаштування',
     welcome:'Привіт,', goodMorning:'Доброго ранку,', goodDay:'Добрий день,', goodEvening:'Добрий вечір,',
     mHealth:'Індекс здоров\'я', mHealthDelta:'+4 за тиждень',
@@ -1130,12 +1143,12 @@ const i18n = {
     status_active:'Активний', status_pending:'Очікує', status_blocked:'Заблокований',
     thName:'Ім\'я', thRole:'Роль', thStatus:'Статус', thDate:'Дата',
     errConnection:'Помилка з\'єднання',
-    mobDashboard:'Головна', mobHealth:'Здоров\'я', mobFood:'Їжа', mobFinance:'Фінанси', mobContacts:'Контакти',
+    mobDashboard:'Головна', mobHealth:'Здоров\'я', mobFood:'Їжа', mobFinance:'Фінанси', mobContacts:'Контакти', mobPlan:'Планування', mobHabits:'Звички',
   },
   en:{
     logout:'Sign out', navMain:'Main', navModules:'Modules', navSystem:'System',
     navOverview:'Dashboard', navLog:'Day log', navPlan:'Planning',
-    navHealth:'Health', navFood:'Nutrition', navFinance:'Finance',
+    navHealth:'Health', navFood:'Nutrition', navHabits:'Habits', navFinance:'Finance',
     navContacts:'Contacts', navAnalytics:'Analytics', navSettings:'Settings',
     welcome:'Hello,', goodMorning:'Good morning,', goodDay:'Good afternoon,', goodEvening:'Good evening,',
     mHealth:'Health score', mHealthDelta:'+4 this week',
@@ -1211,7 +1224,7 @@ const i18n = {
     status_active:'Active', status_pending:'Pending', status_blocked:'Blocked',
     thName:'Name', thRole:'Role', thStatus:'Status', thDate:'Date',
     errConnection:'Connection error',
-    mobDashboard:'Home', mobHealth:'Health', mobFood:'Food', mobFinance:'Finance', mobContacts:'Contacts',
+    mobDashboard:'Home', mobHealth:'Health', mobFood:'Food', mobFinance:'Finance', mobContacts:'Contacts', mobPlan:'Planning', mobHabits:'Habits',
   }
 };
 
@@ -1253,6 +1266,8 @@ function applyLang(){
   document.getElementById('t-nav-plan').textContent = t('navPlan');
   document.getElementById('t-nav-health').textContent = t('navHealth');
   document.getElementById('t-nav-food').textContent = t('navFood');
+  const tNavHabits = document.getElementById('t-nav-habits');
+  if(tNavHabits) tNavHabits.textContent = t('navHabits');
   document.getElementById('t-nav-finance').textContent = t('navFinance');
   document.getElementById('t-nav-contacts').textContent = t('navContacts');
   document.getElementById('t-nav-analytics').textContent = t('navAnalytics');
@@ -1364,6 +1379,10 @@ function applyLang(){
   document.getElementById('t-mob-food').textContent = t('mobFood');
   document.getElementById('t-mob-finance').textContent = t('mobFinance');
   document.getElementById('t-mob-contacts').textContent = t('mobContacts');
+  const tMobPlan = document.getElementById('t-mob-plan');
+  if(tMobPlan) tMobPlan.textContent = t('mobPlan');
+  const tMobHabits = document.getElementById('t-mob-habits');
+  if(tMobHabits) tMobHabits.textContent = t('mobHabits');
 
 
   // Admin
