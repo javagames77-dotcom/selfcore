@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_17';
+  var V='20260525_19';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -74,8 +74,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
 .grid2{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:16px}
-.grid2>:first-child{order:2}.grid2>:last-child{order:1}
 @media(min-width:769px){.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#fpanel-log>.grid2>:first-child{order:2}#fpanel-log>.grid2>:last-child{order:1}
 
 /* METRIC CARD */
 .metric-card{padding:14px 16px;cursor:default}
@@ -565,10 +565,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
             <div style="margin-bottom:7px">
               <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-meal-type-label"></div>
               <select id="food-meal-type" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
-                <option id="t-f-opt-breakfast"></option>
-                <option id="t-f-opt-lunch" selected></option>
-                <option id="t-f-opt-dinner"></option>
-                <option id="t-f-opt-snack"></option>
+                <option value="breakfast" id="t-f-opt-breakfast"></option>
+                <option value="lunch" id="t-f-opt-lunch"></option>
+                <option value="dinner" id="t-f-opt-dinner"></option>
+                <option value="snack" id="t-f-opt-snack"></option>
               </select>
             </div>
             <div style="margin-bottom:7px">
@@ -595,6 +595,15 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
               <div style="font-size:11px;color:var(--muted);margin-bottom:2px" id="food-ai-confidence"></div>
             </div>
             <div style="margin-bottom:7px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-meal-type-label2"></div>
+              <select id="food-ai-meal-type" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">
+                <option value="breakfast" id="t-f-ai-opt-breakfast"></option>
+                <option value="lunch" id="t-f-ai-opt-lunch"></option>
+                <option value="dinner" id="t-f-ai-opt-dinner"></option>
+                <option value="snack" id="t-f-ai-opt-snack"></option>
+              </select>
+            </div>
+            <div style="margin-bottom:7px">
               <div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-dish-label2"></div>
               <input type="text" id="food-ai-dish-name" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1.5px solid var(--accent);background:var(--input-bg);color:var(--text);font-family:inherit">
             </div>
@@ -603,6 +612,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
               <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-prot-short"></div><input type="number" id="food-ai-prot" style="width:100%;font-size:13px;font-weight:500;color:#1D9E75;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
               <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-fat-short"></div><input type="number" id="food-ai-fat" style="width:100%;font-size:13px;font-weight:500;color:#BA7517;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
               <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-ai-carb-lbl"></div><input type="number" id="food-ai-carb-val" style="width:100%;font-size:13px;font-weight:500;color:#185FA5;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-fiber2"></div><input type="number" id="food-ai-fiber-val" style="width:100%;font-size:13px;font-weight:500;color:var(--tag-green);padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);font-family:inherit"></div>
             </div>
             <div id="food-ai-notes" style="font-size:11px;color:var(--muted);line-height:1.5;background:var(--bg3);border-radius:8px;padding:8px 10px;margin-bottom:10px"></div>
             <button class="btn-accent" onclick="foodConfirmAI()" id="t-f-confirm-btn"></button>
@@ -1297,7 +1307,7 @@ function applyLang(){
   fe('t-w-label','wLabel'); fe('t-w-unit','wUnit');
   fe('t-f-prot-goal','fGoalProt'); fe('t-f-fat-goal','fGoalFat'); fe('t-f-carb-goal','fGoalCarb');
   fe('t-f-add-title','fAddTitle'); fe('t-f-tg-hint','fTgHint');
-  fe('t-f-meal-type-label','fMealTypeLabel'); fe('t-f-dish-label','fDishLabel'); fe('t-f-dish-label2','fDishLabel');
+  fe('t-f-meal-type-label','fMealTypeLabel'); fe('t-f-meal-type-label2','fMealTypeLabel'); fe('t-f-dish-label','fDishLabel'); fe('t-f-dish-label2','fDishLabel'); fe('t-f-inp-fiber2','fInpFiber');
   fe('t-f-inp-kcal','fInpKcal'); fe('t-f-inp-prot','fInpProt');
   fe('t-f-inp-fat','fInpFat'); fe('t-f-inp-carb','fInpCarb'); fe('t-f-inp-fiber','fInpFiber');
   fe('t-f-save-btn','fSaveBtn');
@@ -1330,6 +1340,8 @@ function applyLang(){
   const faiweek = document.getElementById('food-ai-week-box'); if(faiweek && !faiweek.dataset.loaded) faiweek.textContent = t('fAiWeekDefault');
   const selOpts = [{id:'t-f-opt-breakfast',k:'fOptBreakfast'},{id:'t-f-opt-lunch',k:'fOptLunch'},{id:'t-f-opt-dinner',k:'fOptDinner'},{id:'t-f-opt-snack',k:'fOptSnack'}];
   selOpts.forEach(o=>{ const el=document.getElementById(o.id); if(el) el.textContent=t(o.k); });
+  [{id:'t-f-ai-opt-breakfast',k:'fOptBreakfast'},{id:'t-f-ai-opt-lunch',k:'fOptLunch'},{id:'t-f-ai-opt-dinner',k:'fOptDinner'},{id:'t-f-ai-opt-snack',k:'fOptSnack'}]
+    .forEach(o=>{ const el=document.getElementById(o.id); if(el) el.textContent=t(o.k); });
   document.getElementById('t-finance-hint').textContent = t('financeHint');
   document.getElementById('t-finance-hint2').textContent = t('financeHint2');
   document.getElementById('t-contacts-hint').textContent = t('contactsHint');
@@ -1619,12 +1631,7 @@ function foodSwitchTab(tab){
 function foodGetMealKey(){
   const sel = document.getElementById('food-meal-type');
   if(!sel) return 'snack';
-  const v = (sel.options[sel.selectedIndex]||{}).text||'';
-  const vl = v.toLowerCase();
-  if(vl.includes('завт')||vl.includes('сніда')||vl.includes('break')) return 'breakfast';
-  if(vl.includes('обід')||vl.includes('обед')||vl.includes('lunch')) return 'lunch';
-  if(vl.includes('вечер')||vl.includes('dinner')) return 'dinner';
-  return 'snack';
+  return sel.value || 'snack';
 }
 
 /* ── Render meals list ── */
@@ -1895,6 +1902,9 @@ async function foodHandleFile(input){
       sv('food-ai-prot', n.prot||0);
       sv('food-ai-fat',  n.fat||0);
       sv('food-ai-carb-val', n.carb||0);
+      sv('food-ai-fiber-val', n.fiber||0);
+      const aiMealType = document.getElementById('food-ai-meal-type');
+      if(aiMealType) aiMealType.value = n.meal_type||'snack';
       st('food-ai-notes', n.notes||'');
       // Уверенность AI
       const conf = document.getElementById('food-ai-confidence');
@@ -1926,8 +1936,10 @@ async function foodConfirmAI(){
   const prot = parseInt((document.getElementById('food-ai-prot')||{}).value) || foodLastAI.prot;
   const fat  = parseInt((document.getElementById('food-ai-fat') ||{}).value) || foodLastAI.fat;
   const carb  = parseInt((document.getElementById('food-ai-carb-val')||{}).value) || foodLastAI.carb;
-  const fiber = parseInt(foodLastAI.fiber) || 0;
-  const meal = { dish_name, meal_type: mealType, kcal, prot, fat, carb, fiber };
+  const fiber = parseInt((document.getElementById('food-ai-fiber-val')||{}).value) || parseInt(foodLastAI.fiber) || 0;
+  const aiMealSel = document.getElementById('food-ai-meal-type');
+  const mealTypeAI = aiMealSel ? aiMealSel.value : mealType;
+  const meal = { dish_name, meal_type: mealTypeAI, kcal, prot, fat, carb, fiber };
   await foodSaveToServer(meal);
   foodMeals.push({ ...meal, time: new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label: t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
   foodRenderMeals(); foodUpdateMetrics();
@@ -1958,7 +1970,7 @@ function foodReset(){
   document.getElementById('food-ai-result').style.display='none';
   document.getElementById('food-success').style.display='none';
   foodLastAI=null;
-  ['food-name','food-inp-kcal','food-inp-prot','food-inp-fat','food-inp-carb','food-inp-fiber'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['food-name','food-inp-kcal','food-inp-prot','food-inp-fat','food-inp-carb','food-inp-fiber','food-ai-fiber-val'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
 }
 
 /* ── Statistics tab ── */
