@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_22';
+  var V='20260525_23';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -195,6 +195,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
   .nav-badge,.nav-divider{display:none}
   .water-btns-desktop{display:none!important}
   .water-btns-mobile{display:flex!important}
+  #fpanel-log>.grid2>:first-child{order:2}#fpanel-log>.grid2>:last-child{order:1}
 }
 @media(max-width:480px){
   .grid4{grid-template-columns:repeat(2,1fr)}
