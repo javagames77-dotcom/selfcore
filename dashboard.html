@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_09';
+  var V='20260525_11';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -484,7 +484,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
           <div class="metric-label" id="t-f-eaten"></div>
           <div class="metric-val" id="f-kcal-val">—<span class="metric-unit">ккал</span></div>
           <div class="metric-delta" id="f-kcal-goal"></div>
-          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px"><div id="f-kcal-bar2" style="height:100%;border-radius:2px;transition:none;background:var(--accent);width:0%;transition:width .4s"></div></div>
+          <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-top:6px;display:flex"><div id="f-kcal-bar2" style="height:100%;background:var(--accent);width:0%;transition:width .4s"></div><div id="f-kcal-bar2-over" style="height:100%;background:#E24B4A;width:0%;transition:width .4s"></div></div>
         </div>
         <div class="card metric-card">
           <div class="metric-label" id="t-f-prot"></div>
@@ -1597,7 +1597,12 @@ let foodGoalType = 'keep';
 let foodSex = 'm';
 let foodEditingIdx = -1;
 
-const mealIcons = { breakfast:['<i class="ti ti-egg" style="font-size:15px"></i>'], lunch:['<i class="ti ti-soup" style="font-size:15px"></i>'], dinner:['<i class="ti ti-meat" style="font-size:15px"></i>'], snack:['<i class="ti ti-apple" style="font-size:15px"></i>'] };
+const mealIcons = {
+  breakfast: [`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 14c.83 .642 2.077 1.017 3.5 1c1.423 .017 2.67 -.358 3.5 -1c.83 -.642 2.077 -1.017 3.5 -1c1.423 -.017 2.67 .358 3.5 1"/><path d="M8 3a2.4 2.4 0 0 0 -1 2a2.4 2.4 0 0 0 1 2"/><path d="M12 3a2.4 2.4 0 0 0 -1 2a2.4 2.4 0 0 0 1 2"/><path d="M3 10h14v5a6 6 0 0 1 -6 6h-2a6 6 0 0 1 -6 -6v-5"/><path d="M16.746 16.726a3 3 0 1 0 .252 -5.555"/></svg>`],
+  lunch:     [`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 11h16a1 1 0 0 1 1 1v.5c0 1.5 -2.517 5.573 -4 6.5v1a1 1 0 0 1 -1 1h-8a1 1 0 0 1 -1 -1v-1c-1.687 -1.054 -4 -5 -4 -6.5v-.5a1 1 0 0 1 1 -1"/><path d="M12 4a2.4 2.4 0 0 0 -1 2a2.4 2.4 0 0 0 1 2"/><path d="M16 4a2.4 2.4 0 0 0 -1 2a2.4 2.4 0 0 0 1 2"/><path d="M8 4a2.4 2.4 0 0 0 -1 2a2.4 2.4 0 0 0 1 2"/></svg>`],
+  dinner:    [`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19 3v12h-5c-.023 -3.681 .184 -7.406 5 -12zm0 12v6h-1v-3m-10 -14v17m-3 -17v3a3 3 0 1 0 6 0v-3"/></svg>`],
+  snack:     [`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 11.319c0 3.102 .444 5.319 2.222 7.978c1.351 1.797 3.156 2.247 5.08 .988c.426 -.268 .97 -.268 1.397 0c1.923 1.26 3.728 .809 5.079 -.988c1.778 -2.66 2.222 -4.876 2.222 -7.977c0 -2.661 -1.99 -5.32 -4.444 -5.32c-1.267 0 -2.41 .693 -3.22 1.44a.5 .5 0 0 1 -.672 0c-.809 -.746 -1.953 -1.44 -3.22 -1.44c-2.454 0 -4.444 2.66 -4.444 5.319"/><path d="M7 12c0 -1.47 .454 -2.34 1.5 -3"/><path d="M12 7c0 -1.2 .867 -4 3 -4"/></svg>`]
+};
 const mealColors = [{bg:'#FAEEDA',col:'#854F0B'},{bg:'#E1F5EE',col:'#0F6E56'},{bg:'#E6F1FB',col:'#185FA5'},{bg:'#EAF3DE',col:'#3B6D11'},{bg:'#EEEDFE',col:'#534AB7'},{bg:'#FAECE7',col:'#993C1D'}];
 
 /* ── Tab switching ── */
@@ -1759,7 +1764,18 @@ function foodUpdateMetrics(){
   const protPct = pct(FOOD_GOAL.prot>0 ? tot.prot/FOOD_GOAL.prot*100 : 0);
   const fatPct  = pct(FOOD_GOAL.fat >0 ? tot.fat /FOOD_GOAL.fat *100 : 0);
   const carbPct = pct(FOOD_GOAL.carb>0 ? tot.carb/FOOD_GOAL.carb*100 : 0);
-  setBar('f-kcal-bar2',   pct(kcalPct));
+  const kcalBarNorm = document.getElementById('f-kcal-bar2');
+  const kcalBarOver = document.getElementById('f-kcal-bar2-over');
+  if(kcalBarNorm && kcalBarOver){
+    if(kcalPct <= 100){
+      kcalBarNorm.style.width = pct(kcalPct)+'%';
+      kcalBarOver.style.width = '0%';
+    } else {
+      const op = Math.min(Math.round((tot.kcal-FOOD_GOAL.kcal)/FOOD_GOAL.kcal*100),100);
+      kcalBarNorm.style.width = (100-op)+'%';
+      kcalBarOver.style.width = op+'%';
+    }
+  }
   setBar('f-prot-bar',    protPct);
   setBar('f-fat-bar',     fatPct);
   setBar('f-carb-bar',    carbPct);
