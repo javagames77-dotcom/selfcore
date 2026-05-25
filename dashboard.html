@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_07';
+  var V='20260525_09';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -579,6 +579,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
               <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-prot"></div><input type="number" id="food-inp-prot" placeholder="32" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit"></div>
               <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-fat"></div><input type="number" id="food-inp-fat" placeholder="12" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit"></div>
               <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-carb"></div><input type="number" id="food-inp-carb" placeholder="48" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit"></div>
+              <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px" id="t-f-inp-fiber"></div><input type="number" id="food-inp-fiber" placeholder="3" style="width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit"></div>
             </div>
             <button class="btn-accent" onclick="foodAddManual()" id="t-f-save-btn"></button>
           </div>
@@ -987,7 +988,7 @@ const i18n = {
     fOr:'или введи вручную',
     fMealTypeLabel:'Приём пищи', fDishLabel:'Блюдо / продукт',
     fOptBreakfast:'Завтрак', fOptLunch:'Обед', fOptDinner:'Ужин', fOptSnack:'Перекус',
-    fInpKcal:'Калории (ккал)', fInpProt:'Белки (г)', fInpFat:'Жиры (г)', fInpCarb:'Углеводы (г)',
+    fInpKcal:'Калории (ккал)', fInpProt:'Белки (г)', fInpFat:'Жиры (г)', fInpCarb:'Углеводы (г)', fInpFiber:'Клетчатка (г)',
     fAiKcalLbl:'ккал', fAiCarbLbl:'углев. г', fSaveBtn:'Сохранить приём пищи',
     fAiRecognized:'GPT-4o распознал блюдо', fProtShort:'белки', fFatShort:'жиры',
     fConfirmBtn:'Подтвердить и сохранить', fRetryBtn:'Ввести по-другому',
@@ -1068,7 +1069,7 @@ const i18n = {
     fOr:'або введи вручну',
     fMealTypeLabel:'Прийом їжі', fDishLabel:'Страва / продукт',
     fOptBreakfast:'Сніданок', fOptLunch:'Обід', fOptDinner:'Вечеря', fOptSnack:'Перекус',
-    fInpKcal:'Калорії (ккал)', fInpProt:'Білки (г)', fInpFat:'Жири (г)', fInpCarb:'Вуглеводи (г)',
+    fInpKcal:'Калорії (ккал)', fInpProt:'Білки (г)', fInpFat:'Жири (г)', fInpCarb:'Вуглеводи (г)', fInpFiber:'Клітковина (г)',
     fAiKcalLbl:'ккал', fAiCarbLbl:'вугл. г', fSaveBtn:'Зберегти прийом їжі',
     fAiRecognized:'GPT-4o розпізнав страву', fProtShort:'білки', fFatShort:'жири',
     fConfirmBtn:'Підтвердити і зберегти', fRetryBtn:'Ввести по-іншому',
@@ -1149,7 +1150,7 @@ const i18n = {
     fOr:'or enter manually',
     fMealTypeLabel:'Meal type', fDishLabel:'Dish / product',
     fOptBreakfast:'Breakfast', fOptLunch:'Lunch', fOptDinner:'Dinner', fOptSnack:'Snack',
-    fInpKcal:'Calories (kcal)', fInpProt:'Protein (g)', fInpFat:'Fat (g)', fInpCarb:'Carbs (g)',
+    fInpKcal:'Calories (kcal)', fInpProt:'Protein (g)', fInpFat:'Fat (g)', fInpCarb:'Carbs (g)', fInpFiber:'Fiber (g)',
     fAiKcalLbl:'kcal', fAiCarbLbl:'carbs g', fSaveBtn:'Save meal',
     fAiRecognized:'GPT-4o recognized the dish', fProtShort:'protein', fFatShort:'fat',
     fConfirmBtn:'Confirm and save', fRetryBtn:'Enter differently',
@@ -1298,7 +1299,7 @@ function applyLang(){
   fe('t-f-add-title','fAddTitle'); fe('t-f-tg-hint','fTgHint');
   fe('t-f-meal-type-label','fMealTypeLabel'); fe('t-f-dish-label','fDishLabel'); fe('t-f-dish-label2','fDishLabel');
   fe('t-f-inp-kcal','fInpKcal'); fe('t-f-inp-prot','fInpProt');
-  fe('t-f-inp-fat','fInpFat'); fe('t-f-inp-carb','fInpCarb');
+  fe('t-f-inp-fat','fInpFat'); fe('t-f-inp-carb','fInpCarb'); fe('t-f-inp-fiber','fInpFiber');
   fe('t-f-save-btn','fSaveBtn');
   fe('t-f-ai-kcal-lbl','fAiKcalLbl'); fe('t-f-ai-carb-lbl','fAiCarbLbl');
   fe('t-f-photo-title','fPhotoTitle'); fe('t-f-photo-sub','fPhotoSub'); fe('t-f-or','fOr');
@@ -1596,12 +1597,7 @@ let foodGoalType = 'keep';
 let foodSex = 'm';
 let foodEditingIdx = -1;
 
-const mealIcons = {
-  breakfast: ['<svg width="14" height="14" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="8" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M5 4.5C5 3 6 2 7.5 2S10 3 10 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'],
-  lunch:     ['<svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'],
-  dinner:    ['<svg width="14" height="14" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M5 7.5h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'],
-  snack:     ['<svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M7.5 2a5 5 0 100 10A5 5 0 007.5 2z" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 5v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>']
-};
+const mealIcons = { breakfast:['<i class="ti ti-egg" style="font-size:15px"></i>'], lunch:['<i class="ti ti-soup" style="font-size:15px"></i>'], dinner:['<i class="ti ti-meat" style="font-size:15px"></i>'], snack:['<i class="ti ti-apple" style="font-size:15px"></i>'] };
 const mealColors = [{bg:'#FAEEDA',col:'#854F0B'},{bg:'#E1F5EE',col:'#0F6E56'},{bg:'#E6F1FB',col:'#185FA5'},{bg:'#EAF3DE',col:'#3B6D11'},{bg:'#EEEDFE',col:'#534AB7'},{bg:'#FAECE7',col:'#993C1D'}];
 
 /* ── Tab switching ── */
@@ -1691,8 +1687,8 @@ function foodRenderMeals(){
           +'<div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(m.dish_name)+'</div>'
           +'<div style="font-size:11px;color:var(--muted)">'+esc(m.time||'')+'</div></div>'
           +'<div style="font-size:13px;font-weight:500;color:var(--text);flex-shrink:0">'+m.kcal+'</div>'
-          +'<button onclick="foodEditingIdx='+i+';foodRenderMeals()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px;font-size:12px" title="Edit">✏️</button>'
-          +'<button onclick="foodDeleteMeal('+i+')" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--tag-red);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:2px;font-size:12px" title="Delete">🗑️</button>'
+          +'<button onclick="foodEditingIdx='+i+';foodRenderMeals()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px" title="Edit"><svg width="12" height="12" viewBox="0 0 15 15" fill="none"><path d="M10.5 2.5l2 2L5 12H3v-2L10.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>'
+          +'<button onclick="foodDeleteMeal('+i+')" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--tag-red);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:2px" title="Delete"><svg width="12" height="12" viewBox="0 0 15 15" fill="none"><path d="M3 4h9M6 4V2.5h3V4M5.5 4v7.5h4V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
           +'</div>';
       }
     });
@@ -1914,9 +1910,10 @@ async function foodAddManual(){
   const prot=parseInt((document.getElementById('food-inp-prot')||{}).value)||0;
   const fat =parseInt((document.getElementById('food-inp-fat') ||{}).value)||0;
   const carb=parseInt((document.getElementById('food-inp-carb')||{}).value)||0;
+  const fiber=parseInt((document.getElementById('food-inp-fiber')||{}).value)||0;
   if(!name&&!kcal){ const el=document.getElementById('food-name'); if(el) el.focus(); return; }
   const mealType=foodGetMealKey();
-  const meal={ dish_name:name||'?', meal_type:mealType, kcal, prot, fat, carb, fiber:0 };
+  const meal={ dish_name:name||'?', meal_type:mealType, kcal, prot, fat, carb, fiber };
   await foodSaveToServer(meal);
   foodMeals.push({ ...meal, time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}), meal_type_label:t('fOpt'+mealType.charAt(0).toUpperCase()+mealType.slice(1)) });
   foodRenderMeals(); foodUpdateMetrics();
@@ -1930,7 +1927,7 @@ function foodReset(){
   document.getElementById('food-ai-result').style.display='none';
   document.getElementById('food-success').style.display='none';
   foodLastAI=null;
-  ['food-name','food-inp-kcal','food-inp-prot','food-inp-fat','food-inp-carb'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['food-name','food-inp-kcal','food-inp-prot','food-inp-fat','food-inp-carb','food-inp-fiber'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
 }
 
 /* ── Statistics tab ── */
