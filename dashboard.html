@@ -1565,6 +1565,7 @@ function foodRenderMeals(){
   const groups = {};
   typeOrder.forEach(k => { groups[k] = []; });
   foodMeals.forEach((m, globalIdx) => {
+    if(!m.dish_name) return; // пропускаем невалидные записи
     const key = typeOrder.includes(m.meal_type) ? m.meal_type : 'snack';
     groups[key].push({ m, globalIdx });
   });
