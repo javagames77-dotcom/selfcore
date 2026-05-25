@@ -1540,26 +1540,70 @@ function foodRenderMeals(){
     list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted2);font-size:12px">'+t('fEmpty')+'</div>';
     return;
   }
-  list.innerHTML = foodMeals.map((m,i)=>{
-    if(foodEditingIdx===i) return '<div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border)">'
-      +'<span style="font-size:15px">'+( mealIcons[m.meal_type]||mealIcons.snack)[i%4]+'</span>'
-      +'<input id="fe-name-'+i+'" value="'+esc(m.dish_name)+'" style="flex:1;font-size:12px;padding:4px 7px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">'
-      +'<input id="fe-kcal-'+i+'" type="number" value="'+m.kcal+'" style="width:60px;font-size:12px;padding:4px 7px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">'
-      +'<button onclick="foodSaveMealEdit('+i+')" style="padding:4px 8px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:11px;cursor:pointer;font-family:inherit">OK</button>'
-      +'<button onclick="foodEditingIdx=-1;foodRenderMeals()" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;font-family:inherit">✕</button>'
+  // Цвета и иконки привязаны к типу приёма (не к индексу)
+  const typeStyle = {
+    breakfast: {bg:'#FAEEDA', col:'#854F0B'},
+    lunch:     {bg:'#E1F5EE', col:'#0F6E56'},
+    dinner:    {bg:'#E6F1FB', col:'#185FA5'},
+    snack:     {bg:'#EAF3DE', col:'#3B6D11'}
+  };
+  const typeLabel = {
+    breakfast: t('fOptBreakfast'),
+    lunch:     t('fOptLunch'),
+    dinner:    t('fOptDinner'),
+    snack:     t('fOptSnack')
+  };
+  const typeOrder = ['breakfast','lunch','dinner','snack'];
+
+  // Группируем, сохраняя глобальный индекс
+  const groups = {};
+  typeOrder.forEach(k => { groups[k] = []; });
+  foodMeals.forEach((m, globalIdx) => {
+    const key = typeOrder.includes(m.meal_type) ? m.meal_type : 'snack';
+    groups[key].push({ m, globalIdx });
+  });
+
+  let html = '';
+  typeOrder.forEach(type => {
+    const items = groups[type];
+    if(!items.length) return; // не рендерим пустые группы
+    const groupKcal = items.reduce((s, x) => s + (parseInt(x.m.kcal)||0), 0);
+    const st = typeStyle[type];
+    const icons = mealIcons[type] || mealIcons.snack;
+
+    html += '<div style="margin-bottom:6px">';
+    // Заголовок группы
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0 4px;border-bottom:1px solid var(--border);margin-bottom:2px">'
+      +'<span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">'+typeLabel[type]+'</span>'
+      +'<span style="font-size:11px;font-weight:500;color:var(--muted)">'+groupKcal+' ккал</span>'
       +'</div>';
-    const c = mealColors[i%mealColors.length];
-    const icon = (mealIcons[m.meal_type]||mealIcons.snack)[i%(mealIcons[m.meal_type]||mealIcons.snack).length];
-    return '<div class="food-meal-row">'
-      +'<div class="food-meal-icon" style="background:'+c.bg+';color:'+c.col+'">'+icon+'</div>'
-      +'<div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(m.dish_name)+'</div>'
-      +'<div style="font-size:11px;color:var(--muted)">'+esc(m.meal_type_label||'')+'</div></div>'
-      +'<div style="font-size:13px;font-weight:500;color:var(--text);flex-shrink:0">'+m.kcal+'</div>'
-      +'<div style="font-size:11px;color:var(--muted);flex-shrink:0;width:36px;text-align:right">'+esc(m.time||'')+'</div>'
-      +'<button onclick="foodEditingIdx='+i+';foodRenderMeals()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px;font-size:12px" title="Edit">✏️</button>'
-      +'<button onclick="foodDeleteMeal('+i+')" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--tag-red);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:2px;font-size:12px" title="Delete">🗑️</button>'
-      +'</div>';
-  }).join('');
+
+    // Строки блюд
+    items.forEach(({ m, globalIdx }) => {
+      const i = globalIdx;
+      if(foodEditingIdx === i){
+        html += '<div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border)">'
+          +'<span style="font-size:15px">'+icons[0]+'</span>'
+          +'<input id="fe-name-'+i+'" value="'+esc(m.dish_name)+'" style="flex:1;font-size:12px;padding:4px 7px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">'
+          +'<input id="fe-kcal-'+i+'" type="number" value="'+m.kcal+'" style="width:60px;font-size:12px;padding:4px 7px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit">'
+          +'<button onclick="foodSaveMealEdit('+i+')" style="padding:4px 8px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:11px;cursor:pointer;font-family:inherit">OK</button>'
+          +'<button onclick="foodEditingIdx=-1;foodRenderMeals()" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;font-family:inherit">✕</button>'
+          +'</div>';
+      } else {
+        const icon = icons[i % icons.length];
+        html += '<div class="food-meal-row">'
+          +'<div class="food-meal-icon" style="background:'+st.bg+';color:'+st.col+'">'+icon+'</div>'
+          +'<div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(m.dish_name)+'</div>'
+          +'<div style="font-size:11px;color:var(--muted)">'+esc(m.time||'')+'</div></div>'
+          +'<div style="font-size:13px;font-weight:500;color:var(--text);flex-shrink:0">'+m.kcal+'</div>'
+          +'<button onclick="foodEditingIdx='+i+';foodRenderMeals()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px;font-size:12px" title="Edit">✏️</button>'
+          +'<button onclick="foodDeleteMeal('+i+')" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--tag-red);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:2px;font-size:12px" title="Delete">🗑️</button>'
+          +'</div>';
+      }
+    });
+    html += '</div>';
+  });
+  list.innerHTML = html;
 }
 
 function foodSaveMealEdit(i){
