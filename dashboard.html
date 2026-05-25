@@ -9,7 +9,7 @@
 <title>Selfcore</title>
 <script>
 (function(){
-  var V='20260525_12';
+  var V='20260525_13';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -540,6 +540,26 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
       </div>
 
       <div class="grid2">
+
+        <div style="display:flex;flex-direction:column;gap:10px;overflow-x:auto">
+          <div class="card" style="padding:14px">
+            <div id="food-meals-list" style="max-height:300px;overflow-y:scroll;scrollbar-width:thin;-webkit-overflow-scrolling:touch"></div>
+            <div style="height:7px;background:#d0d0cc;border-radius:4px;overflow:hidden;margin-top:12px;display:flex">
+              <div id="food-kcal-bar-normal" style="height:100%;background:var(--accent);transition:none"></div><div id="food-kcal-bar-over" style="height:100%;background:#E24B4A;transition:none;width:0%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
+              <span id="food-bar-eaten"></span><span id="food-bar-goal"></span>
+            </div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+              <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 3 3.5.5-2.5 2.5.5 3.5L7.5 9 4 10.5l.5-3.5L2 4.5 5.5 4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              <span id="t-f-tip-title"></span>
+            </div>
+            <div id="food-tip-box" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg3);border-radius:8px;padding:10px 12px"></div>
+          </div>
+        </div>
+      </div>
         <div class="card" style="padding:14px">
           <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:11px;display:flex;align-items:center;gap:6px">
             <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v6M4.5 7.5h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -615,24 +635,6 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:va
           </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:10px;overflow-x:auto">
-          <div class="card" style="padding:14px">
-            <div id="food-meals-list" style="max-height:300px;overflow-y:scroll;scrollbar-width:thin;-webkit-overflow-scrolling:touch"></div>
-            <div style="height:7px;background:#d0d0cc;border-radius:4px;overflow:hidden;margin-top:12px;display:flex">
-              <div id="food-kcal-bar-normal" style="height:100%;background:var(--accent);transition:none"></div><div id="food-kcal-bar-over" style="height:100%;background:#E24B4A;transition:none;width:0%"></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--muted)">
-              <span id="food-bar-eaten"></span><span id="food-bar-goal"></span>
-            </div>
-          </div>
-          <div class="card" style="padding:14px">
-            <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:8px;display:flex;align-items:center;gap:6px">
-              <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 3 3.5.5-2.5 2.5.5 3.5L7.5 9 4 10.5l.5-3.5L2 4.5 5.5 4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
-              <span id="t-f-tip-title"></span>
-            </div>
-            <div id="food-tip-box" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg3);border-radius:8px;padding:10px 12px"></div>
-          </div>
-        </div>
       </div>
     </div>
 
