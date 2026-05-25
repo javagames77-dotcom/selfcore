@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selfcore — Привычки</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+[data-theme="light"]{--bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0f0ed;--border:#e8e8e4;--border2:#d0d0ca;--text:#1a1a1a;--muted:#6b6b6b;--muted2:#b0b0b0;--black:#0a0a0a;--nav-bg:rgba(255,255,255,.96);--sidebar-bg:#ffffff;--input-bg:#fafaf8;--theme-btn-bg:#f0f0ed;--theme-btn-color:#6b6b6b;--card-bg:#ffffff;--card-shadow:0 1px 3px rgba(0,0,0,.06);--tbl-hover:#fafafa;--accent:#1D9E75;--accent-hover:#0F6E56;--accent-light:#E1F5EE;--tag-green-bg:#f0fdf4;--tag-green:#16a34a;--tag-red-bg:#fff0f0;--tag-red:#c0392b;--tag-amber-bg:#fffbeb;--tag-amber:#b45309;--tag-blue-bg:#eff6ff;--tag-blue:#1d4ed8;--tag-purple-bg:#f5f3ff;--tag-purple:#6d28d9}
+[data-theme="dark"]{--bg:#0f0f0f;--bg2:#161616;--bg3:#1e1e1e;--border:#2a2a2a;--border2:#3d3d3d;--text:#f0f0f0;--muted:#888;--muted2:#555;--black:#f0f0f0;--nav-bg:rgba(15,15,15,.97);--sidebar-bg:#0f0f0f;--input-bg:#161616;--theme-btn-bg:#1e1e1e;--theme-btn-color:#888;--card-bg:#161616;--card-shadow:0 1px 3px rgba(0,0,0,.3);--tbl-hover:#1e1e1e;--accent:#1D9E75;--accent-hover:#5DCAA5;--accent-light:#04342C;--tag-green-bg:#0a2010;--tag-green:#4ade80;--tag-red-bg:#2a1010;--tag-red:#ff7070;--tag-amber-bg:#2a1800;--tag-amber:#fbbf24;--tag-blue-bg:#0c1a3a;--tag-blue:#93c5fd;--tag-purple-bg:#1a0a3a;--tag-purple:#c084fc}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg2);color:var(--text);font-size:13px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+
+/* NAV */
+.nav{height:48px;background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:200;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .2s,border-color .2s}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.logo-icon{display:grid;grid-template-columns:repeat(4,5px);grid-template-rows:repeat(4,5px);gap:1.5px;flex-shrink:0}
+.lc{width:5px;height:5px;border-radius:1.2px}
+.logo-text-wrap{display:flex;flex-direction:column;position:relative;height:24px;width:44px}
+.logo-self{position:absolute;top:2px;left:0;font-size:11px;font-weight:300;letter-spacing:-.2px;color:var(--muted2);line-height:.73}
+.logo-core{position:absolute;bottom:0;left:0;font-size:14px;font-weight:600;letter-spacing:-.4px;color:var(--black);line-height:.73;transition:color .2s}
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nav-badge{font-size:10px;font-weight:500;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 10px;letter-spacing:.02em}
+.nav-divider{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.nav-btn{font-size:12px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit;transition:all .12s}
+.nav-btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg2)}
+.theme-toggle{width:32px;height:32px;background:var(--theme-btn-bg);border:1px solid var(--border);border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--theme-btn-color);flex-shrink:0}
+.theme-toggle:hover{border-color:var(--border2)}
+.lang-switcher{display:flex;align-items:center;gap:2px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:3px}
+.lang-btn{padding:3px 8px;border:none;border-radius:5px;background:transparent;color:var(--muted);font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;letter-spacing:.02em}
+.lang-btn.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* LAYOUT */
+.layout{display:flex;height:calc(100vh - 48px)}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:background .2s,border-color .2s;overflow-y:auto}
+.sidebar-user{padding:14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.sidebar-user-info{min-width:0}
+.sidebar-user-name{font-size:12px;font-weight:500;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .2s}
+.sidebar-user-role{font-size:10px;color:var(--muted2)}
+.sidebar-section{padding:14px 12px 6px;font-size:10px;font-weight:500;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase}
+.sitem{display:flex;align-items:center;gap:9px;padding:7px 12px;margin:1px 6px;border:none;border-radius:7px;background:transparent;color:var(--muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .12s;text-align:left;width:calc(100% - 12px);text-decoration:none}
+.sitem:hover{background:var(--bg3);color:var(--text)}
+.sitem.active{background:var(--accent-light);color:var(--accent)}
+.sitem svg{flex-shrink:0;width:15px;height:15px}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:24px}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.page-title{font-size:16px;font-weight:600;color:var(--black);letter-spacing:-.02em}
+
+/* CARDS */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--card-shadow);transition:all .2s}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+
+/* METRIC CARD */
+.metric-card{padding:14px 16px;cursor:default}
+.metric-label{font-size:11px;color:var(--muted);margin-bottom:6px}
+.metric-val{font-size:22px;font-weight:500;color:var(--black);line-height:1}
+.metric-unit{font-size:12px;font-weight:400;color:var(--muted);margin-left:2px}
+.metric-delta{font-size:11px;margin-top:5px;color:var(--muted)}
+.delta-up{color:var(--tag-green)}
+.delta-dn{color:var(--tag-red)}
+
+/* TABS */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab-btn{padding:8px 14px;font-size:12px;font-weight:500;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-family:inherit;cursor:pointer;transition:all .15s;margin-bottom:-1px}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn:hover:not(.active){color:var(--text)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* HABIT ITEM */
+.habit-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:.5px solid var(--border);transition:background .1s}
+.habit-item:last-child{border-bottom:none}
+.habit-item:hover{background:var(--bg2)}
+.habit-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
+.habit-check.done{background:var(--accent);border-color:var(--accent)}
+.habit-check.anchor{background:var(--tag-purple-bg);border-color:var(--tag-purple);cursor:default}
+.habit-emoji{font-size:16px;flex-shrink:0;width:24px;text-align:center}
+.habit-info{flex:1;min-width:0}
+.habit-name{font-size:13px;font-weight:500;color:var(--black)}
+.habit-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.habit-streak{font-size:11px;font-weight:500;color:var(--tag-amber);background:var(--tag-amber-bg);padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0}
+.habit-anchor-badge{font-size:10px;color:var(--tag-purple);background:var(--tag-purple-bg);padding:2px 6px;border-radius:5px;font-weight:500;flex-shrink:0}
+
+/* CALENDAR HEATMAP */
+.heatmap-wrap{overflow-x:auto;padding-bottom:4px}
+.heatmap{display:flex;gap:3px;align-items:flex-start;min-width:max-content}
+.heatmap-col{display:flex;flex-direction:column;gap:3px}
+.heatmap-cell{width:12px;height:12px;border-radius:2px;background:var(--bg3);cursor:pointer;transition:transform .1s}
+.heatmap-cell:hover{transform:scale(1.3)}
+.heatmap-cell.h0{background:var(--bg3)}
+.heatmap-cell.h1{background:#9FE1CB}
+.heatmap-cell.h2{background:#5DCAA5}
+.heatmap-cell.h3{background:#1D9E75}
+.heatmap-cell.h4{background:#0F6E56}
+.heatmap-day-labels{display:flex;flex-direction:column;gap:3px;margin-right:4px}
+.heatmap-day-label{height:12px;font-size:9px;color:var(--muted2);display:flex;align-items:center}
+.heatmap-month-labels{display:flex;gap:3px;padding-left:28px;margin-bottom:4px}
+.heatmap-month-label{font-size:9px;color:var(--muted2);white-space:nowrap}
+
+/* PROGRESS RING */
+.ring-wrap{display:flex;align-items:center;justify-content:center;position:relative}
+.ring-text{position:absolute;text-align:center}
+.ring-pct{font-size:18px;font-weight:600;color:var(--black)}
+.ring-sub{font-size:10px;color:var(--muted)}
+
+/* ADD HABIT FORM */
+.add-habit-form{padding:16px}
+.form-row{margin-bottom:12px}
+.form-label{font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.form-input{width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit;transition:border-color .15s}
+.form-input:focus{outline:none;border-color:var(--accent)}
+.form-select{width:100%;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit}
+.emoji-picker{display:flex;flex-wrap:wrap;gap:6px}
+.emoji-opt{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.emoji-opt.active,.emoji-opt:hover{border-color:var(--accent);background:var(--accent-light)}
+.btn-accent{width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.btn-accent:hover{opacity:.88}
+.btn-ghost{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .12s}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+
+/* WEEK GRID */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px}
+.week-day{text-align:center}
+.week-day-label{font-size:10px;color:var(--muted2);margin-bottom:4px;font-weight:500}
+.week-day-num{font-size:12px;font-weight:500;color:var(--muted);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px}
+.week-day-num.today{background:var(--accent);color:#fff}
+.week-habits{display:flex;flex-direction:column;gap:4px}
+.week-dot{width:100%;height:6px;border-radius:3px;background:var(--bg3)}
+.week-dot.done{background:var(--accent)}
+.week-dot.anchor{background:var(--tag-purple)}
+.week-dot.skipped{background:var(--tag-red-bg)}
+
+/* TOAST */
+#toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:99999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
+.toast{padding:.7rem 1.1rem;border-radius:10px;font-size:13px;font-weight:500;color:#fff;max-width:320px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-success{background:#16a34a}
+.toast-error{background:#dc2626}
+.toast-info{background:var(--accent)}
+
+/* MOB NAV */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--nav-bg);border-top:1px solid var(--border);z-index:199;backdrop-filter:blur(10px)}
+.mob-nav-items{display:flex;height:100%}
+.mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;color:var(--muted);font-size:9px;font-weight:500;font-family:inherit;cursor:pointer;transition:color .15s}
+.mob-nav-btn.active{color:var(--accent)}
+
+/* INSIGHT BOX */
+.insight-box{background:var(--accent-light);border:1px solid #9FE1CB;border-radius:10px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start}
+.insight-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.insight-text{font-size:12px;color:var(--accent-hover);line-height:1.55}
+
+/* SITEM BADGE */
+.sitem-badge{margin-left:auto;background:var(--accent);color:#fff;border-radius:9px;font-size:10px;font-weight:700;padding:1px 6px;min-width:18px;text-align:center;display:none}
+.sitem-badge.show{display:inline-block}
+
+@media(max-width:768px){
+  .sidebar{display:none}
+  .mob-nav{display:block}
+  .main{padding:16px;padding-bottom:72px}
+  .grid4{grid-template-columns:repeat(2,1fr)}
+  .grid3{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .nav-badge,.nav-divider{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/dashboard.html" class="nav-logo">
+    <div class="logo-icon">
+      <div class="lc" style="background:#1D9E75"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.65"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.32"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.8"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.42"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.16"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.5"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.2"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#1D9E75;opacity:.22"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+      <div class="lc" style="background:#e0e0e0"></div>
+    </div>
+    <div class="logo-text-wrap">
+      <span class="logo-self">self</span>
+      <span class="logo-core">core</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <span class="nav-badge" id="navBadge"></span>
+    <div class="nav-divider"></div>
+    <div class="lang-switcher">
+      <button class="lang-btn" onclick="setLang('uk')">UA</button>
+      <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <svg id="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v1.8M8 12.7v1.8M1.5 8h1.8M12.7 8h1.8M3.6 3.6l1.3 1.3M11.1 11.1l1.3 1.3M3.6 12.4l1.3-1.3M11.1 4.9l1.3-1.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <svg id="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:none"><path d="M13.5 10A6 6 0 015 2.5a6 6 0 108 8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="nav-btn" onclick="logout()" id="t-logout">Выход</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-user">
+    <div class="sidebar-avatar" id="sidebarAvatar">U</div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name" id="sidebarName">—</div>
+      <div class="sidebar-user-role" id="sidebarRole"></div>
+    </div>
+  </div>
+
+  <div class="sidebar-section" id="t-nav-main">Главное</div>
+  <a class="sitem" href="/dashboard.html" id="nav-dashboard">
+    <svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+    <span id="t-nav-overview">Дашборд</span>
+  </a>
+  <a class="sitem" href="/dashboard.html#plan" id="nav-plan">
+    <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="2.5" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 1.5v2M10 1.5v2M1.5 6h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-plan">Планирование</span>
+  </a>
+
+  <div class="sidebar-section" id="t-nav-modules">Модули</div>
+  <a class="sitem" href="/dashboard.html#health" id="nav-health">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M7.5 13S2 9.5 2 5.5a3 3 0 015.5-1.5A3 3 0 0113 5.5C13 9.5 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+    <span id="t-nav-health">Здоровье</span>
+  </a>
+  <a class="sitem" href="/dashboard.html#food" id="nav-food">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-food">Питание</span>
+  </a>
+  <button class="sitem active" id="nav-habits">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span id="t-nav-habits">Привычки</span>
+  </button>
+  <a class="sitem" href="/dashboard.html#finance" id="nav-finance">
+    <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 6.5h12" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="9.5" r=".8" fill="currentColor"/></svg>
+    <span id="t-nav-finance">Финансы</span>
+  </a>
+  <a class="sitem" href="/dashboard.html#analytics" id="nav-analytics">
+    <svg viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <span id="t-nav-analytics">Аналитика</span>
+  </a>
+
+  <div class="sidebar-section" id="t-nav-system">Система</div>
+  <a class="sitem" href="/dashboard.html#settings" id="nav-settings">
+    <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7.5 1.5v1.3M7.5 12.2v1.3M1.5 7.5h1.3M12.2 7.5h1.3M3.4 3.4l.9.9M10.7 10.7l.9.9M3.4 11.6l.9-.9M10.7 4.3l.9-.9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span id="t-nav-settings">Настройки</span>
+  </a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="page-header">
+    <div class="page-title" id="t-page-title">Привычки</div>
+    <button class="btn-ghost" onclick="openAddHabit()" id="t-add-btn">+ Добавить</button>
+  </div>
+
+  <!-- METRICS -->
+  <div class="grid4" style="margin-bottom:16px">
+    <div class="card metric-card">
+      <div class="metric-label" id="t-m-today">Сегодня</div>
+      <div class="metric-val"><span id="m-done">0</span><span class="metric-unit" id="t-m-of"> / </span><span id="m-total">0</span></div>
+      <div class="metric-delta delta-up" id="m-pct-label">0%</div>
+    </div>
+    <div class="card metric-card">
+      <div class="metric-label" id="t-m-streak">Лучшая серия</div>
+      <div class="metric-val"><span id="m-streak">0</span><span class="metric-unit" id="t-m-days"> дн</span></div>
+      <div class="metric-delta" id="t-m-streak-sub">подряд</div>
+    </div>
+    <div class="card metric-card">
+      <div class="metric-label" id="t-m-week">Эта неделя</div>
+      <div class="metric-val"><span id="m-week-pct">0</span><span class="metric-unit">%</span></div>
+      <div class="metric-delta" id="t-m-week-sub">выполнение</div>
+    </div>
+    <div class="card metric-card">
+      <div class="metric-label" id="t-m-anchors">Якоря сегодня</div>
+      <div class="metric-val"><span id="m-anchors">0</span><span class="metric-unit" id="t-m-anchors-of"> / </span><span id="m-anchors-total">0</span></div>
+      <div class="metric-delta" id="t-m-anchors-label" style="color:var(--tag-purple)">молитвы</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('today')" id="tab-today">Сегодня</button>
+    <button class="tab-btn" onclick="switchTab('week')" id="tab-week">Неделя</button>
+    <button class="tab-btn" onclick="switchTab('calendar')" id="tab-calendar">Календарь</button>
+    <button class="tab-btn" onclick="switchTab('manage')" id="tab-manage">Управление</button>
+  </div>
+
+  <!-- TAB: TODAY -->
+  <div class="tab-panel active" id="panel-today">
+    <div id="insight-container"></div>
+    <div class="card" style="overflow:hidden" id="habits-today-list">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- TAB: WEEK -->
+  <div class="tab-panel" id="panel-week">
+    <div class="card" style="padding:16px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:14px" id="t-week-overview">Обзор недели</div>
+      <div class="week-grid" id="week-grid"></div>
+      <div style="display:flex;align-items:center;gap:14px;font-size:11px;color:var(--muted);margin-top:8px;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:6px;border-radius:3px;background:var(--accent);display:inline-block"></span><span id="t-legend-done">Выполнено</span></span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:6px;border-radius:3px;background:var(--tag-purple);display:inline-block"></span><span id="t-legend-anchor">Якорь</span></span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:6px;border-radius:3px;background:var(--bg3);display:inline-block"></span><span id="t-legend-pending">Ожидает</span></span>
+      </div>
+    </div>
+
+    <!-- Per-habit week stats -->
+    <div class="card" style="overflow:hidden" id="week-stats-list"></div>
+  </div>
+
+  <!-- TAB: CALENDAR (heatmap) -->
+  <div class="tab-panel" id="panel-calendar">
+    <div class="card" style="padding:16px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:13px;font-weight:500;color:var(--black)" id="t-heatmap-title">Активность за 12 недель</div>
+        <select id="heatmap-habit-select" onchange="renderHeatmap()" style="font-size:12px;padding:5px 9px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-family:inherit"></select>
+      </div>
+      <div style="display:flex;gap:4px">
+        <div class="heatmap-day-labels">
+          <div class="heatmap-day-label" style="margin-top:18px" id="t-hd-mon">Пн</div>
+          <div class="heatmap-day-label" style="margin-top:12px" id="t-hd-wed">Ср</div>
+          <div class="heatmap-day-label" style="margin-top:12px" id="t-hd-fri">Пт</div>
+        </div>
+        <div style="flex:1">
+          <div class="heatmap-month-labels" id="heatmap-months"></div>
+          <div class="heatmap-wrap">
+            <div class="heatmap" id="heatmap-grid"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:10px;font-size:10px;color:var(--muted2)" id="t-heatmap-legend">
+        <span id="t-less">Меньше</span>
+        <span style="width:10px;height:10px;border-radius:2px;background:var(--bg3);display:inline-block"></span>
+        <span style="width:10px;height:10px;border-radius:2px;background:#9FE1CB;display:inline-block"></span>
+        <span style="width:10px;height:10px;border-radius:2px;background:#5DCAA5;display:inline-block"></span>
+        <span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;display:inline-block"></span>
+        <span style="width:10px;height:10px;border-radius:2px;background:#0F6E56;display:inline-block"></span>
+        <span id="t-more">Больше</span>
+      </div>
+    </div>
+
+    <!-- Streak list -->
+    <div class="card" style="padding:14px" id="streak-card">
+      <div style="font-size:13px;font-weight:500;color:var(--black);margin-bottom:12px" id="t-streaks-title">Серии</div>
+      <div id="streaks-list"></div>
+    </div>
+  </div>
+
+  <!-- TAB: MANAGE -->
+  <div class="tab-panel" id="panel-manage">
+    <div class="card" style="overflow:hidden;margin-bottom:14px" id="manage-list"></div>
+    <div class="card" id="add-habit-card" style="display:none">
+      <div style="padding:14px 16px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:13px;font-weight:500;color:var(--black)" id="t-add-habit-title">Новая привычка</div>
+        <button onclick="closeAddHabit()" style="border:none;background:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1">&times;</button>
+      </div>
+      <div class="add-habit-form">
+        <div class="form-row">
+          <div class="form-label" id="t-form-emoji">Эмодзи</div>
+          <div class="emoji-picker" id="emoji-picker"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-label" id="t-form-name">Название</div>
+          <input class="form-input" id="new-habit-name" type="text" placeholder="Утренняя молитва">
+        </div>
+        <div class="form-row">
+          <div class="form-label" id="t-form-freq">Частота</div>
+          <select class="form-select" id="new-habit-freq">
+            <option value="daily" id="t-freq-daily">Ежедневно</option>
+            <option value="weekly" id="t-freq-weekly">Еженедельно</option>
+            <option value="custom" id="t-freq-custom">Несколько раз в неделю</option>
+          </select>
+        </div>
+        <div class="form-row" id="times-row" style="display:none">
+          <div class="form-label" id="t-form-times">Раз в неделю</div>
+          <input class="form-input" id="new-habit-times" type="number" min="1" max="7" value="3" style="width:80px">
+        </div>
+        <div class="form-row">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="new-habit-anchor" style="width:14px;height:14px;accent-color:var(--tag-purple)">
+            <span style="font-size:13px;color:var(--text)" id="t-form-anchor">Якорь (защищённый приоритет)</span>
+          </label>
+        </div>
+        <button class="btn-accent" onclick="saveNewHabit()" id="t-save-habit">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- MOB NAV -->
+<nav class="mob-nav">
+  <div class="mob-nav-items">
+    <a class="mob-nav-btn" href="/dashboard.html">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+      <span id="t-mob-home">Главная</span>
+    </a>
+    <a class="mob-nav-btn" href="/dashboard.html#food">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-mob-food">Питание</span>
+    </a>
+    <button class="mob-nav-btn active">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="t-mob-habits">Привычки</span>
+    </button>
+    <a class="mob-nav-btn" href="/dashboard.html#analytics">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <span id="t-mob-analytics">Аналитика</span>
+    </button>
+    <a class="mob-nav-btn" href="/dashboard.html#settings">
+      <svg width="20" height="20" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7.5 1.5v1.3M7.5 12.2v1.3M1.5 7.5h1.3M12.2 7.5h1.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span id="t-mob-settings">Настройки</span>
+    </a>
+  </div>
+</nav>
+
+<div id="toast-container"></div>
+
+<script>
+/* ══════════════════════════════════
+   i18n
+══════════════════════════════════ */
+const i18n = {
+  ru:{
+    logout:'Выход', pageTitle:'Привычки', addBtn:'+ Добавить',
+    navMain:'Главное', navModules:'Модули', navSystem:'Система',
+    navOverview:'Дашборд', navPlan:'Планирование', navHealth:'Здоровье',
+    navFood:'Питание', navHabits:'Привычки', navFinance:'Финансы',
+    navAnalytics:'Аналитика', navSettings:'Настройки',
+    mToday:'Сегодня', mStreak:'Лучшая серия', mWeek:'Эта неделя',
+    mAnchors:'Якоря сегодня', mDays:' дн', mStreakSub:'подряд',
+    mWeekSub:'выполнение', mAnchorsLabel:'молитвы',
+    tabToday:'Сегодня', tabWeek:'Неделя', tabCalendar:'Календарь', tabManage:'Управление',
+    weekOverview:'Обзор недели',
+    legendDone:'Выполнено', legendAnchor:'Якорь', legendPending:'Ожидает',
+    heatmapTitle:'Активность за 12 недель',
+    hdMon:'Пн', hdWed:'Ср', hdFri:'Пт', less:'Меньше', more:'Больше',
+    streaksTitle:'Серии',
+    addHabitTitle:'Новая привычка', formEmoji:'Эмодзи', formName:'Название',
+    formFreq:'Частота', formTimes:'Раз в неделю', formAnchor:'Якорь (защищённый приоритет)',
+    saveHabit:'Сохранить', freqDaily:'Ежедневно', freqWeekly:'Еженедельно', freqCustom:'Несколько раз в неделю',
+    anchorLabel:'якорь', streakLabel:'серия', daysLabel:'дн',
+    insightPrayer:'Молитвы — якоря дня. Система никогда не планирует поверх них.',
+    insightStreak:'Отличная серия! Продолжай в том же духе.',
+    markDone:'Отмечено ✓', alreadyDone:'Уже выполнено',
+    habitSaved:'Привычка добавлена', habitDeleted:'Привычка удалена',
+    confirmDelete:'Удалить привычку?', deleteBtn:'Удалить', cancelBtn:'Отмена',
+    mobHome:'Главная', mobFood:'Питание', mobHabits:'Привычки',
+    mobAnalytics:'Аналитика', mobSettings:'Настройки',
+    allHabits:'Все привычки', noHabits:'Нет привычек. Нажмите + Добавить.',
+    ofLabel:'из',
+  },
+  uk:{
+    logout:'Вихід', pageTitle:'Звички', addBtn:'+ Додати',
+    navMain:'Головне', navModules:'Модулі', navSystem:'Система',
+    navOverview:'Дашборд', navPlan:'Планування', navHealth:'Здоров\'я',
+    navFood:'Харчування', navHabits:'Звички', navFinance:'Фінанси',
+    navAnalytics:'Аналітика', navSettings:'Налаштування',
+    mToday:'Сьогодні', mStreak:'Найкраща серія', mWeek:'Цей тиждень',
+    mAnchors:'Якоря сьогодні', mDays:' дн', mStreakSub:'підряд',
+    mWeekSub:'виконання', mAnchorsLabel:'молитви',
+    tabToday:'Сьогодні', tabWeek:'Тиждень', tabCalendar:'Календар', tabManage:'Управління',
+    weekOverview:'Огляд тижня',
+    legendDone:'Виконано', legendAnchor:'Якір', legendPending:'Очікує',
+    heatmapTitle:'Активність за 12 тижнів',
+    hdMon:'Пн', hdWed:'Ср', hdFri:'Пт', less:'Менше', more:'Більше',
+    streaksTitle:'Серії',
+    addHabitTitle:'Нова звичка', formEmoji:'Емодзі', formName:'Назва',
+    formFreq:'Частота', formTimes:'Разів на тиждень', formAnchor:'Якір (захищений пріоритет)',
+    saveHabit:'Зберегти', freqDaily:'Щодня', freqWeekly:'Щотижня', freqCustom:'Кілька разів на тиждень',
+    anchorLabel:'якір', streakLabel:'серія', daysLabel:'дн',
+    insightPrayer:'Молитви — якоря дня. Система ніколи не планує поверх них.',
+    insightStreak:'Чудова серія! Продовжуй у тому ж дусі.',
+    markDone:'Відмічено ✓', alreadyDone:'Вже виконано',
+    habitSaved:'Звичку додано', habitDeleted:'Звичку видалено',
+    confirmDelete:'Видалити звичку?', deleteBtn:'Видалити', cancelBtn:'Скасувати',
+    mobHome:'Головна', mobFood:'Їжа', mobHabits:'Звички',
+    mobAnalytics:'Аналітика', mobSettings:'Налаштування',
+    allHabits:'Всі звички', noHabits:'Немає звичок. Натисніть + Додати.',
+    ofLabel:'з',
+  },
+  en:{
+    logout:'Sign out', pageTitle:'Habits', addBtn:'+ Add',
+    navMain:'Main', navModules:'Modules', navSystem:'System',
+    navOverview:'Dashboard', navPlan:'Planning', navHealth:'Health',
+    navFood:'Nutrition', navHabits:'Habits', navFinance:'Finance',
+    navAnalytics:'Analytics', navSettings:'Settings',
+    mToday:'Today', mStreak:'Best streak', mWeek:'This week',
+    mAnchors:'Anchors today', mDays:' d', mStreakSub:'in a row',
+    mWeekSub:'completion', mAnchorsLabel:'prayers',
+    tabToday:'Today', tabWeek:'Week', tabCalendar:'Calendar', tabManage:'Manage',
+    weekOverview:'Week overview',
+    legendDone:'Done', legendAnchor:'Anchor', legendPending:'Pending',
+    heatmapTitle:'Activity — last 12 weeks',
+    hdMon:'Mo', hdWed:'We', hdFri:'Fr', less:'Less', more:'More',
+    streaksTitle:'Streaks',
+    addHabitTitle:'New habit', formEmoji:'Emoji', formName:'Name',
+    formFreq:'Frequency', formTimes:'Times per week', formAnchor:'Anchor (protected priority)',
+    saveHabit:'Save', freqDaily:'Daily', freqWeekly:'Weekly', freqCustom:'Several times a week',
+    anchorLabel:'anchor', streakLabel:'streak', daysLabel:'d',
+    insightPrayer:'Prayers are day anchors. The system never plans over them.',
+    insightStreak:'Great streak! Keep it up.',
+    markDone:'Marked ✓', alreadyDone:'Already done',
+    habitSaved:'Habit added', habitDeleted:'Habit deleted',
+    confirmDelete:'Delete habit?', deleteBtn:'Delete', cancelBtn:'Cancel',
+    mobHome:'Home', mobFood:'Food', mobHabits:'Habits',
+    mobAnalytics:'Analytics', mobSettings:'Settings',
+    allHabits:'All habits', noHabits:'No habits. Click + Add.',
+    ofLabel:'of',
+  }
+};
+
+let currentLang = localStorage.getItem('sc_lang') || 'ru';
+function t(k){ return (i18n[currentLang]||i18n.ru)[k]||k; }
+
+/* ══════════════════════════════════
+   DEMO DATA
+══════════════════════════════════ */
+const EMOJIS = ['🙏','💪','📖','🌿','💧','🏃','✝️','❤️','🌅','🎯','🧘','📝','🛌','🥗','🎸','🕊️'];
+
+let habits = JSON.parse(localStorage.getItem('sc_habits') || 'null') || [
+  {id:1, emoji:'🙏', name:{ru:'Утренняя молитва', uk:'Ранкова молитва', en:'Morning prayer'}, freq:'daily', anchor:true,  streak:14, timesPerWeek:7},
+  {id:2, emoji:'🙏', name:{ru:'Дневная молитва', uk:'Денна молитва',   en:'Midday prayer'},   freq:'daily', anchor:true,  streak:14, timesPerWeek:7},
+  {id:3, emoji:'🙏', name:{ru:'Вечерняя молитва',uk:'Вечірня молитва', en:'Evening prayer'},  freq:'daily', anchor:true,  streak:14, timesPerWeek:7},
+  {id:4, emoji:'❤️', name:{ru:'Общение с семьёй',uk:'Спілкування з сім\'єю',en:'Family time'}, freq:'daily', anchor:false, streak:7, timesPerWeek:7},
+  {id:5, emoji:'📖', name:{ru:'Учёба (English)', uk:'Навчання (English)',en:'Study (English)'},freq:'daily', anchor:false, streak:5, timesPerWeek:7},
+  {id:6, emoji:'💪', name:{ru:'Тренировка',      uk:'Тренування',      en:'Workout'},         freq:'custom',anchor:false, streak:3, timesPerWeek:3},
+  {id:7, emoji:'🛌', name:{ru:'Сон до 23:30',    uk:'Сон до 23:30',    en:'Sleep by 23:30'},  freq:'daily', anchor:false, streak:4, timesPerWeek:7},
+  {id:8, emoji:'🌿', name:{ru:'Прогулка',         uk:'Прогулянка',      en:'Walk outside'},    freq:'custom',anchor:false, streak:2, timesPerWeek:2},
+  {id:9, emoji:'🎸', name:{ru:'Хобби / отдых',   uk:'Хобі / відпочинок',en:'Hobby / rest'},   freq:'custom',anchor:false, streak:1, timesPerWeek:2},
+];
+
+// Generate synthetic log for last 84 days
+function generateLog(){
+  const log = {};
+  const today = new Date();
+  habits.forEach(h => {
+    log[h.id] = {};
+    for(let i=0;i<84;i++){
+      const d = new Date(today); d.setDate(d.getDate()-i);
+      const key = dateKey(d);
+      const chance = h.anchor ? 0.96 : (h.freq==='daily' ? 0.78 : 0.65);
+      log[h.id][key] = Math.random() < chance;
+    }
+    // Today: anchors done, others not yet (demo)
+    log[h.id][dateKey(today)] = h.anchor ? true : false;
+  });
+  return log;
+}
+
+let habitLog = JSON.parse(localStorage.getItem('sc_habit_log') || 'null') || generateLog();
+
+function dateKey(d){ return d.toISOString().slice(0,10); }
+const todayKey = dateKey(new Date());
+
+function saveData(){
+  localStorage.setItem('sc_habits', JSON.stringify(habits));
+  localStorage.setItem('sc_habit_log', JSON.stringify(habitLog));
+}
+
+/* ══════════════════════════════════
+   AUTH
+══════════════════════════════════ */
+(function(){
+  const token = localStorage.getItem('sc_token') || sessionStorage.getItem('sc_token');
+  if(!token){ window.location.href='/index.html'; return; }
+  const user = JSON.parse(localStorage.getItem('sc_user') || sessionStorage.getItem('sc_user') || '{}');
+  document.getElementById('sidebarAvatar').textContent = (user.first_name||'U')[0].toUpperCase();
+  document.getElementById('sidebarName').textContent = (user.first_name||'') + ' ' + (user.last_name||'');
+  const roleMap = {admin:'Администратор', family:'Семья', friend:'Друг'};
+  document.getElementById('sidebarRole').textContent = roleMap[user.role]||'';
+  document.getElementById('navBadge').textContent = roleMap[user.role]||'';
+  document.getElementById('navBadge').style.display = user.role ? '' : 'none';
+})();
+
+function getUser(){ try{ return JSON.parse(localStorage.getItem('sc_user')||sessionStorage.getItem('sc_user')||'{}'); }catch(e){return{};} }
+function logout(){ localStorage.removeItem('sc_token'); localStorage.removeItem('sc_user'); sessionStorage.removeItem('sc_token'); sessionStorage.removeItem('sc_user'); window.location.href='/index.html'; }
+
+/* ══════════════════════════════════
+   THEME
+══════════════════════════════════ */
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  localStorage.setItem('sc_theme',isDark?'light':'dark');
+  document.getElementById('icon-sun').style.display=isDark?'block':'none';
+  document.getElementById('icon-moon').style.display=isDark?'none':'block';
+}
+
+/* ══════════════════════════════════
+   LANG
+══════════════════════════════════ */
+function habitName(h){ return h.name[currentLang] || h.name.ru || Object.values(h.name)[0]; }
+
+function applyLang(){
+  document.documentElement.lang = currentLang;
+  const fe = (id,k) => { const el=document.getElementById(id); if(el) el.textContent=t(k); };
+  fe('t-logout','logout'); fe('t-page-title','pageTitle'); fe('t-add-btn','addBtn');
+  fe('t-nav-main','navMain'); fe('t-nav-modules','navModules'); fe('t-nav-system','navSystem');
+  fe('t-nav-overview','navOverview'); fe('t-nav-plan','navPlan'); fe('t-nav-health','navHealth');
+  fe('t-nav-food','navFood'); fe('t-nav-habits','navHabits'); fe('t-nav-finance','navFinance');
+  fe('t-nav-analytics','navAnalytics'); fe('t-nav-settings','navSettings');
+  fe('t-m-today','mToday'); fe('t-m-streak','mStreak'); fe('t-m-week','mWeek');
+  fe('t-m-anchors','mAnchors'); fe('t-m-days','mDays'); fe('t-m-streak-sub','mStreakSub');
+  fe('t-m-week-sub','mWeekSub'); fe('t-m-anchors-label','mAnchorsLabel');
+  fe('tab-today','tabToday'); fe('tab-week','tabWeek'); fe('tab-calendar','tabCalendar'); fe('tab-manage','tabManage');
+  fe('t-week-overview','weekOverview');
+  fe('t-legend-done','legendDone'); fe('t-legend-anchor','legendAnchor'); fe('t-legend-pending','legendPending');
+  fe('t-heatmap-title','heatmapTitle');
+  fe('t-hd-mon','hdMon'); fe('t-hd-wed','hdWed'); fe('t-hd-fri','hdFri');
+  fe('t-less','less'); fe('t-more','more');
+  fe('t-streaks-title','streaksTitle');
+  fe('t-add-habit-title','addHabitTitle'); fe('t-form-emoji','formEmoji');
+  fe('t-form-name','formName'); fe('t-form-freq','formFreq'); fe('t-form-times','formTimes');
+  fe('t-form-anchor','formAnchor'); fe('t-save-habit','saveHabit');
+  fe('t-freq-daily','freqDaily'); fe('t-freq-weekly','freqWeekly'); fe('t-freq-custom','freqCustom');
+  fe('t-mob-home','mobHome'); fe('t-mob-food','mobFood'); fe('t-mob-habits','mobHabits');
+  fe('t-mob-analytics','mobAnalytics'); fe('t-mob-settings','mobSettings');
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    const map={'UA':'uk','RU':'ru','EN':'en'};
+    btn.classList.toggle('active', map[btn.textContent]===currentLang);
+  });
+  renderAll();
+}
+
+function setLang(lang){ currentLang=lang; localStorage.setItem('sc_lang',lang); applyLang(); }
+
+/* ══════════════════════════════════
+   METRICS
+══════════════════════════════════ */
+function calcMetrics(){
+  const todayDone = habits.filter(h => habitLog[h.id]?.[todayKey]).length;
+  const todayTotal = habits.length;
+  const anchors = habits.filter(h => h.anchor);
+  const anchorsDone = anchors.filter(h => habitLog[h.id]?.[todayKey]).length;
+
+  // Best streak
+  let bestStreak = 0;
+  habits.forEach(h => { if((h.streak||0) > bestStreak) bestStreak = h.streak||0; });
+
+  // Week completion
+  const weekDays = [];
+  for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); weekDays.push(dateKey(d)); }
+  let weekDone=0, weekTotal=0;
+  weekDays.forEach(dk => {
+    habits.forEach(h => {
+      weekTotal++;
+      if(habitLog[h.id]?.[dk]) weekDone++;
+    });
+  });
+  const weekPct = weekTotal ? Math.round(weekDone/weekTotal*100) : 0;
+
+  document.getElementById('m-done').textContent = todayDone;
+  document.getElementById('m-total').textContent = todayTotal;
+  document.getElementById('m-pct-label').textContent = todayTotal ? Math.round(todayDone/todayTotal*100)+'%' : '0%';
+  document.getElementById('m-streak').textContent = bestStreak;
+  document.getElementById('m-week-pct').textContent = weekPct;
+  document.getElementById('m-anchors').textContent = anchorsDone;
+  document.getElementById('m-anchors-total').textContent = anchors.length;
+}
+
+/* ══════════════════════════════════
+   TODAY TAB
+══════════════════════════════════ */
+function renderToday(){
+  const list = document.getElementById('habits-today-list');
+  const insight = document.getElementById('insight-container');
+
+  // Insight
+  const anchorsDone = habits.filter(h=>h.anchor && habitLog[h.id]?.[todayKey]).length;
+  const anchorsTotal = habits.filter(h=>h.anchor).length;
+  if(anchorsDone < anchorsTotal){
+    insight.innerHTML = `<div class="insight-box"><div class="insight-icon">🙏</div><div class="insight-text">${t('insightPrayer')}</div></div>`;
+  } else {
+    insight.innerHTML = '';
+  }
+
+  if(!habits.length){ list.innerHTML=`<div style="padding:32px;text-align:center;color:var(--muted2);font-size:13px">${t('noHabits')}</div>`; return; }
+
+  // Sort: anchors first, then by priority
+  const sorted = [...habits].sort((a,b)=>{
+    if(a.anchor && !b.anchor) return -1;
+    if(!a.anchor && b.anchor) return 1;
+    return 0;
+  });
+
+  list.innerHTML = sorted.map(h => {
+    const done = habitLog[h.id]?.[todayKey];
+    const freqLabel = h.freq==='daily' ? (currentLang==='en'?'daily':currentLang==='uk'?'щодня':'ежедневно')
+                    : h.freq==='weekly' ? (currentLang==='en'?'weekly':currentLang==='uk'?'щотижня':'еженедельно')
+                    : (h.timesPerWeek||2)+'×/'+(currentLang==='en'?'wk':currentLang==='uk'?'тиж':'нед');
+    return `<div class="habit-item" id="hitem-${h.id}">
+      <div class="habit-check${done?' done':''}${h.anchor?' anchor':''}" onclick="${h.anchor?'':('toggleHabit('+h.id+')')}">
+        ${done?'<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
+        ${h.anchor&&!done?'<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 2v4M6 7.5v1" stroke="#6d28d9" stroke-width="1.5" stroke-linecap="round"/></svg>':''}
+      </div>
+      <div class="habit-emoji">${h.emoji}</div>
+      <div class="habit-info">
+        <div class="habit-name" style="${done?'text-decoration:line-through;color:var(--muted)':''}">${habitName(h)}</div>
+        <div class="habit-sub">${freqLabel}${h.streak>1?' · '+(h.streak)+' '+t('daysLabel')+' '+t('streakLabel'):''}</div>
+      </div>
+      ${h.anchor?`<span class="habit-anchor-badge">${t('anchorLabel')}</span>`:''}
+      ${h.streak>=5&&!h.anchor?`<span class="habit-streak">🔥 ${h.streak}</span>`:''}
+    </div>`;
+  }).join('');
+}
+
+function toggleHabit(id){
+  if(!habitLog[id]) habitLog[id]={};
+  const wasDone = habitLog[id][todayKey];
+  habitLog[id][todayKey] = !wasDone;
+  if(!wasDone) habits.find(h=>h.id===id).streak = (habits.find(h=>h.id===id).streak||0)+1;
+  saveData();
+  renderAll();
+  toast(wasDone ? '' : t('markDone'), 'success');
+}
+
+/* ══════════════════════════════════
+   WEEK TAB
+══════════════════════════════════ */
+function renderWeek(){
+  const grid = document.getElementById('week-grid');
+  const days = [];
+  const dayNames = {
+    ru:['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+    uk:['Нд','Пн','Вт','Ср','Чт','Пт','Сб'],
+    en:['Su','Mo','Tu','We','Th','Fr','Sa']
+  };
+  for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push(d); }
+
+  grid.innerHTML = days.map(d => {
+    const key = dateKey(d);
+    const isToday = key===todayKey;
+    const dayNum = d.getDate();
+    const dayName = (dayNames[currentLang]||dayNames.ru)[d.getDay()];
+    const dots = habits.map(h => {
+      const done = habitLog[h.id]?.[key];
+      const cls = h.anchor ? 'anchor' : done ? 'done' : (key<=todayKey?'skipped':'');
+      return `<div class="week-dot ${cls}" title="${habitName(h)}"></div>`;
+    }).join('');
+    return `<div class="week-day">
+      <div class="week-day-label">${dayName}</div>
+      <div class="week-day-num${isToday?' today':''}">${dayNum}</div>
+      <div class="week-habits">${dots}</div>
+    </div>`;
+  }).join('');
+
+  // Per-habit stats
+  const statsEl = document.getElementById('week-stats-list');
+  statsEl.innerHTML = habits.map(h => {
+    const doneDays = days.filter(d => habitLog[h.id]?.[dateKey(d)]).length;
+    const pct = Math.round(doneDays/days.length*100);
+    return `<div class="habit-item">
+      <div class="habit-emoji">${h.emoji}</div>
+      <div class="habit-info">
+        <div class="habit-name">${habitName(h)}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:5px">
+          <div style="flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:${h.anchor?'var(--tag-purple)':'var(--accent)'};border-radius:2px"></div>
+          </div>
+          <span style="font-size:11px;color:var(--muted);min-width:28px;text-align:right">${pct}%</span>
+        </div>
+      </div>
+      <span style="font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap">${doneDays}/${days.length} ${t('daysLabel')}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════
+   HEATMAP
+══════════════════════════════════ */
+function buildHeatmapSelect(){
+  const sel = document.getElementById('heatmap-habit-select');
+  const allOpt = document.createElement('option');
+  allOpt.value = 'all';
+  allOpt.textContent = t('allHabits');
+  sel.innerHTML='';
+  sel.appendChild(allOpt);
+  habits.forEach(h => {
+    const o = document.createElement('option');
+    o.value = h.id;
+    o.textContent = h.emoji+' '+habitName(h);
+    sel.appendChild(o);
+  });
+}
+
+function renderHeatmap(){
+  const sel = document.getElementById('heatmap-habit-select');
+  const selectedId = sel ? sel.value : 'all';
+  const heatmap = document.getElementById('heatmap-grid');
+  const monthsEl = document.getElementById('heatmap-months');
+
+  // 84 days = 12 weeks
+  const today = new Date();
+  const weeks = [];
+  for(let w=11;w>=0;w--){
+    const week=[];
+    for(let d=6;d>=0;d--){
+      const date=new Date(today);
+      date.setDate(today.getDate()-(w*7+d));
+      week.push(date);
+    }
+    weeks.push(week);
+  }
+
+  // Month labels
+  const months = {ru:['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+                  uk:['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'],
+                  en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']};
+  monthsEl.innerHTML='';
+  let lastMonth=-1;
+  weeks.forEach((week,wi)=>{
+    const m=week[0].getMonth();
+    if(m!==lastMonth){
+      const lbl=document.createElement('div');
+      lbl.className='heatmap-month-label';
+      lbl.style.width=(15*1)+'px';
+      lbl.textContent=(months[currentLang]||months.ru)[m];
+      monthsEl.appendChild(lbl);
+      lastMonth=m;
+    } else {
+      const sp=document.createElement('div');
+      sp.style.width='15px';
+      monthsEl.appendChild(sp);
+    }
+  });
+
+  heatmap.innerHTML='';
+  weeks.forEach(week=>{
+    const col=document.createElement('div');
+    col.className='heatmap-col';
+    week.forEach(date=>{
+      const key=dateKey(date);
+      let level=0;
+      if(selectedId==='all'){
+        const done=habits.filter(h=>habitLog[h.id]?.[key]).length;
+        const total=habits.length;
+        if(total) level=Math.ceil(done/total*4);
+      } else {
+        const h=habits.find(x=>x.id==selectedId);
+        level = h && habitLog[h.id]?.[key] ? 4 : 0;
+      }
+      const cell=document.createElement('div');
+      cell.className=`heatmap-cell h${level}`;
+      cell.title=key;
+      col.appendChild(cell);
+    });
+    heatmap.appendChild(col);
+  });
+}
+
+function renderStreaks(){
+  const el=document.getElementById('streaks-list');
+  const sorted=[...habits].sort((a,b)=>(b.streak||0)-(a.streak||0));
+  el.innerHTML=sorted.map(h=>`<div class="habit-item">
+    <div class="habit-emoji">${h.emoji}</div>
+    <div class="habit-info"><div class="habit-name">${habitName(h)}</div></div>
+    <span style="font-size:13px;font-weight:600;color:${h.streak>=7?'var(--tag-green)':h.streak>=3?'var(--tag-amber)':'var(--muted)'}">${h.streak||0} ${t('daysLabel')}</span>
+  </div>`).join('');
+}
+
+/* ══════════════════════════════════
+   MANAGE TAB
+══════════════════════════════════ */
+function renderManage(){
+  const el=document.getElementById('manage-list');
+  if(!habits.length){ el.innerHTML=`<div style="padding:24px;text-align:center;color:var(--muted2)">${t('noHabits')}</div>`; return; }
+  el.innerHTML=habits.map(h=>`<div class="habit-item">
+    <div class="habit-emoji">${h.emoji}</div>
+    <div class="habit-info">
+      <div class="habit-name">${habitName(h)} ${h.anchor?`<span class="habit-anchor-badge">${t('anchorLabel')}</span>`:''}</div>
+      <div class="habit-sub">${h.freq==='daily'?t('freqDaily'):h.freq==='weekly'?t('freqWeekly'):t('freqCustom')+' ('+h.timesPerWeek+'×)'}</div>
+    </div>
+    ${!h.anchor?`<button onclick="deleteHabit(${h.id})" style="width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s" onmouseover="this.style.borderColor='var(--tag-red)';this.style.color='var(--tag-red)';this.style.background='var(--tag-red-bg)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)';this.style.background='var(--bg)'">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>`:''}
+  </div>`).join('');
+}
+
+function deleteHabit(id){
+  if(!confirm(t('confirmDelete'))) return;
+  habits=habits.filter(h=>h.id!==id);
+  saveData();
+  renderAll();
+  toast(t('habitDeleted'),'info');
+}
+
+/* ══════════════════════════════════
+   ADD HABIT
+══════════════════════════════════ */
+let selectedEmoji = '🎯';
+
+function openAddHabit(){
+  switchTab('manage');
+  document.getElementById('add-habit-card').style.display='block';
+  buildEmojiPicker();
+  document.getElementById('new-habit-name').focus();
+}
+
+function closeAddHabit(){
+  document.getElementById('add-habit-card').style.display='none';
+}
+
+function buildEmojiPicker(){
+  const el=document.getElementById('emoji-picker');
+  el.innerHTML=EMOJIS.map(e=>`<div class="emoji-opt${e===selectedEmoji?' active':''}" onclick="selectEmoji('${e}',this)">${e}</div>`).join('');
+}
+
+function selectEmoji(e, el){
+  selectedEmoji=e;
+  document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+}
+
+document.getElementById('new-habit-freq').addEventListener('change',function(){
+  document.getElementById('times-row').style.display=this.value==='custom'?'':'none';
+});
+
+function saveNewHabit(){
+  const name=document.getElementById('new-habit-name').value.trim();
+  if(!name){ document.getElementById('new-habit-name').focus(); return; }
+  const freq=document.getElementById('new-habit-freq').value;
+  const times=parseInt(document.getElementById('new-habit-times').value)||3;
+  const anchor=document.getElementById('new-habit-anchor').checked;
+  const newId=Date.now();
+  const nameObj={ru:name, uk:name, en:name};
+  habits.push({id:newId,emoji:selectedEmoji,name:nameObj,freq,anchor,streak:0,timesPerWeek:times});
+  if(!habitLog[newId]) habitLog[newId]={};
+  saveData();
+  document.getElementById('new-habit-name').value='';
+  document.getElementById('new-habit-anchor').checked=false;
+  closeAddHabit();
+  renderAll();
+  toast(t('habitSaved'),'success');
+}
+
+/* ══════════════════════════════════
+   TABS
+══════════════════════════════════ */
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  if(name==='calendar'){ buildHeatmapSelect(); renderHeatmap(); renderStreaks(); }
+  if(name==='week') renderWeek();
+  if(name==='manage') renderManage();
+}
+
+/* ══════════════════════════════════
+   TOAST
+══════════════════════════════════ */
+function toast(msg, type='info'){
+  if(!msg) return;
+  const c=document.getElementById('toast-container');
+  const el=document.createElement('div');
+  el.className='toast toast-'+type;
+  el.textContent=msg;
+  c.appendChild(el);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>el.classList.add('show')); });
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),300); },2500);
+}
+
+/* ══════════════════════════════════
+   RENDER ALL
+══════════════════════════════════ */
+function renderAll(){
+  calcMetrics();
+  renderToday();
+  // Re-render active tab
+  const activeTab=document.querySelector('.tab-btn.active');
+  if(activeTab){
+    const tid=activeTab.id.replace('tab-','');
+    if(tid==='week') renderWeek();
+    if(tid==='calendar'){ buildHeatmapSelect(); renderHeatmap(); renderStreaks(); }
+    if(tid==='manage') renderManage();
+  }
+}
+
+/* ══════════════════════════════════
+   INIT
+══════════════════════════════════ */
+(function init(){
+  const savedTheme=localStorage.getItem('sc_theme');
+  if(savedTheme){
+    document.documentElement.setAttribute('data-theme',savedTheme);
+    document.getElementById('icon-sun').style.display=savedTheme==='dark'?'none':'block';
+    document.getElementById('icon-moon').style.display=savedTheme==='dark'?'block':'none';
+  }
+  applyLang();
+})();
+</script>
+</body>
+</html>
