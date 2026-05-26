@@ -293,7 +293,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
   <div class="ssbar" id="ssbar" style="display:none">
     <svg width="16" height="16" viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="var(--ac)" stroke-width="1.2" stroke-linecap="round"/></svg>
     <div class="sname" id="ssname"></div><div class="stimer" id="sstimer">00:00</div>
-    <button class="btn ba bxs" onclick="finishSession()" id="i-finish">Завершить</button>
+    <button class="btn ba bxs" onclick="finishSess()" id="i-finish">Завершить</button>
   </div>
   <div class="g2" style="align-items:start">
     <div>
@@ -545,7 +545,7 @@ function renderWorkouts(){
   else el('tmpllist').innerHTML=templates.map(tmpl=>`<div class="row"><div class="ri" style="background:${tpC[tmpl.type]||'var(--bg3)'};color:${tpT[tmpl.type]||'var(--muted)'}"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="rin"><div class="rn">${tn(tmpl)}</div><div class="rs">${tpN(tmpl.type)} · ${(tmpl.exercises||[]).length} упр.</div></div><button class="btn ba bxs" onclick="startSess(${tmpl.id})">${t('start')}</button><button class="ibt" onclick="delTmpl(${tmpl.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`).join('');
   const sorted=[...woHist].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,12);
   if(!sorted.length){el('wohist').innerHTML=`<div style="padding:20px;text-align:center;color:var(--muted2);font-size:12px">${t('noHist')}</div>`;}
-  else el('wohist').innerHTML=sorted.map(wo=>{const tmpl=templates.find(x=>x.id===wo.templateId);const d=new Date(wo.date+'T12:00:00');const ds=d.getDate()+' '+t('months')[d.getMonth()];const ts=Object.values(wo.sets||{}).reduce((a,s)=>a+s.length,0);const feelEmoji=['','😩','😓','😐','💪','🔥'];return `<div class="row" style="cursor:pointer" onclick="viewWo(${wo.id})"><div class="ri" style="background:var(--grb);color:var(--gr)"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${tmpl?tn(tmpl):'—'}${wo.feel?` ${feelEmoji[wo.feel]}`:''}</div><div class="rs">${ds} · ${wo.duration} ${t('timen')} · ${ts} ${t('setn').toLowerCase()}${wo.note?` · <i style="color:var(--ac)">${wo.note.slice(0,40)}${wo.note.length>40?'…':''}</i>`:''}</div></div><button class="ibt" onclick="event.stopPropagation();delWo(${wo.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`;}).join('');
+  else el('wohist').innerHTML=sorted.map(wo=>{const tmpl=templates.find(x=>x.id===wo.templateId);const d=new Date(wo.date+'T12:00:00');const ds=d.getDate()+' '+t('months')[d.getMonth()];const ts=Array.isArray(wo.sets)?(wo.sets.reduce((a,ex)=>a+((ex.sets||[]).length||1),0)):Object.values(wo.sets||{}).reduce((a,s)=>a+s.length,0);const feelEmoji=['','😩','😓','😐','💪','🔥'];return `<div class="row" style="cursor:pointer" onclick="viewWo(${wo.id})"><div class="ri" style="background:var(--grb);color:var(--gr)"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${tmpl?tn(tmpl):tpN(wo.type||'strength')}${wo.feel?` ${feelEmoji[wo.feel]}`:''}</div><div class="rs">${ds} · ${wo.duration} ${t('timen')} · ${ts} ${t('setn').toLowerCase()}${wo.note?` · <i style="color:var(--ac)">${wo.note.slice(0,40)}${wo.note.length>40?'…':''}</i>`:''}</div></div><button class="ibt" onclick="event.stopPropagation();delWo(${wo.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`;}).join('');
   buildExSel();renderExProg();
 }
 function delTmpl(id){templates=templates.filter(x=>x.id!==id);saveAll();renderWorkouts();toast(t('deleted'),'tin');}
@@ -845,8 +845,8 @@ async function loadWorkoutsFromAPI(){
     templateId: null,
     date: w.date ? w.date.slice(0,10) : today,
     duration: w.duration_min || 0,
-    type: w.type,
-    sets: w.exercises_json || {},
+    type: w.type || 'strength',
+    sets: Array.isArray(w.exercises_json) ? w.exercises_json : [],
     feel: w.feel_score || 0,
     note: w.session_note || '',
     completed: !!w.completed_at
