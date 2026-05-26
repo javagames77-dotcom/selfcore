@@ -672,10 +672,31 @@ function renderToday(){
   </div>`).join(''):`<div style="padding:20px;text-align:center;color:var(--muted2);font-size:12px">${t('noTasks')}</div>`;
   const sorted=[...habits].sort((a,b)=>(b.anchor?1:0)-(a.anchor?1:0));
   el('habtoday').innerHTML=sorted.map(h=>{const done=hlog[h.id]?.[today];return `<div class="row"><div class="ri" style="background:${h.anchor?'var(--pub)':'var(--acl)'};color:${h.anchor?'var(--pu)':'var(--ac)'}"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${hn(h)}</div></div>${h.anchor?`<span class="tag tp">${t('anchor')}</span>`:h.streak>=5?`<span class="tag ta">${h.streak} ${t('days')}</span>`:''}<div class="chkr${done?' on':''}${h.anchor?' anc':''}" onclick="${h.anchor?'':('tgHab('+h.id+')')}">${done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div></div>`;}).join('');
-  const sw=schedWo.find(w=>w.date===today);const wdone=woHist.find(w=>w.date===today);const wb=el('wotoday');
-  if(wdone){const tmpl=templates.find(x=>x.id===wdone.templateId);wb.innerHTML=`<div class="row"><div class="ri" style="background:var(--grb);color:var(--gr)"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${tmpl?tn(tmpl):tpN(wdone.type||'strength')}</div><div class="rs">${wdone.duration} ${t('timen')}</div></div><span class="tag tg">${t('woDone')}</span></div>`;}
-  else if(sw){const tmpl=templates.find(x=>x.id===sw.templateId);wb.innerHTML=`<div class="row"><div class="ri" style="background:var(--blb);color:var(--bl)"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="rin"><div class="rn">${tmpl?tn(tmpl):''}</div><div class="rs">${sw.note||t('woPlanned')}</div></div><button class="btn ba bxs" onclick="startSess(${sw.templateId})">${t('start')}</button></div>`;}
+  const sw=schedWo.find(w=>w.date===today);const wdones=woHist.filter(w=>w.date===today);const wb=el('wotoday');
+  if(wdones.length){
+    wb.innerHTML=wdones.map(wdone=>{
+      const tmpl=templates.find(x=>x.id===wdone.templateId);
+      const name=tmpl?tn(tmpl):tpN(wdone.type||'strength');
+      return `<div class="row" style="cursor:pointer" onclick="openSessDetail(${wdone.id})"><div class="ri" style="background:var(--grb);color:var(--gr)"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${name}</div><div class="rs">${wdone.duration} ${t('timen')}</div></div><span class="tag tg">${t('woDone')}</span></div>`;
+    }).join('');
+  } else if(sw){const tmpl=templates.find(x=>x.id===sw.templateId);wb.innerHTML=`<div class="row"><div class="ri" style="background:var(--blb);color:var(--bl)"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="rin"><div class="rn">${tmpl?tn(tmpl):''}</div><div class="rs">${sw.note||t('woPlanned')}</div></div><button class="btn ba bxs" onclick="startSess(${sw.templateId})">${t('start')}</button></div>`;}
   else{wb.innerHTML=`<div style="padding:20px;text-align:center;color:var(--muted2);font-size:12px">—</div>`;}
+}
+function openSessDetail(id){
+  const wo=woHist.find(x=>x.id===id);if(!wo)return;
+  const tmpl=templates.find(x=>x.id===wo.templateId);
+  // Populate session modal for viewing
+  el('sesstitle').textContent=tmpl?tn(tmpl):tpN(wo.type||'strength');
+  curSess={templateId:wo.templateId,startTime:null,viewing:true,woId:id};
+  // Show exercises
+  const exs=tmpl?tmpl.exercises:[];
+  el('sexlist').innerHTML=exs.map(ex=>{
+    const sets=Array.isArray(wo.sets)?wo.sets.find(s=>s.name===(typeof ex.name==='object'?ex.name.ru:ex.name))?.sets||[]:[];
+    return `<div class="sex"><div class="sexn">${typeof ex.name==='object'?(ex.name[lang]||ex.name.ru):ex.name}</div>
+    <div class="setrows">${sets.map((s,i)=>`<div class="setrow"><span>${t('setn')} ${i+1}</span><span>${s.reps} ${t('repsn')}</span><span>${s.weight} ${t('weightn')}</span></div>`).join('')}</div></div>`;
+  }).join('');
+  el('ssbar').style.display='none';
+  openOv('ov-sess');
 }
 function tgAnc(id){if(!hlog[id])hlog[id]={};hlog[id][today]=!hlog[id][today];saveAll();renderToday();if(hlog[id][today])toast(t('done'),'tok');}
 function tgTask(id){
