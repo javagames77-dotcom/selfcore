@@ -978,7 +978,8 @@ function renderGoals(){
       </div>
     </div>`;
   }).join('');
-  el('hab30d').innerHTML=habits.map(h=>{const done=days.filter(k=>hlog[h.id]?.[k]).length;const pct=Math.round(done/days.length*100);return `<div class="pr"><div class="pl" style="width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${hn(h)}</div><div class="pt"><div class="pf" style="width:${pct}%;background:${h.anchor?'var(--pu)':'var(--ac)'}"></div></div><div class="pp">${pct}%</div></div>`;}).join('');
+  const days30=[];for(let i=29;i>=0;i--){const d2=new Date();d2.setDate(d2.getDate()-i);days30.push(dk(d2));}
+  el('hab30d').innerHTML=habits.map(h=>{const done=days30.filter(k=>hlog[h.id]?.[k]).length;const pct=Math.round(done/days30.length*100);return `<div class="pr"><div class="pl" style="width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${hn(h)}</div><div class="pt"><div class="pf" style="width:${pct}%;background:${h.anchor?'var(--pu)':'var(--ac)'}"></div></div><div class="pp">${pct}%</div></div>`;}).join('');
 }
 function openAddGoal(){
   el('goal-edit-id').value='';
