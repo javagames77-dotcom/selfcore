@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var V='20260526_03';
+  var V='20260526_04';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1323,10 +1323,12 @@ function tlRenderEvents(){
     el2.dataset.evId=ev.id;
     if(ev.type==='free'){
       el2.innerHTML=`<div class="tl-ev-t">+ добавить</div>`;
+      el2.style.zIndex='1'; // below real events
       el2.onclick=()=>{if(TL.wasDragging)return;tlClickFree(ev.start);};
     } else {
       const timeStr=tlFmt(ev.start)+(ev.dur>0?'–'+tlFmt(ev.start+ev.dur):'');
       el2.innerHTML=`<div class="tl-ev-t">${ev.title}</div>${height>32?`<div class="tl-ev-s">${timeStr}</div>`:''}`;
+      el2.style.zIndex='5'; // above free slots
       if(ev.type!=='anchor'&&ev.type!=='habit')tlBindDrag(el2,ev);
     }
     grid.appendChild(el2);
@@ -1361,8 +1363,9 @@ function tlBindDrag(el2,ev){
     if(!dragging){
       dragging=true;
       TL.dragEl=el2;TL.dragEv=ev;
+      // Use CURRENT clientY position for offset — not the stale startY
       const rect=el2.getBoundingClientRect();
-      TL.dragOffY=startY-rect.top;
+      TL.dragOffY=clientY-rect.top;
       el2.style.opacity='.65';el2.style.zIndex='20';el2.style.pointerEvents='none';
       TL.wasDragging=true;
     }
@@ -1425,8 +1428,10 @@ function tlAddConfirm(){
   const dur=parseFloat(document.getElementById('tladd-dur').value)||0.5;
   let startH=_tlAddStartH;
   if(timeVal){const p=timeVal.split(':');startH=parseInt(p[0])+parseInt(p[1]||0)/60;}
+  const timeStr=tlFmt(startH); // e.g. "14:15"
   closeOv('ov-tladd');
-  apiAddTask(title,2,today).then(()=>tlLoadAndRender());
+  // Pass scheduled_time so event appears at correct time slot
+  api('add_task',{title,priority:2,date:today,scheduled_time:timeStr}).then(()=>tlLoadAndRender());
   toast('Задача добавлена','tok');
 }
 
