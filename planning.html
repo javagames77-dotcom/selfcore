@@ -758,8 +758,24 @@ function renderWorkouts(){
   else el('wohist').innerHTML=sorted.map(wo=>{const tmpl=templates.find(x=>x.id===wo.templateId);const d=new Date(wo.date+'T12:00:00');const ds=d.getDate()+' '+t('months')[d.getMonth()];const ts=Array.isArray(wo.sets)?(wo.sets.reduce((a,ex)=>a+((ex.sets||[]).length||1),0)):Object.values(wo.sets||{}).reduce((a,s)=>a+s.length,0);const feelEmoji=['','😩','😓','😐','💪','🔥'];return `<div class="row" style="cursor:pointer" onclick="viewWo(${wo.id})"><div class="ri" style="background:var(--grb);color:var(--gr)"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${tmpl?tn(tmpl):tpN(wo.type||'strength')}${wo.feel?` ${feelEmoji[wo.feel]}`:''}</div><div class="rs">${ds} · ${wo.duration} ${t('timen')} · ${ts} ${t('setn').toLowerCase()}${wo.note?` · <i style="color:var(--ac)">${wo.note.slice(0,40)}${wo.note.length>40?'…':''}</i>`:''}</div></div><button class="ibt" onclick="event.stopPropagation();delWo(${wo.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`;}).join('');
   buildExSel();renderExProg();
 }
-function delTmpl(id){templates=templates.filter(x=>x.id!==id);saveAll();renderWorkouts();toast(t('deleted'),'tin');}
-function delWo(id){woHist=woHist.filter(x=>x.id!==id);saveAll();renderWorkouts();}
+async function delTmpl(id){
+  showConfirm('habDelConfirm','habDelDesc','habDelBtn',async()=>{
+    const res=await api('delete_template',{id:parseInt(id)});
+    if(res.success){
+      templates=templates.filter(x=>x.id!==id);
+      renderWorkouts();toast(t('deleted'),'tin');
+    } else {toast(t('errDel'),'ter');}
+  });
+}
+async function delWo(id){
+  showConfirm('habDelConfirm','habDelDesc','habDelBtn',async()=>{
+    const res=await api('delete_workout',{id:parseInt(id)});
+    if(res.success){
+      woHist=woHist.filter(x=>x.id!==id);
+      renderWorkouts();toast(t('deleted'),'tin');
+    } else {toast(t('errDel'),'ter');}
+  });
+}
 function buildExSel(){const sel=el('exsel');const all=[];templates.forEach(tmpl=>{(tmpl.exercises||[]).forEach(ex=>{if(!all.find(e=>e.id===ex.id))all.push(ex);});});sel.innerHTML=all.map(ex=>`<option value="${ex.id}">${tn(ex)}</option>`).join('');}
 function renderExProg(){
   const sel=el('exsel');if(!sel||!sel.value)return;const exId=parseInt(sel.value);
@@ -810,19 +826,36 @@ function rmSet(exId,idx,rid){if(curSess.sets[exId])curSess.sets[exId].splice(idx
 function finishSess(){
   if(sessInt)clearInterval(sessInt);const dur=Math.round((Date.now()-sessStart)/60000)||1;
   const filt={};Object.keys(curSess.sets).forEach(k=>{const f=curSess.sets[k].filter(s=>(s.reps||0)+(s.weight||0)+(s.dist||0)+(s.time||0)>0);if(f.length)filt[k]=f;});
-  const woId=Date.now();
-  woHist.push({id:woId,templateId:curSess.templateId,date:today,duration:dur,sets:filt,feel:0,note:''});
-  schedWo=schedWo.filter(w=>!(w.date===today&&w.templateId===curSess.templateId));
-  saveAll();el('ssbar').style.display='none';closeOv('ov-sess');
-  // Auto-sync workout goals
+  el('ssbar').style.display='none';closeOv('ov-sess');
+  // Build exercises_json in format for DB
+  const tmpl=templates.find(x=>x.id===curSess.templateId);
+  const exercises_json=(tmpl?tmpl.exercises:[]).map(ex=>({
+    name:typeof ex.name==='object'?(ex.name.ru||Object.values(ex.name)[0]):ex.name,
+    sets:(filt[ex.id]||[])
+  })).filter(ex=>ex.sets.length>0);
+  // Save to API
+  api('save_workout',{
+    template_id:curSess.templateId||null,
+    type:tmpl?tmpl.type:'strength',
+    duration_min:dur,
+    exercises_json
+  }).then(res=>{
+    if(res.success&&res.workout){
+      const woId=res.workout.id;
+      woHist.push({id:woId,templateId:curSess.templateId,date:today,duration:dur,type:tmpl?tmpl.type:'strength',sets:exercises_json,feel:0,note:''});
+      schedWo=schedWo.filter(w=>!(w.date===today&&w.templateId===curSess.templateId));
+      window._feelWoId=woId;
+    }
+  }).catch(console.error);
+  // Auto-sync goals
   api('sync_workout_goals').then(res=>{
     if(res.success&&res.updated&&res.updated.length){
-      res.updated.forEach(g=>toast(`⚡ ${g.title}: ${g.current_value}`,t('tok'),'tok'));
+      res.updated.forEach(g=>toast(`⚡ ${g.title}: ${g.current_value}`,'tok'));
       if(activeTab==='goals')loadGoalsFromAPI().then(renderGoals);
     }
   }).catch(console.error);
   // Show feeling popup
-  window._feelWoId=woId;window._curFeel=0;
+  window._feelWoId=null;window._curFeel=0;
   document.querySelectorAll('.feel-btn').forEach(b=>b.classList.remove('on'));
   el('wf-note').value='';
   openOv('ov-wofeel');
@@ -832,10 +865,19 @@ function selFeel(n){
   window._curFeel=n;
   document.querySelectorAll('.feel-btn').forEach((b,i)=>b.classList.toggle('on',i+1<=n));
 }
-function saveWoFeel(){
+async function saveWoFeel(){
   const wo=woHist.find(x=>x.id===window._feelWoId);
-  if(wo){wo.feel=window._curFeel||0;wo.note=el('wf-note').value.trim();}
-  saveAll();closeOv('ov-wofeel');renderAll();toast(t('done'),'tok');
+  const feel=window._curFeel||0;
+  const note=el('wf-note').value.trim();
+  if(wo){wo.feel=feel;wo.note=note;}
+  closeOv('ov-wofeel');renderAll();toast(t('done'),'tok');
+  if(window._feelWoId&&typeof window._feelWoId==='number'&&window._feelWoId>1000000000000){
+    // local ID - API not yet returned, skip
+    return;
+  }
+  if(window._feelWoId){
+    api('update_workout_feel',{id:window._feelWoId,feel_score:feel,session_note:note}).catch(console.error);
+  }
 }
 function viewWo(id){
   const wo=woHist.find(x=>x.id===id);if(!wo)return;
@@ -863,9 +905,40 @@ let tmplExList=[];
 function openAddTmpl(){tmplExList=[];el('tmname').value='';el('tmexs').innerHTML='';el('tmexinp').value='';openOv('ov-tmpl');}
 function addTmEx(){const v=el('tmexinp').value.trim();if(!v)return;const tp=el('tmtype').value;tmplExList.push({id:Date.now(),name:{ru:v,uk:v,en:v},type:tp==='cardio'?'cardio':'weight'});el('tmexinp').value='';el('tmexs').innerHTML=tmplExList.map((ex,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid var(--border)"><div style="flex:1;font-size:12px;color:var(--text)">${tn(ex)}</div><button class="ibt" onclick="rmTmEx(${i})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`).join('');}
 function rmTmEx(i){tmplExList.splice(i,1);el('tmexs').innerHTML=tmplExList.map((ex,j)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid var(--border)"><div style="flex:1;font-size:12px;color:var(--text)">${tn(ex)}</div><button class="ibt" onclick="rmTmEx(${j})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`).join('');}
-function saveTmpl(){const name=el('tmname').value.trim();if(!name)return;templates.push({id:Date.now(),name:{ru:name,uk:name,en:name},type:el('tmtype').value,exercises:tmplExList});saveAll();closeOv('ov-tmpl');renderWorkouts();toast(t('saved'),'tok');}
+async function saveTmpl(){
+  const name=el('tmname').value.trim();if(!name)return;
+  closeOv('ov-tmpl');
+  const res=await api('save_template',{
+    name,name_uk:name,name_en:name,
+    type:el('tmtype').value,
+    exercises:tmplExList
+  });
+  if(res.success&&res.template){
+    templates.push({
+      id:res.template.id,
+      name:{ru:name,uk:name,en:name},
+      type:el('tmtype').value,
+      exercises:tmplExList
+    });
+    renderWorkouts();toast(t('saved'),'tok');
+  } else {toast(t('errSave'),'ter');}
+}
 function openAddWo(){el('awdate').value=today;el('awtmpl').innerHTML=templates.map(x=>`<option value="${x.id}">${tn(x)}</option>`).join('');openOv('ov-addwo');}
-function saveSchedWo(){const tid=parseInt(el('awtmpl').value);schedWo.push({id:Date.now(),templateId:tid,date:el('awdate').value||today,note:el('awnote').value});saveAll();closeOv('ov-addwo');renderAll();toast(t('saved'),'tok');}
+async function saveSchedWo(){
+  const tid=parseInt(el('awtmpl').value);
+  const tmpl=templates.find(x=>x.id===tid);
+  const date=el('awdate').value||today;
+  closeOv('ov-addwo');
+  const res=await api('schedule_workout',{
+    template_id:tid,
+    date,
+    type:tmpl?tmpl.type:'strength'
+  });
+  if(res.success){
+    schedWo.push({id:res.workout?res.workout.id:Date.now(),templateId:tid,date,note:el('awnote').value});
+    renderAll();toast(t('saved'),'tok');
+  } else {toast(t('errSave'),'ter');}
+}
 
 function renderHabits(){
   el('allhab').innerHTML=habits.map(h=>{
@@ -1231,19 +1304,31 @@ async function loadHabitsFromAPI(){
 /* ── Загрузка тренировок ── */
 async function loadWorkoutsFromAPI(){
   try {
-  const res = await api('get_workouts', {days: 30});
-  if (!res || !res.success || !Array.isArray(res.workouts)) return;
-  woHist = res.workouts.map(w => ({
-    id: w.id,
-    templateId: null,
-    date: w.date ? w.date.slice(0,10) : today,
-    duration: w.duration_min || 0,
-    type: w.type || 'strength',
-    sets: Array.isArray(w.exercises_json) ? w.exercises_json : [],
-    feel: w.feel_score || 0,
-    note: w.session_note || '',
-    completed: !!w.completed_at
-  }));
+    const [woRes, tmplRes] = await Promise.all([
+      api('get_workouts', {days: 90}),
+      api('get_templates')
+    ]);
+    if (woRes && woRes.success && Array.isArray(woRes.workouts)) {
+      woHist = woRes.workouts.map(w => ({
+        id: w.id,
+        templateId: w.template_id || null,
+        date: w.date ? w.date.slice(0,10) : today,
+        duration: w.duration_min || 0,
+        type: w.type || 'strength',
+        sets: Array.isArray(w.exercises_json) ? w.exercises_json : [],
+        feel: w.feel_score || 0,
+        note: w.session_note || '',
+        completed: !!w.completed_at
+      }));
+    }
+    if (tmplRes && tmplRes.success && Array.isArray(tmplRes.templates)) {
+      templates = tmplRes.templates.map(t => ({
+        id: t.id,
+        name: {ru: t.name, uk: t.name_uk||t.name, en: t.name_en||t.name},
+        type: t.type || 'strength',
+        exercises: Array.isArray(t.exercises) ? t.exercises : []
+      }));
+    }
   } catch(e) { console.error('loadWorkoutsFromAPI:', e); }
 }
 
