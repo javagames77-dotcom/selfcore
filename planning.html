@@ -773,7 +773,10 @@ async function api(action, body={}){
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({token: getToken(), action, ...body})
     });
-    return await r.json();
+    const text = await r.text();
+    if(!text || !text.trim()) return {success: true, data: null, tasks: [], habits: [], workouts: [], goals: [], checkins: [], week: []};
+    try { return JSON.parse(text); }
+    catch(e) { console.error('JSON parse error:', text.slice(0,100)); return {success: false, error: 'bad json'}; }
   } catch(e) {
     console.error('API error:', e);
     return {success: false, error: e.message};
@@ -820,8 +823,9 @@ async function loadTodayFromAPI(){
 
 /* ── Загрузка привычек с 30-дневной статистикой ── */
 async function loadHabitsFromAPI(){
+  try {
   const res = await api('get_habits');
-  if (!res.success) return;
+  if (!res || !res.success || !Array.isArray(res.habits)) return;
   habits = res.habits.map(h => ({
     id: h.id,
     name: {ru: h.name, uk: h.name_uk || h.name, en: h.name_en || h.name},
@@ -834,12 +838,14 @@ async function loadHabitsFromAPI(){
     if (!hlog[h.id]) hlog[h.id] = {};
     hlog[h.id][today] = h.done_today;
   });
+  } catch(e) { console.error('loadHabitsFromAPI:', e); }
 }
 
 /* ── Загрузка тренировок ── */
 async function loadWorkoutsFromAPI(){
+  try {
   const res = await api('get_workouts', {days: 30});
-  if (!res.success) return;
+  if (!res || !res.success || !Array.isArray(res.workouts)) return;
   woHist = res.workouts.map(w => ({
     id: w.id,
     templateId: null,
@@ -851,20 +857,23 @@ async function loadWorkoutsFromAPI(){
     note: w.session_note || '',
     completed: !!w.completed_at
   }));
+  } catch(e) { console.error('loadWorkoutsFromAPI:', e); }
 }
 
 /* ── Загрузка целей ── */
 async function loadGoalsFromAPI(){
-  const res = await api('get_goals');
-  if (!res.success) return;
-  goals = res.goals.map(g => ({
-    id: g.id,
-    name: {ru: g.title, uk: g.title_uk || g.title, en: g.title_en || g.title},
-    cat: g.category,
-    cur: parseFloat(g.current_value) || 0,
-    target: parseFloat(g.target_value) || 100,
-    deadline: g.deadline ? g.deadline.slice(0,10) : ''
-  }));
+  try {
+    const res = await api('get_goals');
+    if (!res || !res.success || !Array.isArray(res.goals)) return;
+    goals = res.goals.map(g => ({
+      id: g.id,
+      name: {ru: g.title||'', uk: g.title_uk||g.title||'', en: g.title_en||g.title||''},
+      cat: g.category || 'other',
+      cur: parseFloat(g.current_value) || 0,
+      target: parseFloat(g.target_value) || 100,
+      deadline: g.deadline ? g.deadline.slice(0,10) : ''
+    }));
+  } catch(e) { console.error('loadGoalsFromAPI:', e); }
 }
 
 /* ── Загрузка статистики недели ── */
