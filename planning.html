@@ -864,33 +864,27 @@ async function saveHab(){
   const preferred_time=el('htime').value||null;
   closeOv('ov-hab');
   if(editId){
-    // Update existing
-    const res=await api('update_habit',{id:parseInt(editId),name,freq,is_anchor,preferred_time});
-    if(res.success){
-      const h=habits.find(x=>x.id===parseInt(editId));
-      if(h){h.name={ru:name,uk:name,en:name};h.freq=freq;h.anchor=is_anchor;h.preferred_time=preferred_time;}
-      toast(t('saved'),'tok');
-    }
+    const res=await api('update_habit',{id:parseInt(editId),name,name_uk:name,name_en:name,freq,is_anchor,preferred_time});
+    if(res.success){toast(t('saved'),'tok');}
+    else{toast('Ошибка сохранения','ter');return;}
   } else {
-    // Add new
     const res=await api('add_habit',{name,name_uk:name,name_en:name,freq,is_anchor,preferred_time});
-    if(res.success&&res.habit){
-      habits.push({id:res.habit.id,name:{ru:name,uk:name,en:name},freq,anchor:is_anchor,streak:0,preferred_time});
-      hlog[res.habit.id]={};
-      toast(t('saved'),'tok');
-    }
+    if(res.success){toast(t('saved'),'tok');}
+    else{toast('Ошибка добавления','ter');return;}
   }
+  // Всегда перечитываем из БД — никакой локальной манипуляции
   await loadHabitsFromAPI();
   renderHabits();renderToday();
 }
 async function delHab(id){
   if(!confirm('Удалить привычку?'))return;
-  const res=await api('delete_habit',{id});
+  const res=await api('delete_habit',{id:parseInt(id)});
   if(res.success){
-    habits=habits.filter(h=>h.id!==id);
-    delete hlog[id];
-    renderHabits();renderToday();
     toast(t('deleted'),'tin');
+    await loadHabitsFromAPI();
+    renderHabits();renderToday();
+  } else {
+    toast('Ошибка удаления','ter');
   }
 }
 
