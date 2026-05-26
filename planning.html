@@ -755,12 +755,6 @@ function tgTheme(){const h=document.documentElement;const dark=h.getAttribute('d
   el('sbro').textContent={admin:'Администратор',family:'Семья',friend:'Друг'}[user.role]||'';
 })();
 function logout(){['sc_token','sc_user'].forEach(k=>{localStorage.removeItem(k);sessionStorage.removeItem(k);});window.location.href='/index.html';}
-(function(){
-  const th=localStorage.getItem('sc_theme');if(th){document.documentElement.setAttribute('data-theme',th);el('isun').style.display=th==='dark'?'none':'block';el('imoon').style.display=th==='dark'?'block':'none';}
-  // Clear old cached data from localStorage
-  ['sc5_h','sc5_hl','sc5_t','sc5_tmpl','sc5_woh','sc5_swo','sc5_goals'].forEach(k=>localStorage.removeItem(k));
-  applyLang();initFromAPI();
-})();
 
 /* ════════════════════════════════════════════════════════
    REAL API — подключение к n8n Planning API
@@ -964,8 +958,8 @@ addTask = async function(){
 };
 
 // Override delTask — use API
-const _origDelTask = deleteTask;
-deleteTask = async function(id){
+const _origDelTask = delTask;
+delTask = async function(id){
   tasks = tasks.filter(x=>x.id!==id);
   renderToday();
   apiDeleteTask(id).catch(console.error);
@@ -1027,6 +1021,13 @@ goTab = async function(name){
   } catch(e){ console.error('Tab load error:',e); renderAll(); }
 };
 
+
+(function(){
+  const th=localStorage.getItem('sc_theme');if(th){document.documentElement.setAttribute('data-theme',th);el('isun').style.display=th==='dark'?'none':'block';el('imoon').style.display=th==='dark'?'block':'none';}
+  // Clear old cached data from localStorage
+  ['sc5_h','sc5_hl','sc5_t','sc5_tmpl','sc5_woh','sc5_swo','sc5_goals'].forEach(k=>localStorage.removeItem(k));
+  applyLang();initFromAPI();
+})();
 </script>
 </body>
 </html>
