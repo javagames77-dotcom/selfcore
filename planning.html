@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var V='20260526_04';
+  var V='20260526_05';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1360,22 +1360,23 @@ function tlBindDrag(el2,ev){
     const dx=Math.abs(clientX-startX);
     // Only start drag after threshold
     if(!dragging&&(dy<THRESH&&dx<THRESH))return;
+    const grid=document.getElementById('tl-grid');
+    if(!grid)return;
+    const gridRect=grid.getBoundingClientRect();
+    const body=document.getElementById('tl-body');
+    const scrollTop=body?body.scrollTop:0;
     if(!dragging){
       dragging=true;
       TL.dragEl=el2;TL.dragEv=ev;
-      // Use CURRENT clientY position for offset — not the stale startY
-      const rect=el2.getBoundingClientRect();
-      TL.dragOffY=clientY-rect.top;
+      // Offset = where inside the event user clicked, relative to grid coords
+      const evRect=el2.getBoundingClientRect();
+      const evTopInGrid=evRect.top - gridRect.top + scrollTop;
+      TL.dragOffY=tlH2Y(ev.start) - evTopInGrid + (clientY - evRect.top);
       el2.style.opacity='.65';el2.style.zIndex='20';el2.style.pointerEvents='none';
       TL.wasDragging=true;
     }
     if(!TL.dragEl)return;
-    const grid=document.getElementById('tl-grid');
-    if(!grid)return;
-    const rect=grid.getBoundingClientRect();
-    const body=document.getElementById('tl-body');
-    const scrollTop=body?body.scrollTop:0;
-    const y=clientY-rect.top+scrollTop-TL.dragOffY;
+    const y=clientY-gridRect.top+scrollTop-TL.dragOffY;
     const newH=tlSnap(Math.max(TL.SH,Math.min(TL.EH-0.5,tlY2H(Math.max(0,y)))));
     TL.dragEl.style.top=tlH2Y(newH)+'px';
     TL.pendingH=newH;
