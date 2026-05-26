@@ -188,71 +188,74 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .feel-row{display:flex;gap:6px;margin-bottom:8px}
 
 /* ═══ TIMELINE ═══ */
-.tl-now-bar{background:var(--acl);border:1px solid var(--acm);border-radius:10px;padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.tl-now-pill{background:var(--ac);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;flex-shrink:0}
-.tl-now-task{font-size:13px;font-weight:500;color:var(--acd);flex:1}
-.tl-now-timer{font-size:12px;color:var(--acd);font-variant-numeric:tabular-nums;flex-shrink:0}
-.tl-now-skip{font-size:11px;background:transparent;border:1px solid var(--acm);border-radius:6px;padding:3px 10px;cursor:pointer;color:var(--acd);font-family:inherit}
+.tl-wrap{display:flex;flex-direction:column;height:calc(100vh - 140px);min-height:500px}
+.tl-now-bar{background:var(--acl);border:1px solid var(--acm);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.tl-now-pill{background:var(--ac);color:#fff;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;flex-shrink:0;letter-spacing:.02em}
+.tl-now-task{font-size:13px;font-weight:500;color:var(--acd);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-now-timer{font-size:11px;color:var(--acd);font-variant-numeric:tabular-nums;flex-shrink:0}
+.tl-now-skip{font-size:11px;background:transparent;border:1px solid var(--acm);border-radius:6px;padding:2px 9px;cursor:pointer;color:var(--acd);font-family:inherit;flex-shrink:0}
 .tl-now-skip:hover{background:var(--acm)}
-.tl-hdr{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
-.tl-hdr-date{font-size:13px;font-weight:500;color:var(--black);flex:1}
-.tl-hdr-sub{font-size:11px;color:var(--muted)}
-.tl-ai-btn{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.tl-card{background:var(--card);border-radius:12px;box-shadow:var(--cshadow);overflow:hidden;display:flex;flex-direction:column;flex:1}
+.tl-hdr{display:flex;align-items:center;gap:8px;padding:11px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.tl-hdr-left{flex:1;min-width:0}
+.tl-hdr-date{font-size:13px;font-weight:600;color:var(--black)}
+.tl-hdr-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.tl-ai-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
 .tl-ai-btn:hover{border-color:var(--ac);color:var(--ac)}
-.tl-ai-btn.loading{opacity:.6;pointer-events:none}
-.tl-mic-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
+.tl-mic-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
 .tl-mic-btn:hover{border-color:var(--ac);color:var(--ac)}
 .tl-mic-btn.on{background:var(--ac);border-color:var(--ac);color:#fff}
-.tl-energy-row{display:flex;align-items:center;gap:8px;padding:5px 16px 4px;border-bottom:1px solid var(--border);background:var(--bg2)}
-.tl-energy-lbl{font-size:10px;color:var(--muted);width:54px;flex-shrink:0}
-.tl-energy-track{flex:1;height:24px;display:flex;align-items:flex-end;gap:1px;position:relative}
-.tl-ebar{border-radius:2px 2px 0 0;flex:1;transition:height .3s}
-.tl-energy-val{font-size:10px;color:var(--muted);flex-shrink:0;width:52px;text-align:right}
-.tl-scroll-wrap{display:flex;overflow-y:auto;flex:1;max-height:calc(100vh - 280px)}
-.tl-hours{width:46px;flex-shrink:0;background:var(--bg2)}
-.tl-col{flex:1;position:relative;border-left:1px solid var(--border);background:var(--bg2)}
-.tl-hlbl{height:56px;display:flex;align-items:flex-start;justify-content:flex-end;padding:5px 8px 0 0;font-size:10px;color:var(--muted2);font-weight:500;user-select:none}
-.tl-hrow{height:56px;border-bottom:1px solid var(--border)}
-.tl-hrow.dim{border-color:rgba(0,0,0,.04)}
-[data-theme="dark"] .tl-hrow.dim{border-color:rgba(255,255,255,.04)}
+.tl-energy-row{display:flex;align-items:center;gap:8px;padding:4px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg3)}
+.tl-energy-lbl{font-size:9px;color:var(--muted2);width:48px;flex-shrink:0;text-transform:uppercase;letter-spacing:.06em}
+.tl-energy-track{flex:1;height:18px;display:flex;align-items:flex-end;gap:1px}
+.tl-ebar{border-radius:1px 1px 0 0;flex:1;min-width:0}
+.tl-energy-val{font-size:10px;color:var(--muted);flex-shrink:0;width:56px;text-align:right}
+.tl-body{display:flex;overflow-y:auto;flex:1;position:relative;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.tl-gutter{width:48px;flex-shrink:0;position:relative;background:var(--bg2)}
+.tl-grid{flex:1;position:relative;border-left:1px solid var(--border);background:var(--bg2);min-height:952px}
+.tl-hlbl{position:absolute;right:8px;font-size:10px;color:var(--muted2);font-weight:400;transform:translateY(-7px);user-select:none;width:36px;text-align:right}
+.tl-hline{position:absolute;left:0;right:0;border-top:1px solid var(--border)}
+.tl-hline.minor{border-top:1px dashed var(--border)}
+[data-theme="dark"] .tl-hline.minor{border-color:var(--bg3)}
 .tl-nowline{position:absolute;left:0;right:0;height:2px;background:var(--re);z-index:10;pointer-events:none}
 .tl-nowdot{position:absolute;left:-5px;top:-4px;width:9px;height:9px;border-radius:50%;background:var(--re)}
-.tl-ev{position:absolute;left:5px;right:5px;border-radius:8px;padding:4px 8px;cursor:grab;z-index:5;overflow:hidden;border:1px solid transparent;user-select:none;transition:box-shadow .12s,opacity .12s}
-.tl-ev:active{cursor:grabbing;box-shadow:0 4px 16px rgba(0,0,0,.15);opacity:.9;z-index:20}
-.tl-ev:hover{filter:brightness(.94)}
+.tl-ev{position:absolute;border-radius:7px;padding:4px 8px;cursor:grab;z-index:5;overflow:hidden;border:1px solid transparent;user-select:none;transition:box-shadow .1s,filter .1s;box-sizing:border-box}
+.tl-ev:active{cursor:grabbing;box-shadow:0 6px 20px rgba(0,0,0,.18);z-index:20}
+.tl-ev:hover{filter:brightness(.93)}
 .tl-ev-t{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.tl-ev-s{font-size:10px;margin-top:1px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tl-ev-done .tl-ev-t{text-decoration:line-through;opacity:.5}
-.ev-anchor{background:var(--pub);color:var(--pu);border-color:var(--puu)}
+.tl-ev-s{font-size:10px;margin-top:1px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-ev-done .tl-ev-t{text-decoration:line-through;opacity:.45}
+.ev-anchor{background:var(--pub);color:var(--pu);border-color:var(--puu);cursor:default}
+.ev-anchor:active{cursor:default;box-shadow:none}
 .ev-urgent{background:var(--reb);color:var(--re);border-color:var(--reu)}
 .ev-task{background:var(--blb);color:var(--bl);border-color:var(--blu)}
-.ev-habit{background:var(--acl);color:var(--acd);border-color:var(--acm)}
+.ev-habit{background:var(--acl);color:var(--acd);border-color:var(--acm);cursor:default}
 .ev-workout{background:var(--grb);color:var(--gr);border-color:var(--gru)}
-.ev-free{background:var(--bg3);border-color:var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.ev-free:hover{background:var(--acl);border-color:var(--acm)}
-.ev-free .tl-ev-t{font-size:11px;color:var(--muted2);font-weight:400;text-align:center}
-.tl-footer{border-top:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--bg2)}
+.ev-free{background:transparent;border:1px dashed var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ev-free:hover{background:var(--acl);border-color:var(--acm);border-style:solid}
+.ev-free .tl-ev-t{font-size:11px;color:var(--muted2);font-weight:400}
+.ev-free:hover .tl-ev-t{color:var(--ac)}
+.tl-footer{border-top:1px solid var(--border);padding:7px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap;background:var(--bg2)}
 .tl-legend{display:flex;gap:10px;flex-wrap:wrap}
 .tl-li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
-.tl-ld{width:7px;height:7px;border-radius:2px}
+.tl-ld{width:7px;height:7px;border-radius:2px;flex-shrink:0}
 .tl-pips{display:flex;gap:3px;align-items:center;margin-left:auto}
 .tl-pip{width:6px;height:6px;border-radius:50%;background:var(--border2)}
 .tl-pip.on{background:var(--ac)}
-.tl-pips-lbl{font-size:10px;color:var(--muted);margin-right:2px}
-.tl-voice-row{background:var(--bg3);border-top:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;gap:10px}
-.tl-vwave{display:flex;gap:2px;align-items:center;height:18px}
-.tl-vw{width:3px;border-radius:2px;background:var(--ac);transition:height .1s}
+.tl-pips-lbl{font-size:10px;color:var(--muted)}
+.tl-voice-row{border-top:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px;background:var(--bg3);flex-shrink:0}
+.tl-vwave{display:flex;gap:2px;align-items:center;height:16px}
+.tl-vw{width:3px;border-radius:2px;background:var(--ac)}
 .tl-vtxt{font-size:12px;color:var(--muted);flex:1}
-.tl-ai-overlay{position:absolute;inset:0;background:rgba(0,0,0,.2);z-index:30;display:flex;align-items:center;justify-content:center;border-radius:0}
-.tl-ai-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;max-width:300px;width:100%;text-align:center}
+.tl-ai-overlay{position:absolute;inset:0;background:rgba(0,0,0,.25);z-index:30;display:none;align-items:center;justify-content:center}
+.tl-ai-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;max-width:280px;width:90%;text-align:center}
 .tl-ai-title{font-size:14px;font-weight:600;color:var(--black);margin-bottom:8px}
-.tl-ai-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px}
-.tl-ai-dots{display:flex;justify-content:center;gap:6px;margin-bottom:14px}
+.tl-ai-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.tl-ai-dots{display:flex;justify-content:center;gap:5px;margin-bottom:12px}
 .tl-ai-dot{width:7px;height:7px;border-radius:50%;background:var(--ac);opacity:.3;animation:tlblink 1.2s infinite}
-.tl-ai-dot:nth-child(2){animation-delay:.2s}
-.tl-ai-dot:nth-child(3){animation-delay:.4s}
+.tl-ai-dot:nth-child(2){animation-delay:.2s}.tl-ai-dot:nth-child(3){animation-delay:.4s}
 @keyframes tlblink{0%,100%{opacity:.3}50%{opacity:1}}
-.tl-ai-accept{width:100%;padding:9px;border-radius:8px;border:none;background:var(--ac);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.tl-ai-accept{width:100%;padding:8px;border-radius:7px;border:none;background:var(--ac);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
 .tl-ai-accept:hover{background:var(--acd)}
 .feel-btn{flex:1;height:32px;border-radius:7px;border:1.5px solid var(--border);background:var(--bg2);cursor:pointer;font-size:16px;transition:all .15s;display:flex;align-items:center;justify-content:center}
 .feel-btn:hover{border-color:var(--ac);background:var(--acl)}
@@ -339,58 +342,58 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 <!-- TIMELINE -->
 <div class="tc" id="tc-timeline">
   <div id="tl-now-wrap"></div>
-  <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
-    <div class="tl-hdr">
-      <div>
-        <div class="tl-hdr-date" id="tl-date-lbl"></div>
-        <div class="tl-hdr-sub" id="tl-hdr-sub">загрузка...</div>
+  <div class="tl-wrap">
+    <div class="tl-card">
+      <div class="tl-hdr">
+        <div class="tl-hdr-left">
+          <div class="tl-hdr-date" id="tl-date-lbl"></div>
+          <div class="tl-hdr-sub" id="tl-hdr-sub">загрузка...</div>
+        </div>
+        <button class="tl-ai-btn" onclick="tlAIPlan()">
+          <svg width="12" height="12" viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 4H13l-3.5 2.5 1.5 4.5L7.5 9.5 4 12l1.5-4.5L2 5h4z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+          AI-план
+        </button>
+        <button class="tl-mic-btn" id="tl-mic-btn" onclick="tlToggleMic()" title="Голос">
+          <svg width="12" height="12" viewBox="0 0 15 15" fill="none"><rect x="5" y="1" width="5" height="8" rx="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 7.5a5 5 0 0010 0M7.5 12.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
       </div>
-      <button class="tl-ai-btn" id="tl-ai-btn" onclick="tlAIPlan()">
-        <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 4H13l-3.5 2.5 1.5 4.5L7.5 9.5 4 12l1.5-4.5L2 5h4z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
-        AI-план
-      </button>
-      <button class="tl-mic-btn" id="tl-mic-btn" onclick="tlToggleMic()" title="Голосовая команда">
-        <svg width="13" height="13" viewBox="0 0 15 15" fill="none"><rect x="5" y="1" width="5" height="8" rx="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 7.5a5 5 0 0010 0M7.5 12.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <div class="tl-energy-row">
-      <span class="tl-energy-lbl">энергия</span>
-      <div class="tl-energy-track" id="tl-energy-track"></div>
-      <span class="tl-energy-val" id="tl-energy-val"></span>
-    </div>
-    <div style="position:relative;display:flex;flex-direction:column">
-      <div class="tl-scroll-wrap" id="tl-scroll-wrap">
-        <div class="tl-hours" id="tl-hours"></div>
-        <div class="tl-col" id="tl-col"></div>
+      <div class="tl-energy-row">
+        <span class="tl-energy-lbl">энергия</span>
+        <div class="tl-energy-track" id="tl-energy-track"></div>
+        <span class="tl-energy-val" id="tl-energy-val"></span>
       </div>
-      <div id="tl-ai-overlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.2);z-index:30;align-items:center;justify-content:center">
-        <div class="tl-ai-card">
-          <div class="tl-ai-title">AI строит расписание</div>
-          <div class="tl-ai-sub" id="tl-ai-status">Анализирую задачи и энергию...</div>
-          <div class="tl-ai-dots" id="tl-ai-dots"><div class="tl-ai-dot"></div><div class="tl-ai-dot"></div><div class="tl-ai-dot"></div></div>
-          <button class="tl-ai-accept" id="tl-ai-accept" style="display:none" onclick="tlAcceptPlan()">Принять план ✓</button>
+      <div class="tl-body" id="tl-body" style="position:relative">
+        <div class="tl-gutter" id="tl-gutter"></div>
+        <div class="tl-grid" id="tl-grid"></div>
+        <div id="tl-ai-overlay" class="tl-ai-overlay">
+          <div class="tl-ai-card">
+            <div class="tl-ai-title">AI строит расписание</div>
+            <div class="tl-ai-sub" id="tl-ai-status">Анализирую задачи и энергию...</div>
+            <div class="tl-ai-dots" id="tl-ai-dots"><div class="tl-ai-dot"></div><div class="tl-ai-dot"></div><div class="tl-ai-dot"></div></div>
+            <button class="tl-ai-accept" id="tl-ai-accept" style="display:none" onclick="tlAcceptPlan()">Принять план ✓</button>
+          </div>
         </div>
       </div>
-    </div>
-    <div id="tl-voice-row" style="display:none" class="tl-voice-row">
-      <div class="tl-vwave" id="tl-vwave">
-        <div class="tl-vw" id="vw1" style="height:5px"></div><div class="tl-vw" id="vw2" style="height:12px"></div>
-        <div class="tl-vw" id="vw3" style="height:7px"></div><div class="tl-vw" id="vw4" style="height:16px"></div>
-        <div class="tl-vw" id="vw5" style="height:6px"></div><div class="tl-vw" id="vw6" style="height:10px"></div>
-        <div class="tl-vw" id="vw7" style="height:4px"></div>
+      <div id="tl-voice-row" style="display:none" class="tl-voice-row">
+        <div class="tl-vwave">
+          <div class="tl-vw" id="vw1" style="height:5px"></div><div class="tl-vw" id="vw2" style="height:11px"></div>
+          <div class="tl-vw" id="vw3" style="height:7px"></div><div class="tl-vw" id="vw4" style="height:15px"></div>
+          <div class="tl-vw" id="vw5" style="height:6px"></div><div class="tl-vw" id="vw6" style="height:9px"></div>
+          <div class="tl-vw" id="vw7" style="height:4px"></div>
+        </div>
+        <span class="tl-vtxt" id="tl-vtxt">Слушаю...</span>
       </div>
-      <span class="tl-vtxt" id="tl-vtxt">Слушаю...</span>
-    </div>
-    <div class="tl-footer">
-      <div class="tl-legend">
-        <div class="tl-li"><div class="tl-ld" style="background:var(--puu)"></div>якорь</div>
-        <div class="tl-li"><div class="tl-ld" style="background:var(--reu)"></div>срочно</div>
-        <div class="tl-li"><div class="tl-ld" style="background:var(--blu)"></div>задача</div>
-        <div class="tl-li"><div class="tl-ld" style="background:var(--acm)"></div>привычка</div>
-        <div class="tl-li"><div class="tl-ld" style="background:var(--gru)"></div>тренировка</div>
+      <div class="tl-footer">
+        <div class="tl-legend">
+          <div class="tl-li"><div class="tl-ld" style="background:var(--puu)"></div>якорь</div>
+          <div class="tl-li"><div class="tl-ld" style="background:var(--reu)"></div>срочно</div>
+          <div class="tl-li"><div class="tl-ld" style="background:var(--blu)"></div>задача</div>
+          <div class="tl-li"><div class="tl-ld" style="background:var(--acm)"></div>привычка</div>
+          <div class="tl-li"><div class="tl-ld" style="background:var(--gru)"></div>тренировка</div>
+        </div>
+        <span class="tl-pips-lbl">выполнено</span>
+        <div class="tl-pips" id="tl-pips"></div>
       </div>
-      <span class="tl-pips-lbl">выполнено</span>
-      <div class="tl-pips" id="tl-pips"></div>
     </div>
   </div>
 </div>
@@ -1175,406 +1178,349 @@ goTab = async function(name){
 /* ═══════════════════════════════════════════════════════
    TIMELINE — умный распорядок дня
 ═══════════════════════════════════════════════════════ */
-const TL = {
-  SH: 6, EH: 23, HH: 56,
-  events: [],
-  dragEl: null, dragOffsetY: 0,
-  waveTimer: null, micOn: false,
-  nowTimer: null,
+const TL={
+  SH:6,EH:23,
+  PX_PER_HOUR:56,
+  events:[],
+  dragEl:null,dragEv:null,dragOffY:0,pendingH:undefined,
+  waveTimer:null,micOn:false
 };
-
-function tlHtoY(h){ return (h - TL.SH) * TL.HH; }
-function tlYtoH(y){ return TL.SH + y / TL.HH; }
-function tlSnap(h){ return Math.round(h * 4) / 4; } // snap to 15 min
+const tlH2Y=h=>(h-TL.SH)*TL.PX_PER_HOUR;
+const tlY2H=y=>TL.SH+y/TL.PX_PER_HOUR;
+const tlSnap=h=>Math.round(h*4)/4;
+const tlFmt=h=>{const hh=Math.floor(h),mm=Math.round((h-hh)*60);return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');};
 
 function tlBuildEnergy(){
-  const track = document.getElementById('tl-energy-track');
-  if(!track) return;
-  const nowH = new Date().getHours() + new Date().getMinutes()/60;
-  // Energy curve: peaks 8-10, drops midday, recovers 16-18
-  const curve = [1,2,4,7,9,9,8,6,4,3,4,6,7,6,5,4,3,2];
-  const maxV = Math.max(...curve);
-  let html = '';
-  curve.forEach((v, i) => {
-    const h = Math.round((v/maxV) * 20) + 2;
-    const hour = TL.SH + i;
-    const isNow = Math.abs(hour - nowH) < 0.5;
-    const col = isNow ? 'var(--re)' : v >= 7 ? 'var(--ac)' : v >= 4 ? 'var(--acm)' : 'var(--border2)';
-    html += `<div class="tl-ebar" style="height:${h}px;background:${col}" title="${hour}:00"></div>`;
-  });
-  track.innerHTML = html;
-  // energy label
-  const idx = Math.max(0, Math.min(Math.round(nowH - TL.SH), curve.length-1));
-  const val = curve[idx];
-  const lbl = val >= 7 ? 'высокая' : val >= 4 ? 'средняя' : 'низкая';
-  const valEl = document.getElementById('tl-energy-val');
-  if(valEl) valEl.textContent = 'сейчас: ' + lbl;
+  const track=document.getElementById('tl-energy-track');
+  if(!track)return;
+  const nowH=new Date().getHours()+new Date().getMinutes()/60;
+  const curve=[1,2,4,7,9,9,8,6,4,3,4,6,7,6,5,4,3,2];
+  const maxV=9;
+  track.innerHTML=curve.map((v,i)=>{
+    const h=Math.round((v/maxV)*16)+2;
+    const hr=TL.SH+i;
+    const isNow=Math.abs(hr-nowH)<0.7;
+    const col=isNow?'var(--re)':v>=7?'var(--ac)':v>=4?'var(--acm)':'var(--border2)';
+    return `<div class="tl-ebar" style="height:${h}px;background:${col}" title="${hr}:00"></div>`;
+  }).join('');
+  const idx=Math.max(0,Math.min(Math.round(nowH-TL.SH),curve.length-1));
+  const v=curve[idx];
+  const valEl=document.getElementById('tl-energy-val');
+  if(valEl)valEl.textContent='сейчас: '+(v>=7?'высокая':v>=4?'средняя':'низкая');
 }
 
 function tlBuildGrid(){
-  const hoursEl = document.getElementById('tl-hours');
-  const colEl = document.getElementById('tl-col');
-  if(!hoursEl || !colEl) return;
-  hoursEl.innerHTML = ''; colEl.innerHTML = '';
-  const total = TL.EH - TL.SH;
-  colEl.style.height = (total * TL.HH) + 'px';
-  hoursEl.style.minHeight = (total * TL.HH) + 'px';
-  for(let h = TL.SH; h < TL.EH; h++){
-    const lbl = document.createElement('div');
-    lbl.className = 'tl-hlbl';
-    lbl.textContent = h + ':00';
-    hoursEl.appendChild(lbl);
-    const row = document.createElement('div');
-    row.className = 'tl-hrow';
-    colEl.appendChild(row);
+  const gutter=document.getElementById('tl-gutter');
+  const grid=document.getElementById('tl-grid');
+  if(!gutter||!grid)return;
+  gutter.innerHTML='';grid.innerHTML='';
+  const total=TL.EH-TL.SH;
+  const totalPx=total*TL.PX_PER_HOUR;
+  grid.style.height=totalPx+'px';
+  gutter.style.height=totalPx+'px';
+  for(let h=TL.SH;h<TL.EH;h++){
+    const y=tlH2Y(h);
+    // hour line
+    const line=document.createElement('div');
+    line.className='tl-hline';
+    line.style.top=y+'px';
+    grid.appendChild(line);
+    // half-hour line
+    const hline=document.createElement('div');
+    hline.className='tl-hline minor';
+    hline.style.top=(y+TL.PX_PER_HOUR/2)+'px';
+    grid.appendChild(hline);
+    // label
+    const lbl=document.createElement('div');
+    lbl.className='tl-hlbl';
+    lbl.style.top=y+'px';
+    lbl.textContent=h+':00';
+    gutter.appendChild(lbl);
   }
   // Now line
-  const nowH = new Date().getHours() + new Date().getMinutes()/60;
-  if(nowH >= TL.SH && nowH < TL.EH){
-    const line = document.createElement('div');
-    line.className = 'tl-nowline';
-    line.style.top = tlHtoY(nowH) + 'px';
-    line.innerHTML = '<div class="tl-nowdot"></div>';
-    colEl.appendChild(line);
+  const nowH=new Date().getHours()+new Date().getMinutes()/60;
+  if(nowH>=TL.SH&&nowH<TL.EH){
+    const line=document.createElement('div');
+    line.className='tl-nowline';
+    line.style.top=tlH2Y(nowH)+'px';
+    line.innerHTML='<div class="tl-nowdot"></div>';
+    grid.appendChild(line);
   }
 }
 
-function tlEventClass(ev){
-  if(ev.type === 'anchor') return 'ev-anchor';
-  if(ev.type === 'workout') return 'ev-workout';
-  if(ev.type === 'habit') return 'ev-habit';
-  if(ev.type === 'free') return 'ev-free';
-  if(ev.priority === 1) return 'ev-urgent';
+function tlEvClass(ev){
+  if(ev.type==='anchor')return 'ev-anchor';
+  if(ev.type==='workout')return 'ev-workout';
+  if(ev.type==='habit')return 'ev-habit';
+  if(ev.type==='free')return 'ev-free';
+  if(ev.priority===1)return 'ev-urgent';
   return 'ev-task';
 }
 
 function tlRenderEvents(){
-  const colEl = document.getElementById('tl-col');
-  if(!colEl) return;
-  // Remove old event elements
-  colEl.querySelectorAll('.tl-ev').forEach(e => e.remove());
-
-  TL.events.forEach(ev => {
-    if(!ev.start) return;
-    const el2 = document.createElement('div');
-    el2.className = 'tl-ev ' + tlEventClass(ev);
-    if(ev.done) el2.classList.add('tl-ev-done');
-    const top = tlHtoY(ev.start);
-    const height = Math.max((ev.dur || 0.5) * TL.HH - 4, 22);
-    el2.style.top = top + 'px';
-    el2.style.height = height + 'px';
-    el2.dataset.id = ev.id;
-    el2.dataset.type = ev.type;
-    if(ev.type === 'free'){
-      el2.innerHTML = `<div class="tl-ev-t">+ добавить</div>`;
-      el2.onclick = () => tlClickFreeSlot(ev.start);
-    } else {
-      const timeStr = tlHtoTimeStr(ev.start) + (ev.dur > 0 ? '–' + tlHtoTimeStr(ev.start + ev.dur) : '');
-      el2.innerHTML = `<div class="tl-ev-t">${ev.title}</div><div class="tl-ev-s">${timeStr}</div>`;
-      if(ev.type !== 'anchor') tlBindDrag(el2, ev);
+  const grid=document.getElementById('tl-grid');
+  if(!grid)return;
+  grid.querySelectorAll('.tl-ev').forEach(e=>e.remove());
+  // Sort and resolve overlaps
+  const sorted=[...TL.events].filter(e=>e.start!=null).sort((a,b)=>a.start-b.start);
+  // Column layout: detect overlaps, assign left/width
+  const cols=[];
+  sorted.forEach(ev=>{
+    let placed=false;
+    for(let c=0;c<cols.length;c++){
+      const last=cols[c][cols[c].length-1];
+      if(ev.start>=(last.start+(last.dur||0.5))){
+        cols[c].push(ev);ev._col=c;placed=true;break;
+      }
     }
-    colEl.appendChild(el2);
+    if(!placed){cols.push([ev]);ev._col=cols.length-1;}
+  });
+  const totalCols=cols.length||1;
+  sorted.forEach(ev=>{
+    const colIdx=ev._col||0;
+    // Count how many cols overlap at this event's time
+    let overlapCols=1;
+    cols.forEach((col,ci)=>{
+      if(ci===colIdx)return;
+      if(col.some(e=>e.start<(ev.start+(ev.dur||0.5))&&(e.start+(e.dur||0.5))>ev.start))overlapCols++;
+    });
+    const colW=Math.min(1,1/Math.max(overlapCols,1));
+    const leftPct=colIdx*colW*100;
+    const widthPct=colW*100;
+    const el2=document.createElement('div');
+    el2.className='tl-ev '+tlEvClass(ev);
+    if(ev.done)el2.classList.add('tl-ev-done');
+    const top=tlH2Y(ev.start);
+    const height=Math.max((ev.dur||0.5)*TL.PX_PER_HOUR-3,20);
+    el2.style.cssText=`top:${top}px;height:${height}px;left:calc(${leftPct}% + 4px);width:calc(${widthPct}% - 8px)`;
+    el2.dataset.evId=ev.id;
+    if(ev.type==='free'){
+      el2.innerHTML=`<div class="tl-ev-t">+ добавить</div>`;
+      el2.onclick=()=>tlClickFree(ev.start);
+    } else {
+      const timeStr=tlFmt(ev.start)+(ev.dur>0?'–'+tlFmt(ev.start+ev.dur):'');
+      el2.innerHTML=`<div class="tl-ev-t">${ev.title}</div>${height>32?`<div class="tl-ev-s">${timeStr}</div>`:''}`;
+      if(ev.type!=='anchor'&&ev.type!=='habit')tlBindDrag(el2,ev);
+    }
+    grid.appendChild(el2);
   });
   tlUpdateNowBar();
   tlUpdatePips();
 }
 
-function tlHtoTimeStr(h){
-  const hh = Math.floor(h);
-  const mm = Math.round((h - hh) * 60);
-  return String(hh).padStart(2,'0') + ':' + String(mm).padStart(2,'0');
-}
-
-function tlBindDrag(el2, ev){
-  el2.addEventListener('mousedown', e => {
-    if(e.button !== 0) return;
+function tlBindDrag(el2,ev){
+  const startDrag=e=>{
     e.preventDefault();
-    TL.dragEl = el2;
-    TL.dragEv = ev;
-    const rect = el2.getBoundingClientRect();
-    TL.dragOffsetY = e.clientY - rect.top;
-    el2.style.opacity = '0.7';
-    el2.style.zIndex = '20';
-    el2.style.pointerEvents = 'none';
-    document.addEventListener('mousemove', tlOnDragMove);
-    document.addEventListener('mouseup', tlOnDragEnd);
-  });
-  // Touch support
-  el2.addEventListener('touchstart', e => {
-    e.preventDefault();
-    const t2 = e.touches[0];
-    TL.dragEl = el2;
-    TL.dragEv = ev;
-    const rect = el2.getBoundingClientRect();
-    TL.dragOffsetY = t2.clientY - rect.top;
-    el2.style.opacity = '0.7';
-    el2.style.zIndex = '20';
-    document.addEventListener('touchmove', tlOnTouchMove, {passive:false});
-    document.addEventListener('touchend', tlOnDragEnd);
-  }, {passive:false});
-}
-
-function tlOnDragMove(e){
-  if(!TL.dragEl) return;
-  const col = document.getElementById('tl-col');
-  if(!col) return;
-  const colRect = col.getBoundingClientRect();
-  const y = e.clientY - colRect.top - TL.dragOffsetY;
-  const newH = tlSnap(tlYtoH(Math.max(0, y)));
-  TL.dragEl.style.top = tlHtoY(newH) + 'px';
-  TL._pendingH = newH;
-}
-
-function tlOnTouchMove(e){
-  e.preventDefault();
-  if(!TL.dragEl) return;
-  const t2 = e.touches[0];
-  const col = document.getElementById('tl-col');
-  if(!col) return;
-  const colRect = col.getBoundingClientRect();
-  const y = t2.clientY - colRect.top - TL.dragOffsetY;
-  const newH = tlSnap(tlYtoH(Math.max(0, y)));
-  TL.dragEl.style.top = tlHtoY(newH) + 'px';
-  TL._pendingH = newH;
-}
-
-function tlOnDragEnd(){
-  document.removeEventListener('mousemove', tlOnDragMove);
-  document.removeEventListener('mouseup', tlOnDragEnd);
-  document.removeEventListener('touchmove', tlOnTouchMove);
-  document.removeEventListener('touchend', tlOnDragEnd);
-  if(!TL.dragEl || !TL.dragEv) return;
-  TL.dragEl.style.opacity = '';
-  TL.dragEl.style.zIndex = '';
-  TL.dragEl.style.pointerEvents = '';
-  const newH = TL._pendingH;
-  if(newH !== undefined && Math.abs(newH - TL.dragEv.start) > 0.1){
-    const timeStr = tlHtoTimeStr(newH);
-    TL.dragEv.start = newH;
-    // Update subtitle
-    const sub = TL.dragEl.querySelector('.tl-ev-s');
-    if(sub) sub.textContent = timeStr + (TL.dragEv.dur > 0 ? '–' + tlHtoTimeStr(newH + TL.dragEv.dur) : '');
-    // Save to API
-    if(TL.dragEv.taskId){
-      api('update_task_time', {id: TL.dragEv.taskId, scheduled_time: timeStr}).catch(console.error);
+    const clientY=e.touches?e.touches[0].clientY:e.clientY;
+    TL.dragEl=el2;TL.dragEv=ev;
+    const rect=el2.getBoundingClientRect();
+    TL.dragOffY=clientY-rect.top;
+    el2.style.opacity='.65';el2.style.zIndex='20';el2.style.pointerEvents='none';
+    if(e.touches){
+      document.addEventListener('touchmove',onMove,{passive:false});
+      document.addEventListener('touchend',onEnd);
+    } else {
+      document.addEventListener('mousemove',onMove);
+      document.addEventListener('mouseup',onEnd);
     }
-    tlUpdateNowBar();
-    toast('Сохранено', 'tok');
-  }
-  TL.dragEl = null;
-  TL.dragEv = null;
-  TL._pendingH = undefined;
+  };
+  const onMove=e=>{
+    if(!TL.dragEl)return;
+    const clientY=e.touches?e.touches[0].clientY:e.clientY;
+    const grid=document.getElementById('tl-grid');
+    if(!grid)return;
+    const rect=grid.getBoundingClientRect();
+    const body=document.getElementById('tl-body');
+    const scrollTop=body?body.scrollTop:0;
+    const y=clientY-rect.top+scrollTop-TL.dragOffY;
+    const newH=tlSnap(Math.max(TL.SH,Math.min(TL.EH-0.5,tlY2H(Math.max(0,y)))));
+    TL.dragEl.style.top=tlH2Y(newH)+'px';
+    TL.pendingH=newH;
+    if(e.touches)e.preventDefault();
+  };
+  const onEnd=()=>{
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onEnd);
+    document.removeEventListener('touchmove',onMove);
+    document.removeEventListener('touchend',onEnd);
+    if(!TL.dragEl)return;
+    TL.dragEl.style.opacity='';TL.dragEl.style.zIndex='';TL.dragEl.style.pointerEvents='';
+    if(TL.pendingH!=null&&Math.abs(TL.pendingH-(TL.dragEv.start||0))>0.1){
+      const newH=TL.pendingH;
+      const timeStr=tlFmt(newH);
+      TL.dragEv.start=newH;
+      const sub=TL.dragEl.querySelector('.tl-ev-s');
+      if(sub)sub.textContent=timeStr+'–'+tlFmt(newH+(TL.dragEv.dur||0.5));
+      if(TL.dragEv.taskId){
+        api('update_task_time',{id:TL.dragEv.taskId,scheduled_time:timeStr}).catch(console.error);
+      }
+      toast('Сохранено','tok');
+      tlUpdateNowBar();
+    }
+    TL.dragEl=null;TL.dragEv=null;TL.pendingH=undefined;
+  };
+  el2.addEventListener('mousedown',startDrag);
+  el2.addEventListener('touchstart',startDrag,{passive:false});
 }
 
-function tlClickFreeSlot(startH){
-  const inp = prompt('Название задачи (время: ' + tlHtoTimeStr(startH) + '):');
-  if(!inp || !inp.trim()) return;
-  apiAddTask(inp.trim(), 2, today).then(() => {
-    tlLoadAndRender();
-  });
+function tlClickFree(startH){
+  const inp=prompt('Задача ('+tlFmt(startH)+'):');
+  if(!inp||!inp.trim())return;
+  apiAddTask(inp.trim(),2,today).then(()=>tlLoadAndRender());
 }
 
 function tlUpdateNowBar(){
-  const wrap = document.getElementById('tl-now-wrap');
-  if(!wrap) return;
-  const nowH = new Date().getHours() + new Date().getMinutes()/60;
-  // Find current event
-  const cur = TL.events.find(ev => ev.start && ev.type !== 'free' && nowH >= ev.start && nowH < (ev.start + (ev.dur||0.5)));
-  if(!cur){ wrap.innerHTML = ''; return; }
-  const remaining = Math.round((cur.start + (cur.dur||0.5) - nowH) * 60);
-  wrap.innerHTML = `<div class="tl-now-bar">
+  const wrap=document.getElementById('tl-now-wrap');
+  if(!wrap)return;
+  const nowH=new Date().getHours()+new Date().getMinutes()/60;
+  const cur=TL.events.find(ev=>ev.type!=='free'&&ev.start!=null&&nowH>=ev.start&&nowH<(ev.start+(ev.dur||0.5)));
+  if(!cur){wrap.innerHTML='';return;}
+  const rem=Math.max(0,Math.round((cur.start+(cur.dur||0.5)-nowH)*60));
+  const canSkip=cur.type==='task';
+  wrap.innerHTML=`<div class="tl-now-bar">
     <span class="tl-now-pill">сейчас</span>
     <span class="tl-now-task">${cur.title}</span>
-    <span class="tl-now-timer" id="tl-now-timer">осталось ${remaining} мин</span>
-    ${cur.type === 'task' || cur.priority ? `<button class="tl-now-skip" onclick="tlSkipCurrent()">пропустил</button>` : ''}
+    <span class="tl-now-timer">осталось ${rem} мин</span>
+    ${canSkip?`<button class="tl-now-skip" onclick="tlSkip()">пропустил</button>`:''}
   </div>`;
 }
 
-function tlSkipCurrent(){
-  const nowH = new Date().getHours() + new Date().getMinutes()/60;
-  const cur = TL.events.find(ev => ev.start && ev.type !== 'free' && nowH >= ev.start && nowH < (ev.start + (ev.dur||0.5)));
-  if(!cur) return;
-  TL.events = TL.events.filter(e => e.id !== cur.id);
+function tlSkip(){
+  const nowH=new Date().getHours()+new Date().getMinutes()/60;
+  const cur=TL.events.find(ev=>ev.type==='task'&&ev.start!=null&&nowH>=ev.start&&nowH<(ev.start+(ev.dur||0.5)));
+  if(!cur)return;
+  TL.events=TL.events.filter(e=>e.id!==cur.id);
   tlRenderEvents();
-  toast('Перестраиваю день...', 'tin');
-  setTimeout(() => tlAIPlan(), 500);
+  toast('Перестраиваю день...','tin');
+  setTimeout(()=>tlAIPlan(),600);
 }
 
 function tlUpdatePips(){
-  const pips = document.getElementById('tl-pips');
-  if(!pips) return;
-  const evs = TL.events.filter(e => e.type !== 'free' && e.type !== 'anchor');
-  const done = evs.filter(e => e.done).length;
-  pips.innerHTML = evs.map((_, i) => `<div class="tl-pip${i < done ? ' on' : ''}"></div>`).join('');
+  const pips=document.getElementById('tl-pips');
+  if(!pips)return;
+  const evs=TL.events.filter(e=>e.type!=='free'&&e.type!=='anchor');
+  const done=evs.filter(e=>e.done).length;
+  pips.innerHTML=evs.slice(0,10).map((_,i)=>`<div class="tl-pip${i<done?' on':''}"></div>`).join('');
 }
 
-function tlBuildEventsFromData(d){
-  TL.events = [];
-  const nowH = new Date().getHours() + new Date().getMinutes()/60;
-  // Anchors — fixed times
-  const anchorTimes = [7, 13, 19, 22];
-  (d.habits || []).filter(h => h.anchor || h.is_anchor).forEach((h, i) => {
-    const st = anchorTimes[i] || (7 + i);
-    TL.events.push({
-      id: 'anc-' + h.id, type: 'anchor', title: h.name || (h.name_ru || h.name),
-      start: st, dur: 0.25, done: h.done || false
-    });
+function tlBuildEvents(d){
+  TL.events=[];
+  // Якоря — фиксированные
+  const ancTimes=[7,13,19,22];
+  (d.habits||[]).filter(h=>h.anchor||h.is_anchor).forEach((h,i)=>{
+    TL.events.push({id:'anc-'+h.id,type:'anchor',title:h.name||(h.name_uk||h.name_en||'Якорь'),start:ancTimes[i]||7,dur:0.25,done:h.done||false});
   });
-  // Workout
-  if(d.workout && !d.workout.completed_at){
-    TL.events.push({
-      id: 'wo-' + (d.workout.id||1), type: 'workout', title: 'Тренировка — ' + (d.workout.type || 'силовая'),
-      start: 11, dur: (d.workout.duration_min || 60) / 60, done: false
-    });
+  // Тренировка
+  if(d.workout&&!d.workout.completed_at){
+    TL.events.push({id:'wo-1',type:'workout',title:'Тренировка — '+(d.workout.type==='strength'?'силовая':d.workout.type||''),start:11,dur:(d.workout.duration_min||60)/60,done:false});
   }
-  // Tasks with scheduled_time
-  const tasksWithTime = (d.tasks || []).filter(t => t.scheduled_time);
-  const tasksWithout = (d.tasks || []).filter(t => !t.scheduled_time);
-  tasksWithTime.forEach(t => {
-    const parts = t.scheduled_time.split(':');
-    const h = parseInt(parts[0]) + parseInt(parts[1]||0)/60;
-    TL.events.push({
-      id: 'task-' + t.id, taskId: t.id, type: 'task',
-      priority: t.priority,
-      title: t.title, start: h, dur: 0.5, done: t.done || false
-    });
+  // Задачи со scheduled_time
+  (d.tasks||[]).filter(t=>t.scheduled_time).forEach(t=>{
+    const p=t.scheduled_time.split(':');
+    const h=parseInt(p[0])+parseInt(p[1]||0)/60;
+    TL.events.push({id:'task-'+t.id,taskId:t.id,type:'task',priority:t.priority||2,title:t.title,start:h,dur:0.5,done:t.done||false});
   });
-  // Tasks without time — place in available slots
-  let slotH = 8.5;
-  tasksWithout.forEach(t => {
-    // skip occupied slots
-    while(TL.events.some(e => e.start && Math.abs(e.start - slotH) < 0.5)){
-      slotH += 0.5;
-    }
-    if(slotH < TL.EH){
-      TL.events.push({
-        id: 'task-' + t.id, taskId: t.id, type: 'task',
-        priority: t.priority,
-        title: t.title, start: slotH, dur: 0.5, done: t.done || false
-      });
-      slotH += 0.75;
+  // Задачи без времени — раскладываем в свободные слоты
+  let slot=8.25;
+  (d.tasks||[]).filter(t=>!t.scheduled_time&&!t.done).forEach(t=>{
+    while(TL.events.some(e=>e.start!=null&&Math.abs(e.start-slot)<0.5)&&slot<TL.EH)slot+=0.25;
+    if(slot<TL.EH-0.5){
+      TL.events.push({id:'task-'+t.id,taskId:t.id,type:'task',priority:t.priority||2,title:t.title,start:slot,dur:0.5,done:false});
+      slot+=0.75;
     }
   });
-  // Free slots
-  tlAddFreeSlots();
-  // Sort by start
-  TL.events.sort((a,b) => (a.start||0) - (b.start||0));
-}
-
-function tlAddFreeSlots(){
-  // Find gaps > 30min between events
-  const sorted = TL.events.filter(e => e.start).sort((a,b) => a.start - b.start);
-  const freeSlots = [];
-  let cursor = TL.SH;
-  sorted.forEach(ev => {
-    if(ev.start - cursor >= 0.75){
-      freeSlots.push({start: cursor, dur: ev.start - cursor});
-    }
-    cursor = Math.max(cursor, ev.start + (ev.dur||0.5));
+  // Свободные окна — компактные, только > 45 мин
+  const sorted=[...TL.events].filter(e=>e.start!=null).sort((a,b)=>a.start-b.start);
+  let cur=TL.SH;
+  const frees=[];
+  sorted.forEach(ev=>{
+    if(ev.start-cur>=0.75)frees.push({start:cur,dur:ev.start-cur});
+    cur=Math.max(cur,ev.start+(ev.dur||0.5));
   });
-  if(TL.EH - cursor >= 0.75) freeSlots.push({start: cursor, dur: TL.EH - cursor});
-  freeSlots.forEach((fs, i) => {
-    TL.events.push({id: 'free-' + i, type: 'free', title: '+ добавить', start: fs.start, dur: fs.dur});
-  });
+  if(TL.EH-cur>=0.75)frees.push({start:cur,dur:Math.min(TL.EH-cur,2)});
+  frees.forEach((f,i)=>TL.events.push({id:'free-'+i,type:'free',title:'+ добавить',start:f.start,dur:Math.min(f.dur,1)}));
+  TL.events.sort((a,b)=>(a.start||0)-(b.start||0));
 }
 
 async function tlLoadAndRender(){
-  const res = await api('get_today');
-  if(!res || !res.success) return;
-  const d = (res.data && res.data.data) ? res.data.data : (res.data || {});
-  tlBuildEventsFromData(d);
+  const res=await api('get_today');
+  if(!res||!res.success)return;
+  const d=(res.data&&res.data.data)?res.data.data:(res.data||{});
+  tlBuildEvents(d);
   tlBuildGrid();
   tlRenderEvents();
-  // Update header
-  const dateEl = document.getElementById('tl-date-lbl');
-  if(dateEl){
-    const now = new Date();
-    const days = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
-    const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-    dateEl.textContent = days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()];
-  }
-  const subEl = document.getElementById('tl-hdr-sub');
+  // Header
+  const now=new Date();
+  const days=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+  const months=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  const dateEl=document.getElementById('tl-date-lbl');
+  if(dateEl)dateEl.textContent=days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()];
+  const subEl=document.getElementById('tl-hdr-sub');
   if(subEl){
-    const tasks2 = TL.events.filter(e => e.type === 'task');
-    const wo = TL.events.find(e => e.type === 'workout');
-    subEl.textContent = tasks2.length + ' задач' + (wo ? ' · тренировка ' + tlHtoTimeStr(wo.start) : '');
+    const tks=TL.events.filter(e=>e.type==='task').length;
+    const wo=TL.events.find(e=>e.type==='workout');
+    subEl.textContent=tks+' задач'+(wo?' · тренировка '+tlFmt(wo.start):'');
   }
-  // Scroll to current time
-  const wrap = document.getElementById('tl-scroll-wrap');
-  if(wrap){
-    const nowH2 = new Date().getHours() + new Date().getMinutes()/60;
-    setTimeout(() => { wrap.scrollTop = Math.max(0, tlHtoY(nowH2) - 100); }, 50);
+  // Scroll to current time - 1.5h
+  const body=document.getElementById('tl-body');
+  if(body){
+    const nowH2=new Date().getHours()+new Date().getMinutes()/60;
+    setTimeout(()=>{body.scrollTop=Math.max(0,tlH2Y(nowH2-1.5));},60);
   }
 }
 
 async function tlAIPlan(){
-  const overlay = document.getElementById('tl-ai-overlay');
-  const status = document.getElementById('tl-ai-status');
-  const dots = document.getElementById('tl-ai-dots');
-  const accept = document.getElementById('tl-ai-accept');
-  if(!overlay) return;
-  overlay.style.display = 'flex';
-  status.textContent = 'Анализирую задачи и энергию...';
-  dots.style.display = 'flex';
-  accept.style.display = 'none';
-  setTimeout(() => { if(status) status.textContent = 'Расставляю по энергоблокам...'; }, 1000);
-  const res = await api('ai_schedule_day');
-  if(res && res.success){
-    status.textContent = 'Готово! ' + (res.schedule||[]).length + ' событий расставлено.';
-    dots.style.display = 'none';
-    accept.style.display = 'block';
+  const ov=document.getElementById('tl-ai-overlay');
+  const st=document.getElementById('tl-ai-status');
+  const dots=document.getElementById('tl-ai-dots');
+  const acc=document.getElementById('tl-ai-accept');
+  if(!ov)return;
+  ov.style.display='flex';
+  st.textContent='Анализирую задачи и энергию...';
+  dots.style.display='flex';acc.style.display='none';
+  setTimeout(()=>{if(st)st.textContent='Расставляю по энергоблокам...';},900);
+  const res=await api('ai_schedule_day');
+  if(res&&res.success){
+    st.textContent='Готово! '+(res.schedule||[]).length+' событий расставлено.';
+    dots.style.display='none';acc.style.display='block';
   } else {
-    status.textContent = 'Ошибка. Попробуй снова.';
-    dots.style.display = 'none';
-    setTimeout(() => { overlay.style.display = 'none'; }, 1500);
+    st.textContent='Ошибка. Попробуй снова.';
+    dots.style.display='none';
+    setTimeout(()=>{ov.style.display='none';},1500);
   }
 }
 
 function tlAcceptPlan(){
-  const overlay = document.getElementById('tl-ai-overlay');
-  if(overlay) overlay.style.display = 'none';
+  const ov=document.getElementById('tl-ai-overlay');
+  if(ov)ov.style.display='none';
   tlLoadAndRender();
-  toast('План принят', 'tok');
+  toast('План принят','tok');
 }
 
-let tlMicWave = null;
+let tlWaveTimer=null;
 function tlToggleMic(){
-  const btn = document.getElementById('tl-mic-btn');
-  const row = document.getElementById('tl-voice-row');
-  const vtxt = document.getElementById('tl-vtxt');
-  TL.micOn = !TL.micOn;
+  const btn=document.getElementById('tl-mic-btn');
+  const row=document.getElementById('tl-voice-row');
+  const vtxt=document.getElementById('tl-vtxt');
+  TL.micOn=!TL.micOn;
   if(TL.micOn){
-    btn.classList.add('on');
-    row.style.display = 'flex';
-    vtxt.textContent = 'Слушаю...';
-    tlMicWave = setInterval(() => {
-      [1,2,3,4,5,6,7].forEach(n => {
-        const w = document.getElementById('vw'+n);
-        if(w) w.style.height = (Math.round(Math.random()*14)+3) + 'px';
-      });
-    }, 120);
-    setTimeout(() => {
-      const phrases = ['"Добавь задачу встреча в 15:00"', '"Перенеси тренировку на 18:00"', '"Что сегодня срочного?"'];
-      vtxt.innerHTML = `<span style="color:var(--text);font-weight:500">${phrases[Math.floor(Math.random()*phrases.length)]}</span> — распознано`;
-      clearInterval(tlMicWave);
-      setTimeout(() => {
-        btn.classList.remove('on');
-        row.style.display = 'none';
-        TL.micOn = false;
-      }, 2000);
-    }, 2200);
+    btn.classList.add('on');row.style.display='flex';vtxt.textContent='Слушаю...';
+    tlWaveTimer=setInterval(()=>{[1,2,3,4,5,6,7].forEach(n=>{const w=document.getElementById('vw'+n);if(w)w.style.height=(Math.round(Math.random()*12)+3)+'px';});},120);
+    setTimeout(()=>{
+      const ph=['"Добавь задачу встреча в 15:00"','"Перенеси тренировку на 18:00"','"Что сегодня срочного?"'];
+      vtxt.innerHTML=`<span style="color:var(--text);font-weight:500">${ph[Math.floor(Math.random()*ph.length)]}</span> — распознано`;
+      clearInterval(tlWaveTimer);
+      setTimeout(()=>{btn.classList.remove('on');row.style.display='none';TL.micOn=false;},1800);
+    },2200);
   } else {
-    clearInterval(tlMicWave);
-    btn.classList.remove('on');
-    row.style.display = 'none';
+    clearInterval(tlWaveTimer);btn.classList.remove('on');row.style.display='none';
   }
 }
 
-// Extend goTab to handle timeline
-const _goTabV2 = goTab;
-goTab = async function(name){
-  await _goTabV2(name);
-  if(name === 'timeline'){
+const _goTabBase=goTab;
+goTab=async function(name){
+  await _goTabBase(name);
+  if(name==='timeline'){
     tlBuildEnergy();
     await tlLoadAndRender();
   }
@@ -1586,5 +1532,3 @@ goTab = async function(name){
   applyLang();initFromAPI();
 })();
 </script>
-</body>
-</html>
