@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var V='20260526_06';
+  var V='20260526_04';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -475,10 +475,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
   <a class="mb2" href="/dashboard.html?view=food"><svg viewBox="0 0 15 15" fill="none"><path d="M5 1.5v4a2.5 2.5 0 005 0v-4M7.5 5.5v8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span id="i-mbfood">Питание</span></a>
 </div></nav>
 <div class="ov" id="ov-hab"><div class="modal">
-  <div class="mh"><div class="mt" id="i-mhtitle">Новая привычка</div><button class="mc" onclick="closeOv('ov-hab')">✕</button></div>
-  <div class="mb"><div class="fr"><div class="fl" id="i-mhname">Название</div><input class="inp" id="hname"></div>
-  <div class="fr2"><div><div class="fl" id="i-mhfreq">Частота</div><select class="sel" id="hfreq"><option value="daily" id="i-hfd">Ежедневно</option><option value="custom" id="i-hfc">Несколько раз в неделю</option></select></div><div><div class="fl" id="i-mhtype">Тип</div><select class="sel" id="hanc"><option value="0" id="i-htn">Обычная</option><option value="1" id="i-hta">Якорь</option></select></div></div>
-  <button class="btn ba" style="width:100%" onclick="saveHab()" id="i-mhsave">Сохранить</button></div>
+  <div class="mh"><div class="mt" id="hab-modal-title">Новая привычка</div><button class="mc" onclick="closeOv('ov-hab')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="hab-edit-id" value="">
+    <div class="fr"><div class="fl">Название</div><input class="inp" id="hname" placeholder="Утренняя молитва..."></div>
+    <div class="fr2">
+      <div><div class="fl">Частота</div><select class="sel" id="hfreq"><option value="daily">Ежедневно</option><option value="custom">Несколько раз в неделю</option></select></div>
+      <div><div class="fl">Тип</div><select class="sel" id="hanc"><option value="0">Обычная</option><option value="1">Якорь дня</option></select></div>
+    </div>
+    <div class="fr"><div class="fl">Время выполнения <span style="color:var(--muted2);font-weight:400">(опционально)</span></div><input class="inp" id="htime" type="time" placeholder="07:00"></div>
+    <button class="btn ba" style="width:100%;margin-top:4px" onclick="saveHab()" id="i-mhsave">Сохранить</button>
+  </div>
 </div></div>
 
 <div class="ov" id="ov-tmpl"><div class="modal">
@@ -808,7 +815,20 @@ function openAddWo(){el('awdate').value=today;el('awtmpl').innerHTML=templates.m
 function saveSchedWo(){const tid=parseInt(el('awtmpl').value);schedWo.push({id:Date.now(),templateId:tid,date:el('awdate').value||today,note:el('awnote').value});saveAll();closeOv('ov-addwo');renderAll();toast(t('saved'),'tok');}
 
 function renderHabits(){
-  el('allhab').innerHTML=habits.map(h=>`<div class="row"><div class="ri" style="background:${h.anchor?'var(--pub)':'var(--acl)'};color:${h.anchor?'var(--pu)':'var(--ac)'}"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${hn(h)}</div><div class="rs">${h.freq==='daily'?t('hfd'):t('hfc')} · ${t('streak')} ${h.streak||0} ${t('days')}</div></div>${h.anchor?`<span class="tag tp">${t('anchor')}</span>`:''} ${!h.anchor?`<button class="ibt" onclick="delHab(${h.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>`:''}</div>`).join('');
+  el('allhab').innerHTML=habits.map(h=>{
+    const timeStr=h.preferred_time?`<span style="color:var(--ac);font-size:10px;font-weight:500;background:var(--acl);padding:1px 7px;border-radius:10px">${h.preferred_time}</span>`:'';
+    const ancTag=h.anchor?`<span class="tag tp">${t('anchor')}</span>`:'';
+    return `<div class="row">
+      <div class="ri" style="background:${h.anchor?'var(--pub)':'var(--acl)'};color:${h.anchor?'var(--pu)':'var(--ac)'}"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="rin">
+        <div class="rn">${hn(h)}</div>
+        <div class="rs" style="display:flex;align-items:center;gap:6px;margin-top:2px">${h.freq==='daily'?t('hfd'):t('hfc')} · ${t('streak')} ${h.streak||0} ${t('days')} ${timeStr}</div>
+      </div>
+      ${ancTag}
+      <button class="ibt ed" onclick="editHab(${h.id})" title="Редактировать"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M8 2l2 2-6 6H2V8l6-6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
+      <button class="ibt" onclick="delHab(${h.id})" title="Удалить"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>`;
+  }).join('');
   const sel=el('hmsel');sel.innerHTML=`<option value="all">${lang==='en'?'All':lang==='uk'?'Всі':'Все'}</option>`+habits.map(h=>`<option value="${h.id}">${hn(h)}</option>`).join('');
   renderHmap();renderStreaks();
 }
@@ -817,9 +837,62 @@ function renderHmap(){
   for(let w=11;w>=0;w--){const col=document.createElement('div');col.className='hcol';for(let d=6;d>=0;d--){const date=new Date(todD);date.setDate(todD.getDate()-(w*7+d));const key=dk(date);let lv=0;if(sv2==='all'){const done=habits.filter(h=>hlog[h.id]?.[key]).length;lv=habits.length?Math.ceil(done/habits.length*3):0;}else{lv=hlog[sv2]?.[key]?4:0;}const cell=document.createElement('div');cell.className='hcel'+(lv?' h'+lv:'');cell.title=key;col.appendChild(cell);}grid.appendChild(col);}
 }
 function renderStreaks(){el('streaks').innerHTML=[...habits].sort((a,b)=>(b.streak||0)-(a.streak||0)).map(h=>`<div class="row"><div class="ri" style="background:${h.anchor?'var(--pub)':'var(--acl)'};color:${h.anchor?'var(--pu)':'var(--ac)'}"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${hn(h)}</div></div><span style="font-size:16px;font-weight:700;color:${(h.streak||0)>=7?'var(--gr)':(h.streak||0)>=3?'var(--am)':'var(--muted)'}">${h.streak||0} ${t('days')}</span></div>`).join('');}
-function delHab(id){habits=habits.filter(h=>h.id!==id);delete hlog[id];saveAll();renderHabits();renderToday();}
-function openAddHab(){el('hname').value='';openOv('ov-hab');}
-function saveHab(){const name=el('hname').value.trim();if(!name)return;const id=Date.now();habits.push({id,name:{ru:name,uk:name,en:name},freq:el('hfreq').value,anchor:el('hanc').value==='1',streak:0});hlog[id]={};saveAll();closeOv('ov-hab');renderHabits();renderToday();toast(t('saved'),'tok');}
+function openAddHab(){
+  el('hab-edit-id').value='';
+  el('hab-modal-title').textContent='Новая привычка';
+  el('hname').value='';
+  el('hfreq').value='daily';
+  el('hanc').value='0';
+  el('htime').value='';
+  openOv('ov-hab');
+}
+function editHab(id){
+  const h=habits.find(x=>x.id===id);if(!h)return;
+  el('hab-edit-id').value=id;
+  el('hab-modal-title').textContent='Редактировать привычку';
+  el('hname').value=hn(h);
+  el('hfreq').value=h.freq||'daily';
+  el('hanc').value=h.anchor?'1':'0';
+  el('htime').value=h.preferred_time||'';
+  openOv('ov-hab');
+}
+async function saveHab(){
+  const name=el('hname').value.trim();if(!name)return;
+  const editId=el('hab-edit-id').value;
+  const freq=el('hfreq').value;
+  const is_anchor=el('hanc').value==='1';
+  const preferred_time=el('htime').value||null;
+  closeOv('ov-hab');
+  if(editId){
+    // Update existing
+    const res=await api('update_habit',{id:parseInt(editId),name,freq,is_anchor,preferred_time});
+    if(res.success){
+      const h=habits.find(x=>x.id===parseInt(editId));
+      if(h){h.name={ru:name,uk:name,en:name};h.freq=freq;h.anchor=is_anchor;h.preferred_time=preferred_time;}
+      toast(t('saved'),'tok');
+    }
+  } else {
+    // Add new
+    const res=await api('add_habit',{name,name_uk:name,name_en:name,freq,is_anchor,preferred_time});
+    if(res.success&&res.habit){
+      habits.push({id:res.habit.id,name:{ru:name,uk:name,en:name},freq,anchor:is_anchor,streak:0,preferred_time});
+      hlog[res.habit.id]={};
+      toast(t('saved'),'tok');
+    }
+  }
+  await loadHabitsFromAPI();
+  renderHabits();renderToday();
+}
+async function delHab(id){
+  if(!confirm('Удалить привычку?'))return;
+  const res=await api('delete_habit',{id});
+  if(res.success){
+    habits=habits.filter(h=>h.id!==id);
+    delete hlog[id];
+    renderHabits();renderToday();
+    toast(t('deleted'),'tin');
+  }
+}
 
 const catC={health:'var(--gr)',sport:'var(--bl)',study:'var(--am)',spirit:'var(--pu)',other:'var(--muted)'};
 const catB={health:'var(--grb)',sport:'var(--blb)',study:'var(--amb)',spirit:'var(--pub)',other:'var(--bg3)'};
@@ -977,7 +1050,8 @@ async function loadTodayFromAPI(){
       name: {ru: h.name, uk: h.name_uk || h.name, en: h.name_en || h.name},
       freq: h.freq || 'daily',
       anchor: h.is_anchor || false,
-      streak: 0
+      streak: 0,
+      preferred_time: h.preferred_time || null
     }));
     d.habits.forEach(h => {
       if (!hlog[h.id]) hlog[h.id] = {};
@@ -999,7 +1073,8 @@ async function loadHabitsFromAPI(){
     freq: h.freq,
     anchor: h.is_anchor,
     streak: h.streak_7d || 0,
-    done_30d: h.done_30d || 0
+    done_30d: h.done_30d || 0,
+    preferred_time: h.preferred_time || null
   }));
   res.habits.forEach(h => {
     if (!hlog[h.id]) hlog[h.id] = {};
@@ -1472,10 +1547,12 @@ function tlUpdatePips(){
 
 function tlBuildEvents(d){
   TL.events=[];
-  // Якоря — фиксированные
+  // Якоря — используем preferred_time если есть, иначе дефолт
   const ancTimes=[7,13,19,22];
   (d.habits||[]).filter(h=>h.anchor||h.is_anchor).forEach((h,i)=>{
-    TL.events.push({id:'anc-'+h.id,type:'anchor',title:h.name||(h.name_uk||h.name_en||'Якорь'),start:ancTimes[i]||7,dur:0.25,done:h.done||false});
+    let st=ancTimes[i]||7;
+    if(h.preferred_time){const p=h.preferred_time.split(':');st=parseInt(p[0])+parseInt(p[1]||0)/60;}
+    TL.events.push({id:'anc-'+h.id,type:'anchor',title:h.name||(h.name_uk||h.name_en||'Якорь'),start:st,dur:0.25,done:h.done||false});
   });
   // Тренировка
   if(d.workout&&!d.workout.completed_at){
