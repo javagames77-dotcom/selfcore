@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 (function(){
-  var V='20260526_01';
+  var V='20260526_02';
   if(location.search.indexOf('v='+V)===-1){
     location.replace(location.pathname+'?v='+V);
   }
@@ -1010,13 +1010,15 @@ editGoal = function(id){
 /* ── Главный init — загружает реальные данные ── */
 async function initFromAPI(){
   applyLang();
-  // Show skeleton
   el('tc-today').classList.add('on');
   el('tab-today').classList.add('on');
   el('mob-today').classList.add('on');
   activeTab = 'today';
   try {
-    await loadTodayFromAPI();
+    await Promise.all([
+      loadTodayFromAPI(),
+      loadWorkoutsFromAPI()
+    ]);
   } catch(e){ console.error(e); }
   renderToday();
   renderReview();
