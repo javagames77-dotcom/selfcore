@@ -541,11 +541,27 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 </div></div>
 
 <div class="ov" id="ov-goal"><div class="modal">
-  <div class="mh"><div class="mt" id="i-mgtitle">Новая цель</div><button class="mc" onclick="closeOv('ov-goal')">✕</button></div>
-  <div class="mb"><div class="fr"><div class="fl" id="i-mgname">Цель</div><input class="inp" id="gname" placeholder="Жим лёжа 100 кг"></div>
-  <div class="fr2"><div><div class="fl" id="i-mgcat">Категория</div><select class="sel" id="gcat"><option value="health" id="i-gch">Здоровье</option><option value="sport" id="i-gcs">Спорт</option><option value="study" id="i-gcst">Учёба</option><option value="spirit" id="i-gcsp">Духовное</option><option value="other" id="i-gco">Другое</option></select></div><div><div class="fl" id="i-mgdl">Дедлайн</div><input class="inp" id="gdl" type="date"></div></div>
-  <div class="fr2"><div><div class="fl" id="i-mgcur">Текущее</div><input class="inp" id="gcur" type="number" value="0"></div><div><div class="fl" id="i-mgtarget">Цель</div><input class="inp" id="gtarget" type="number" value="100"></div></div>
-  <button class="btn ba" style="width:100%" onclick="saveGoal()" id="i-mgsave">Сохранить</button></div>
+  <div class="mh"><div class="mt" id="goal-modal-title">Новая цель</div><button class="mc" onclick="closeOv('ov-goal')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="goal-edit-id" value="">
+    <div class="fr"><div class="fl" id="i-mgname">Название</div><input class="inp" id="gname" placeholder="Жим лёжа 100 кг"></div>
+    <div class="fr2">
+      <div><div class="fl" id="i-mgcat">Категория</div><select class="sel" id="gcat">
+        <option value="health" id="i-gch">Здоровье</option>
+        <option value="sport" id="i-gcs">Спорт</option>
+        <option value="study" id="i-gcst">Учёба</option>
+        <option value="spirit" id="i-gcsp">Духовное</option>
+        <option value="other" id="i-gco">Другое</option>
+      </select></div>
+      <div><div class="fl" id="i-mgdl">Дедлайн</div><input class="inp" id="gdl" type="date"></div>
+    </div>
+    <div class="fr2">
+      <div><div class="fl" id="i-mgcur">Текущее</div><input class="inp" id="gcur" type="number" step="0.1" value="0"></div>
+      <div><div class="fl" id="i-mgtarget">Цель</div><input class="inp" id="gtarget" type="number" step="0.1" value="100"></div>
+    </div>
+    <div class="fr"><div class="fl" id="i-mgunit">Единица</div><input class="inp" id="gunit" placeholder="кг, км, мин..."></div>
+    <button class="btn ba" style="width:100%;margin-top:4px" onclick="saveGoal()" id="i-mgsave">Сохранить</button>
+  </div>
 </div></div>
 
 
@@ -601,9 +617,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 </div></div>
 <div id="toasts"></div><script>
 const L={
-ru:{out:'Выход',ntag:'Планирование',sbmain:'Главное',sbmods:'Разделы',sbsys:'Система',sbdash:'Дашборд',sbplan:'Планирование',sbhealth:'Здоровье',sbfood:'Питание',sbfin:'Финансы',sban:'Аналитика',sbset:'Настройки',ttod:'Сегодня',tcal:'Календарь',two:'Тренировки',thab:'Привычки',tgoals:'Цели',mhab:'Привычки',mtask:'Задачи',mwo:'Тренировка',mweek:'Неделя',mtasksub:'сегодня',mwosub:'сегодня',mweeksub:'выполнение',anctitle:'Якоря дня',tasktitle:'Задачи дня',habtoday:'Привычки',wotoday:'Тренировка',planwo:'Запланировать',leganc:'Якоря',leghab:'Привычки',legwo:'Тренировка',legtask:'Задачи',calstats:'Статистика месяца',tmpllbl:'Шаблоны',addtmpl:'+ Создать',histlbl:'История',exproglbl:'Прогресс упражнения',allhablbl:'Все привычки',addhab:'+ Добавить',hmaplbl:'12 недель',streaklbl:'Серии',less:'Меньше',more:'Больше',goalslbl:'Цели',addgoal:'+ Добавить',d30lbl:'Привычки (30 дней)',mhtitle:'Новая привычка',mhname:'Название',mhfreq:'Частота',mhtype:'Тип',hfd:'Ежедневно',hfc:'Несколько раз в неделю',htn:'Обычная',hta:'Якорь',mhsave:'Сохранить',mttitle:'Шаблон тренировки',mtname:'Название',mttype:'Тип',mtexs:'Упражнения',mtaddex:'+ Добавить',mtsave:'Сохранить',ttstr:'Силовая',ttcard:'Кардио',ttflex:'Растяжка',tthiit:'HIIT',mawtitle:'Запланировать',mawtmpl:'Шаблон',mawdate:'Дата',mawnote:'Заметка',mawsave:'Запланировать',mgtitle:'Новая цель',mgname:'Цель',mgcat:'Категория',mgdl:'Дедлайн',mgcur:'Текущее',mgtarget:'Цель',mgsave:'Сохранить',gch:'Здоровье',gcs:'Спорт',gcst:'Учёба',gcsp:'Духовное',gco:'Другое',finish:'Завершить',start:'Начать',setn:'Подход',repsn:'Повт',weightn:'Кг',distn:'Км',timen:'Мин',prev:'Прошлый раз',pr:'PR',done:'Готово',added:'Добавлено',deleted:'Удалено',saved:'Сохранено',anchor:'якорь',streak:'серия',days:'дн',woDone:'Выполнено',woPlanned:'Запланировано',noTmpl:'Нет шаблонов',noHist:'История пуста',noGoals:'Целей нет',noTasks:'Задач нет',markDone:'Отметить',markedDone:'Выполнено',mbhome:'Главная',mbtod:'Сегодня',mbcal:'Кал.',mbwo:'Трен.',mbhab:'Привычки',mbgoals:'Цели',mbfood:'Питание',wkd:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],months:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],tntitle:'Как прошло?',tnlbl:'Комментарий (опционально)',tnsave:'Сохранить',tnskip:'Пропустить',wftitle:'Как прошла тренировка?',wffeellbl:'Самочувствие',wfnotelbl:'Заметка',wfsave:'Сохранить',taskAdded:'Задача добавлена',editHabit:'Редактировать привычку',newHabit:'Новая привычка',nowEnergy:'сейчас: ',micListening:'Слушаю...',aiReplan:'Перестраиваю день...',aiAccepted:'План принят',aiDone:'Готово!',aiSchedule:'Расставляю по энергоблокам...',aiAnalyze:'Анализирую задачи и энергию...',errRetry:'Ошибка. Попробуй снова.',errDel:'Ошибка удаления',errAdd:'Ошибка добавления',errSave:'Ошибка сохранения',goalUpdBtn:'Сохранить',goalUpdLbl:'Текущее значение',goalUpdTitle:'Обновить цель',habDelBtn:'Удалить',habDelDesc:'Это действие нельзя отменить.',habDelConfirm:'Удалить привычку?'},
-uk:{out:'Вихід',ntag:'Планування',sbmain:'Головне',sbmods:'Розділи',sbsys:'Система',sbdash:'Дашборд',sbplan:'Планування',sbhealth:"Здоров'я",sbfood:'Харчування',sbfin:'Фінанси',sban:'Аналітика',sbset:'Налаштування',ttod:'Сьогодні',tcal:'Календар',two:'Тренування',thab:'Звички',tgoals:'Цілі',mhab:'Звички',mtask:'Завдання',mwo:'Тренування',mweek:'Тиждень',mtasksub:'сьогодні',mwosub:'сьогодні',mweeksub:'виконання',anctitle:'Якоря дня',tasktitle:'Завдання дня',habtoday:'Звички',wotoday:'Тренування',planwo:'Запланувати',leganc:'Якоря',leghab:'Звички',legwo:'Тренування',legtask:'Завдання',calstats:'Статистика місяця',tmpllbl:'Шаблони',addtmpl:'+ Створити',histlbl:'Історія',exproglbl:'Прогрес вправи',allhablbl:'Всі звички',addhab:'+ Додати',hmaplbl:'12 тижнів',streaklbl:'Серії',less:'Менше',more:'Більше',goalslbl:'Цілі',addgoal:'+ Додати',d30lbl:'Звички (30 днів)',mhtitle:'Нова звичка',mhname:'Назва',mhfreq:'Частота',mhtype:'Тип',hfd:'Щодня',hfc:'Кілька разів на тиждень',htn:'Звичайна',hta:'Якір',mhsave:'Зберегти',mttitle:'Шаблон тренування',mtname:'Назва',mttype:'Тип',mtexs:'Вправи',mtaddex:'+ Додати',mtsave:'Зберегти',ttstr:'Силова',ttcard:'Кардіо',ttflex:'Розтяжка',tthiit:'HIIT',mawtitle:'Запланувати',mawtmpl:'Шаблон',mawdate:'Дата',mawnote:'Нотатка',mawsave:'Запланувати',mgtitle:'Нова ціль',mgname:'Ціль',mgcat:'Категорія',mgdl:'Дедлайн',mgcur:'Поточне',mgtarget:'Ціль',mgsave:'Зберегти',gch:"Здоров'я",gcs:'Спорт',gcst:'Навчання',gcsp:'Духовне',gco:'Інше',finish:'Завершити',start:'Почати',setn:'Підхід',repsn:'Повт',weightn:'Кг',distn:'Км',timen:'Хв',prev:'Минулого разу',pr:'PR',done:'Готово',added:'Додано',deleted:'Видалено',saved:'Збережено',anchor:'якір',streak:'серія',days:'дн',woDone:'Виконано',woPlanned:'Заплановано',noTmpl:'Немає шаблонів',noHist:'Історія порожня',noGoals:'Цілей немає',noTasks:'Завдань немає',markDone:'Відмітити',markedDone:'Виконано',mbhome:'Головна',mbtod:'Сьогодні',mbcal:'Кал.',mbwo:'Трен.',mbhab:'Звички',mbgoals:'Цілі',mbfood:'Їжа',wkd:['Пн','Вт','Ср','Чт','Пт','Сб','Нд'],months:['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'],tntitle:'Як пройшло?',tnlbl:'Коментар (опціонально)',tnsave:'Зберегти',tnskip:'Пропустити',wftitle:'Як пройшло тренування?',wffeellbl:'Самопочуття',wfnotelbl:'Нотатка',wfsave:'Зберегти',taskAdded:'Завдання додано',editHabit:'Редагувати звичку',newHabit:'Нова звичка',nowEnergy:'зараз: ',micListening:'Слухаю...',aiReplan:'Перебудовую день...',aiAccepted:'План прийнято',aiDone:'Готово!',aiSchedule:'Розставляю по енергоблоках...',aiAnalyze:'Аналізую завдання та енергію...',errRetry:'Помилка. Спробуй ще раз.',errDel:'Помилка видалення',errAdd:'Помилка додавання',errSave:'Помилка збереження',goalUpdBtn:'Зберегти',goalUpdLbl:'Поточне значення',goalUpdTitle:'Оновити ціль',habDelBtn:'Видалити',habDelDesc:'Цю дію не можна скасувати.',habDelConfirm:'Видалити звичку?'},
-en:{out:'Sign out',ntag:'Planning',sbmain:'Main',sbmods:'Sections',sbsys:'System',sbdash:'Dashboard',sbplan:'Planning',sbhealth:'Health',sbfood:'Nutrition',sbfin:'Finance',sban:'Analytics',sbset:'Settings',ttod:'Today',tcal:'Calendar',two:'Workouts',thab:'Habits',tgoals:'Goals',mhab:'Habits',mtask:'Tasks',mwo:'Workout',mweek:'Week',mtasksub:'today',mwosub:'today',mweeksub:'completion',anctitle:'Day anchors',tasktitle:"Today's tasks",habtoday:'Habits',wotoday:'Workout',planwo:'Schedule',leganc:'Anchors',leghab:'Habits',legwo:'Workout',legtask:'Tasks',calstats:'Monthly stats',tmpllbl:'Templates',addtmpl:'+ Create',histlbl:'History',exproglbl:'Exercise progress',allhablbl:'All habits',addhab:'+ Add',hmaplbl:'12 weeks',streaklbl:'Streaks',less:'Less',more:'More',goalslbl:'Goals',addgoal:'+ Add',d30lbl:'Habits (30 days)',mhtitle:'New habit',mhname:'Name',mhfreq:'Frequency',mhtype:'Type',hfd:'Daily',hfc:'Several times a week',htn:'Regular',hta:'Anchor',mhsave:'Save',mttitle:'Workout template',mtname:'Name',mttype:'Type',mtexs:'Exercises',mtaddex:'+ Add',mtsave:'Save',ttstr:'Strength',ttcard:'Cardio',ttflex:'Flexibility',tthiit:'HIIT',mawtitle:'Schedule workout',mawtmpl:'Template',mawdate:'Date',mawnote:'Note',mawsave:'Schedule',mgtitle:'New goal',mgname:'Goal',mgcat:'Category',mgdl:'Deadline',mgcur:'Current',mgtarget:'Target',mgsave:'Save',gch:'Health',gcs:'Sport',gcst:'Study',gcsp:'Spiritual',gco:'Other',finish:'Finish',start:'Start',setn:'Set',repsn:'Reps',weightn:'kg',distn:'km',timen:'min',prev:'Last time',pr:'PR',done:'Done',added:'Added',deleted:'Deleted',saved:'Saved',anchor:'anchor',streak:'streak',days:'d',woDone:'Done',woPlanned:'Planned',noTmpl:'No templates',noHist:'No history',noGoals:'No goals',noTasks:'No tasks',markDone:'Mark',markedDone:'Done',mbhome:'Home',mbtod:'Today',mbcal:'Cal.',mbwo:'Wo.',mbhab:'Habits',mbgoals:'Goals',mbfood:'Food',wkd:['Mo','Tu','We','Th','Fr','Sa','Su'],months:['January','February','March','April','May','June','July','August','September','October','November','December'],tntitle:'How did it go?',tnlbl:'Comment (optional)',tnsave:'Save',tnskip:'Skip',wftitle:'How was the workout?',wffeellbl:'Feeling',wfnotelbl:'Note',wfsave:'Save',taskAdded:'Task added',editHabit:'Edit habit',newHabit:'New habit',nowEnergy:'now: ',micListening:'Listening...',aiReplan:'Rescheduling day...',aiAccepted:'Plan accepted',aiDone:'Done!',aiSchedule:'Scheduling by energy blocks...',aiAnalyze:'Analyzing tasks and energy...',errRetry:'Error. Please try again.',errDel:'Delete error',errAdd:'Add error',errSave:'Save error',goalUpdBtn:'Save',goalUpdLbl:'Current value',goalUpdTitle:'Update goal',habDelBtn:'Delete',habDelDesc:'This action cannot be undone.',habDelConfirm:'Delete habit?'}
+ru:{out:'Выход',ntag:'Планирование',sbmain:'Главное',sbmods:'Разделы',sbsys:'Система',sbdash:'Дашборд',sbplan:'Планирование',sbhealth:'Здоровье',sbfood:'Питание',sbfin:'Финансы',sban:'Аналитика',sbset:'Настройки',ttod:'Сегодня',tcal:'Календарь',two:'Тренировки',thab:'Привычки',tgoals:'Цели',mhab:'Привычки',mtask:'Задачи',mwo:'Тренировка',mweek:'Неделя',mtasksub:'сегодня',mwosub:'сегодня',mweeksub:'выполнение',anctitle:'Якоря дня',tasktitle:'Задачи дня',habtoday:'Привычки',wotoday:'Тренировка',planwo:'Запланировать',leganc:'Якоря',leghab:'Привычки',legwo:'Тренировка',legtask:'Задачи',calstats:'Статистика месяца',tmpllbl:'Шаблоны',addtmpl:'+ Создать',histlbl:'История',exproglbl:'Прогресс упражнения',allhablbl:'Все привычки',addhab:'+ Добавить',hmaplbl:'12 недель',streaklbl:'Серии',less:'Меньше',more:'Больше',goalslbl:'Цели',addgoal:'+ Добавить',d30lbl:'Привычки (30 дней)',mhtitle:'Новая привычка',mhname:'Название',mhfreq:'Частота',mhtype:'Тип',hfd:'Ежедневно',hfc:'Несколько раз в неделю',htn:'Обычная',hta:'Якорь',mhsave:'Сохранить',mttitle:'Шаблон тренировки',mtname:'Название',mttype:'Тип',mtexs:'Упражнения',mtaddex:'+ Добавить',mtsave:'Сохранить',ttstr:'Силовая',ttcard:'Кардио',ttflex:'Растяжка',tthiit:'HIIT',mawtitle:'Запланировать',mawtmpl:'Шаблон',mawdate:'Дата',mawnote:'Заметка',mawsave:'Запланировать',mgtitle:'Новая цель',mgname:'Цель',mgcat:'Категория',mgdl:'Дедлайн',mgcur:'Текущее',mgtarget:'Цель',mgsave:'Сохранить',gch:'Здоровье',gcs:'Спорт',gcst:'Учёба',gcsp:'Духовное',gco:'Другое',finish:'Завершить',start:'Начать',setn:'Подход',repsn:'Повт',weightn:'Кг',distn:'Км',timen:'Мин',prev:'Прошлый раз',pr:'PR',done:'Готово',added:'Добавлено',deleted:'Удалено',saved:'Сохранено',anchor:'якорь',streak:'серия',days:'дн',woDone:'Выполнено',woPlanned:'Запланировано',noTmpl:'Нет шаблонов',noHist:'История пуста',noGoals:'Целей нет',noTasks:'Задач нет',markDone:'Отметить',markedDone:'Выполнено',mbhome:'Главная',mbtod:'Сегодня',mbcal:'Кал.',mbwo:'Трен.',mbhab:'Привычки',mbgoals:'Цели',mbfood:'Питание',wkd:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],months:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],tntitle:'Как прошло?',tnlbl:'Комментарий (опционально)',tnsave:'Сохранить',tnskip:'Пропустить',wftitle:'Как прошла тренировка?',wffeellbl:'Самочувствие',wfnotelbl:'Заметка',wfsave:'Сохранить',goalDelConfirm:'Удалить цель?',goalDelDesc:'Данные о прогрессе будут удалены.',editGoalTitle:'Редактировать цель',goalUnit:'Единица измерения',goalUnitPh:'кг, км, мин...',goalProgress:'Прогресс',goalDays:'дней осталось',goalDone:'Цель достигнута!',taskAdded:'Задача добавлена',editHabit:'Редактировать привычку',newHabit:'Новая привычка',nowEnergy:'сейчас: ',micListening:'Слушаю...',aiReplan:'Перестраиваю день...',aiAccepted:'План принят',aiDone:'Готово!',aiSchedule:'Расставляю по энергоблокам...',aiAnalyze:'Анализирую задачи и энергию...',errRetry:'Ошибка. Попробуй снова.',errDel:'Ошибка удаления',errAdd:'Ошибка добавления',errSave:'Ошибка сохранения',goalUpdBtn:'Сохранить',goalUpdLbl:'Текущее значение',goalUpdTitle:'Обновить цель',habDelBtn:'Удалить',habDelDesc:'Это действие нельзя отменить.',habDelConfirm:'Удалить привычку?'},
+uk:{out:'Вихід',ntag:'Планування',sbmain:'Головне',sbmods:'Розділи',sbsys:'Система',sbdash:'Дашборд',sbplan:'Планування',sbhealth:"Здоров'я",sbfood:'Харчування',sbfin:'Фінанси',sban:'Аналітика',sbset:'Налаштування',ttod:'Сьогодні',tcal:'Календар',two:'Тренування',thab:'Звички',tgoals:'Цілі',mhab:'Звички',mtask:'Завдання',mwo:'Тренування',mweek:'Тиждень',mtasksub:'сьогодні',mwosub:'сьогодні',mweeksub:'виконання',anctitle:'Якоря дня',tasktitle:'Завдання дня',habtoday:'Звички',wotoday:'Тренування',planwo:'Запланувати',leganc:'Якоря',leghab:'Звички',legwo:'Тренування',legtask:'Завдання',calstats:'Статистика місяця',tmpllbl:'Шаблони',addtmpl:'+ Створити',histlbl:'Історія',exproglbl:'Прогрес вправи',allhablbl:'Всі звички',addhab:'+ Додати',hmaplbl:'12 тижнів',streaklbl:'Серії',less:'Менше',more:'Більше',goalslbl:'Цілі',addgoal:'+ Додати',d30lbl:'Звички (30 днів)',mhtitle:'Нова звичка',mhname:'Назва',mhfreq:'Частота',mhtype:'Тип',hfd:'Щодня',hfc:'Кілька разів на тиждень',htn:'Звичайна',hta:'Якір',mhsave:'Зберегти',mttitle:'Шаблон тренування',mtname:'Назва',mttype:'Тип',mtexs:'Вправи',mtaddex:'+ Додати',mtsave:'Зберегти',ttstr:'Силова',ttcard:'Кардіо',ttflex:'Розтяжка',tthiit:'HIIT',mawtitle:'Запланувати',mawtmpl:'Шаблон',mawdate:'Дата',mawnote:'Нотатка',mawsave:'Запланувати',mgtitle:'Нова ціль',mgname:'Ціль',mgcat:'Категорія',mgdl:'Дедлайн',mgcur:'Поточне',mgtarget:'Ціль',mgsave:'Зберегти',gch:"Здоров'я",gcs:'Спорт',gcst:'Навчання',gcsp:'Духовне',gco:'Інше',finish:'Завершити',start:'Почати',setn:'Підхід',repsn:'Повт',weightn:'Кг',distn:'Км',timen:'Хв',prev:'Минулого разу',pr:'PR',done:'Готово',added:'Додано',deleted:'Видалено',saved:'Збережено',anchor:'якір',streak:'серія',days:'дн',woDone:'Виконано',woPlanned:'Заплановано',noTmpl:'Немає шаблонів',noHist:'Історія порожня',noGoals:'Цілей немає',noTasks:'Завдань немає',markDone:'Відмітити',markedDone:'Виконано',mbhome:'Головна',mbtod:'Сьогодні',mbcal:'Кал.',mbwo:'Трен.',mbhab:'Звички',mbgoals:'Цілі',mbfood:'Їжа',wkd:['Пн','Вт','Ср','Чт','Пт','Сб','Нд'],months:['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'],tntitle:'Як пройшло?',tnlbl:'Коментар (опціонально)',tnsave:'Зберегти',tnskip:'Пропустити',wftitle:'Як пройшло тренування?',wffeellbl:'Самопочуття',wfnotelbl:'Нотатка',wfsave:'Зберегти',goalDelConfirm:'Видалити ціль?',goalDelDesc:'Дані про прогрес будуть видалені.',editGoalTitle:'Редагувати ціль',goalUnit:'Одиниця виміру',goalUnitPh:'кг, км, хв...',goalProgress:'Прогрес',goalDays:'днів залишилось',goalDone:'Ціль досягнута!',taskAdded:'Завдання додано',editHabit:'Редагувати звичку',newHabit:'Нова звичка',nowEnergy:'зараз: ',micListening:'Слухаю...',aiReplan:'Перебудовую день...',aiAccepted:'План прийнято',aiDone:'Готово!',aiSchedule:'Розставляю по енергоблоках...',aiAnalyze:'Аналізую завдання та енергію...',errRetry:'Помилка. Спробуй ще раз.',errDel:'Помилка видалення',errAdd:'Помилка додавання',errSave:'Помилка збереження',goalUpdBtn:'Зберегти',goalUpdLbl:'Поточне значення',goalUpdTitle:'Оновити ціль',habDelBtn:'Видалити',habDelDesc:'Цю дію не можна скасувати.',habDelConfirm:'Видалити звичку?'},
+en:{out:'Sign out',ntag:'Planning',sbmain:'Main',sbmods:'Sections',sbsys:'System',sbdash:'Dashboard',sbplan:'Planning',sbhealth:'Health',sbfood:'Nutrition',sbfin:'Finance',sban:'Analytics',sbset:'Settings',ttod:'Today',tcal:'Calendar',two:'Workouts',thab:'Habits',tgoals:'Goals',mhab:'Habits',mtask:'Tasks',mwo:'Workout',mweek:'Week',mtasksub:'today',mwosub:'today',mweeksub:'completion',anctitle:'Day anchors',tasktitle:"Today's tasks",habtoday:'Habits',wotoday:'Workout',planwo:'Schedule',leganc:'Anchors',leghab:'Habits',legwo:'Workout',legtask:'Tasks',calstats:'Monthly stats',tmpllbl:'Templates',addtmpl:'+ Create',histlbl:'History',exproglbl:'Exercise progress',allhablbl:'All habits',addhab:'+ Add',hmaplbl:'12 weeks',streaklbl:'Streaks',less:'Less',more:'More',goalslbl:'Goals',addgoal:'+ Add',d30lbl:'Habits (30 days)',mhtitle:'New habit',mhname:'Name',mhfreq:'Frequency',mhtype:'Type',hfd:'Daily',hfc:'Several times a week',htn:'Regular',hta:'Anchor',mhsave:'Save',mttitle:'Workout template',mtname:'Name',mttype:'Type',mtexs:'Exercises',mtaddex:'+ Add',mtsave:'Save',ttstr:'Strength',ttcard:'Cardio',ttflex:'Flexibility',tthiit:'HIIT',mawtitle:'Schedule workout',mawtmpl:'Template',mawdate:'Date',mawnote:'Note',mawsave:'Schedule',mgtitle:'New goal',mgname:'Goal',mgcat:'Category',mgdl:'Deadline',mgcur:'Current',mgtarget:'Target',mgsave:'Save',gch:'Health',gcs:'Sport',gcst:'Study',gcsp:'Spiritual',gco:'Other',finish:'Finish',start:'Start',setn:'Set',repsn:'Reps',weightn:'kg',distn:'km',timen:'min',prev:'Last time',pr:'PR',done:'Done',added:'Added',deleted:'Deleted',saved:'Saved',anchor:'anchor',streak:'streak',days:'d',woDone:'Done',woPlanned:'Planned',noTmpl:'No templates',noHist:'No history',noGoals:'No goals',noTasks:'No tasks',markDone:'Mark',markedDone:'Done',mbhome:'Home',mbtod:'Today',mbcal:'Cal.',mbwo:'Wo.',mbhab:'Habits',mbgoals:'Goals',mbfood:'Food',wkd:['Mo','Tu','We','Th','Fr','Sa','Su'],months:['January','February','March','April','May','June','July','August','September','October','November','December'],tntitle:'How did it go?',tnlbl:'Comment (optional)',tnsave:'Save',tnskip:'Skip',wftitle:'How was the workout?',wffeellbl:'Feeling',wfnotelbl:'Note',wfsave:'Save',goalDelConfirm:'Delete goal?',goalDelDesc:'Progress data will be deleted.',editGoalTitle:'Edit goal',goalUnit:'Unit',goalUnitPh:'kg, km, min...',goalProgress:'Progress',goalDays:'days left',goalDone:'Goal achieved!',taskAdded:'Task added',editHabit:'Edit habit',newHabit:'New habit',nowEnergy:'now: ',micListening:'Listening...',aiReplan:'Rescheduling day...',aiAccepted:'Plan accepted',aiDone:'Done!',aiSchedule:'Scheduling by energy blocks...',aiAnalyze:'Analyzing tasks and energy...',errRetry:'Error. Please try again.',errDel:'Delete error',errAdd:'Add error',errSave:'Save error',goalUpdBtn:'Save',goalUpdLbl:'Current value',goalUpdTitle:'Update goal',habDelBtn:'Delete',habDelDesc:'This action cannot be undone.',habDelConfirm:'Delete habit?'}
 };
 let lang=localStorage.getItem('sc_lang')||'ru';
 const t=k=>(L[lang]||L.ru)[k]||(L.ru[k]||k);
@@ -929,30 +945,96 @@ const catB={health:'var(--grb)',sport:'var(--blb)',study:'var(--amb)',spirit:'va
 function catLbl(c){return{health:t('gch'),sport:t('gcs'),study:t('gcst'),spirit:t('gcsp'),other:t('gco')}[c]||c;}
 function renderGoals(){
   if(!goals.length){el('goalslist').innerHTML=`<div style="padding:20px;text-align:center;color:var(--muted2);font-size:12px">${t('noGoals')}</div>`;}
-  else el('goalslist').innerHTML=goals.map(g=>{const pct=g.target?Math.min(Math.round(g.cur/g.target*100),100):0;const name=typeof g.name==='object'?(g.name[lang]||g.name.ru):g.name;return `<div class="gi"><div class="gt"><div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0"><div style="width:7px;height:7px;border-radius:50%;background:${catC[g.cat]||'var(--muted)'};flex-shrink:0"></div><div class="gn">${name}</div></div><div style="display:flex;align-items:center;gap:6px"><span class="gp">${pct}%</span><button class="ibt ed" onclick="editGoal(${g.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M8 2l2 2-6 6H2V8l6-6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button><button class="ibt" onclick="delGoal(${g.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div><div class="gtrack"><div class="gfill" style="width:${pct}%;background:${catC[g.cat]||'var(--ac)'}"></div></div><div class="gm"><span class="tag" style="background:${catB[g.cat]};color:${catC[g.cat]};border:none">${catLbl(g.cat)}</span><span>${g.cur} / ${g.target}</span>${g.deadline?`<span>${g.deadline}</span>`:''}</div></div>`;}).join('');
-  const days=[];for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(dk(d));}
+  else el('goalslist').innerHTML=goals.map(g=>{
+    const pct=g.target?Math.min(Math.round(g.cur/g.target*100),100):0;
+    const name=typeof g.name==='object'?(g.name[lang]||g.name.ru):g.name;
+    const achieved=pct>=100;
+    const unitStr=g.unit?` ${g.unit}`:'';
+    // Days left
+    let daysLeft='';
+    if(g.deadline){
+      const diff=Math.ceil((new Date(g.deadline)-new Date())/(1000*60*60*24));
+      daysLeft=diff>0?`<span style="font-size:10px;color:var(--muted)">${diff} ${t('goalDays')}</span>`:
+               diff===0?`<span style="font-size:10px;color:var(--am)">сегодня</span>`:
+               `<span style="font-size:10px;color:var(--re)">${Math.abs(diff)} дн. просрочено</span>`;
+    }
+    return `<div class="gi" style="${achieved?'opacity:.8':''}">
+      <div class="gt">
+        <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+          <div style="width:7px;height:7px;border-radius:50%;background:${catC[g.cat]||'var(--muted)'};flex-shrink:0"></div>
+          <div class="gn">${name}${achieved?` <span style="font-size:10px;color:var(--gr)">✓ ${t('goalDone')}</span>`:''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="gp" style="color:${achieved?'var(--gr)':'var(--ac)'}">${pct}%</span>
+          <button class="ibt ed" onclick="editGoal(${g.id})" title="${t('editGoalTitle')}"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M8 2l2 2-6 6H2V8l6-6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
+          <button class="ibt" onclick="delGoal(${g.id})" title="${t('goalDelConfirm')}"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+        </div>
+      </div>
+      <div class="gtrack"><div class="gfill" style="width:${pct}%;background:${achieved?'var(--gr)':(catC[g.cat]||'var(--ac)')}"></div></div>
+      <div class="gm">
+        <span class="tag" style="background:${catB[g.cat]};color:${catC[g.cat]};border:none">${catLbl(g.cat)}</span>
+        <span>${g.cur}${unitStr} / ${g.target}${unitStr}</span>
+        ${g.deadline?`<span>${daysLeft}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
   el('hab30d').innerHTML=habits.map(h=>{const done=days.filter(k=>hlog[h.id]?.[k]).length;const pct=Math.round(done/days.length*100);return `<div class="pr"><div class="pl" style="width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${hn(h)}</div><div class="pt"><div class="pf" style="width:${pct}%;background:${h.anchor?'var(--pu)':'var(--ac)'}"></div></div><div class="pp">${pct}%</div></div>`;}).join('');
 }
-function openAddGoal(){el('gname').value='';el('gdl').value='';el('gcur').value=0;el('gtarget').value=100;openOv('ov-goal');}
-function saveGoal(){const name=el('gname').value.trim();if(!name)return;goals.push({id:Date.now(),name:{ru:name,uk:name,en:name},cat:el('gcat').value,deadline:el('gdl').value,cur:parseFloat(el('gcur').value)||0,target:parseFloat(el('gtarget').value)||100});saveAll();closeOv('ov-goal');renderGoals();toast(t('saved'),'tok');}
-function delGoal(id){goals=goals.filter(x=>x.id!==id);saveAll();renderGoals();}
+function openAddGoal(){
+  el('goal-edit-id').value='';
+  el('goal-modal-title').textContent=t('mgtitle');
+  el('gname').value='';el('gcat').value='health';
+  el('gdl').value='';el('gcur').value=0;el('gtarget').value=100;el('gunit').value='';
+  openOv('ov-goal');
+}
 function editGoal(id){
   const g=goals.find(x=>x.id===id);if(!g)return;
+  el('goal-edit-id').value=id;
+  el('goal-modal-title').textContent=t('editGoalTitle');
   const name=typeof g.name==='object'?(g.name[lang]||g.name.ru):g.name;
-  document.getElementById('goal-upd-title').textContent=t('goalUpdTitle')+': '+name;
-  document.getElementById('goal-upd-lbl').textContent=t('goalUpdLbl');
-  document.getElementById('goal-upd-inp').value=g.cur;
-  document.getElementById('goal-upd-target').textContent='/ '+g.target;
-  document.getElementById('goal-upd-btn').textContent=t('goalUpdBtn');
-  window._goalUpdId=id;
-  openOv('ov-goal-upd');
+  el('gname').value=name;
+  el('gcat').value=g.cat||'other';
+  el('gdl').value=g.deadline||'';
+  el('gcur').value=g.cur||0;
+  el('gtarget').value=g.target||100;
+  el('gunit').value=g.unit||'';
+  openOv('ov-goal');
+}
+async function saveGoal(){
+  const title=el('gname').value.trim();if(!title)return;
+  const editId=el('goal-edit-id').value;
+  const body={
+    title,title_uk:title,title_en:title,
+    category:el('gcat').value,
+    deadline:el('gdl').value||null,
+    current_value:parseFloat(el('gcur').value)||0,
+    target_value:parseFloat(el('gtarget').value)||100,
+    unit:el('gunit').value.trim()||null
+  };
+  closeOv('ov-goal');
+  if(editId){
+    const res=await api('update_goal',{id:parseInt(editId),...body});
+    if(res.success){toast(t('saved'),'tok');}
+    else{toast(t('errSave'),'ter');return;}
+  } else {
+    const res=await api('add_goal',body);
+    if(res.success){toast(t('saved'),'tok');}
+    else{toast(t('errAdd'),'ter');return;}
+  }
+  await loadGoalsFromAPI();renderGoals();
+}
+async function delGoal(id){
+  showConfirm('goalDelConfirm','goalDelDesc','habDelBtn',async()=>{
+    const res=await api('delete_goal',{id:parseInt(id)});
+    if(res.success){
+      toast(t('deleted'),'tin');
+      await loadGoalsFromAPI();renderGoals();
+    } else {toast(t('errDel'),'ter');}
+  });
 }
 function goalUpdConfirm(){
-  const g=goals.find(x=>x.id===window._goalUpdId);if(!g)return;
-  const v=parseFloat(document.getElementById('goal-upd-inp').value)||0;
-  g.cur=v;closeOv('ov-goal-upd');renderGoals();
-  apiUpdateGoal(g.id,g.cur).catch(console.error);
-  toast(t('saved'),'tok');
+  // kept for backward compat — no longer used
+  closeOv('ov-goal-upd');
 }
 
 let activeTab='today';
@@ -1161,7 +1243,8 @@ async function loadGoalsFromAPI(){
       cat: g.category || 'other',
       cur: parseFloat(g.current_value) || 0,
       target: parseFloat(g.target_value) || 100,
-      deadline: g.deadline ? g.deadline.slice(0,10) : ''
+      deadline: g.deadline ? g.deadline.slice(0,10) : '',
+      unit: g.unit || ''
     }));
   } catch(e) { console.error('loadGoalsFromAPI:', e); }
 }
@@ -1276,7 +1359,7 @@ tgHab = function(id){
 };
 
 // Override editGoal — sync to API
-// editGoal already uses modal and calls apiUpdateGoal directly
+// goals: full CRUD via API
 
 /* ── Главный init — загружает реальные данные ── */
 async function initFromAPI(){
