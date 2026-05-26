@@ -773,12 +773,9 @@ async function api(action, body={}){
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({token: getToken(), action, ...body})
     });
-    const text = await r.text();
-    if(!text || !text.trim()) return {success: true, data: null, tasks: [], habits: [], workouts: [], goals: [], checkins: [], week: []};
-    try { return JSON.parse(text); }
-    catch(e) { console.error('JSON parse error:', text.slice(0,100)); return {success: false, error: 'bad json'}; }
+    return await r.json();
   } catch(e) {
-    console.error('API error:', e);
+    console.error('API error:', action, e.message);
     return {success: false, error: e.message};
   }
 }
@@ -786,35 +783,33 @@ async function api(action, body={}){
 /* ── Загрузка данных "Сегодня" из реального API ── */
 async function loadTodayFromAPI(){
   const res = await api('get_today');
-  if (!res.success) return null;
-  const d = res.data;
+  if (!res || !res.success) return null;
+  // Response: {success, data: {data: {tasks, habits, workout, ...}}}
+  const d = (res.data && res.data.data) ? res.data.data : (res.data || {});
 
-  // Обновляем tasks из БД
-  if (d.tasks) {
-    tasks = d.tasks.map(t => ({
-      id: t.id,
-      text: {ru: t.title, uk: t.title, en: t.title},
-      date: today,
-      done: t.done,
-      priority: t.priority || 2,
-      completion_note: t.completion_note || '',
-      source: t.source
-    }));
-  }
+  // tasks null = no tasks today
+  tasks = Array.isArray(d.tasks) ? d.tasks.map(t => ({
+    id: t.id,
+    text: {ru: t.title, uk: t.title, en: t.title},
+    date: today,
+    done: t.done || false,
+    priority: t.priority || 2,
+    completion_note: t.completion_note || '',
+    source: t.source || 'db'
+  })) : [];
 
-  // Обновляем привычки из БД
-  if (d.habits) {
+  // habits
+  if (Array.isArray(d.habits)) {
     habits = d.habits.map(h => ({
       id: h.id,
       name: {ru: h.name, uk: h.name_uk || h.name, en: h.name_en || h.name},
-      freq: h.freq,
-      anchor: h.is_anchor,
-      streak: h.streak_7d || 0
+      freq: h.freq || 'daily',
+      anchor: h.is_anchor || false,
+      streak: 0
     }));
-    // Обновляем hlog для today
     d.habits.forEach(h => {
       if (!hlog[h.id]) hlog[h.id] = {};
-      hlog[h.id][today] = h.done_today;
+      hlog[h.id][today] = h.done || false;
     });
   }
 
@@ -864,7 +859,8 @@ async function loadWorkoutsFromAPI(){
 async function loadGoalsFromAPI(){
   try {
     const res = await api('get_goals');
-    if (!res || !res.success || !Array.isArray(res.goals)) return;
+    if (!res || !res.success) return;
+    if (!Array.isArray(res.goals)) { goals = []; return; }
     goals = res.goals.map(g => ({
       id: g.id,
       name: {ru: g.title||'', uk: g.title_uk||g.title||'', en: g.title_en||g.title||''},
