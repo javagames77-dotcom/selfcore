@@ -1548,6 +1548,12 @@ function tlBuildEvents(d){
     if(h.preferred_time){const p=h.preferred_time.split(':');st=parseInt(p[0])+parseInt(p[1]||0)/60;}
     TL.events.push({id:'anc-'+h.id,type:'anchor',title:h.name||(h.name_uk||h.name_en||'Якорь'),start:st,dur:0.25,done:h.done||false});
   });
+  // Обычные привычки — только если есть preferred_time
+  (d.habits||[]).filter(h=>!(h.anchor||h.is_anchor)&&h.preferred_time).forEach(h=>{
+    const p=h.preferred_time.split(':');
+    const st=parseInt(p[0])+parseInt(p[1]||0)/60;
+    TL.events.push({id:'hab-'+h.id,type:'habit',title:h.name||(h.name_uk||h.name_en||'Привычка'),start:st,dur:0.25,done:h.done||false});
+  });
   // Тренировка
   if(d.workout&&!d.workout.completed_at){
     // Use planned_at time if available, else place at a free slot after 10:00
