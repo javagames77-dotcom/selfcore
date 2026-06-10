@@ -127,6 +127,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .exn{font-size:13px;font-weight:600;color:var(--black);flex:1}
 .exp{font-size:11px;color:var(--muted);padding:7px 14px;border-bottom:.5px solid var(--border);background:var(--bg)}
 .shd{display:grid;grid-template-columns:28px 1fr 1fr 40px 26px;gap:6px;padding:5px 14px;font-size:10px;color:var(--muted2);font-weight:600;text-transform:uppercase;letter-spacing:.05em;border-bottom:.5px solid var(--border)}
+.set-chk{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s}
+.set-chk.on{background:var(--ac);border-color:var(--ac)}
+.set-chk.on::after{content:'';display:block;width:6px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translateY(-1px)}
 .srow{display:grid;grid-template-columns:28px 1fr 1fr 40px 26px;gap:6px;align-items:center;padding:5px 14px;border-bottom:.5px solid var(--border)}
 .srow:last-child{border-bottom:none}
 .sn{color:var(--muted2);font-size:11px;font-weight:600;text-align:center}
@@ -1315,24 +1318,63 @@ function startSess(tmplId){
   curSess={templateId:tmplId,sets:{}};el('sesstitle').textContent=tn(tmpl);
   const isCard=tmpl.type==='cardio';let html='';
   (tmpl.exercises||[]).forEach(ex=>{
-    const prevWo=woHist.find(w=>w.sets?.[ex.id]?.length);const prevSets=prevWo?prevWo.sets[ex.id]:[];
+    const exName=(typeof ex.name==='object'?(ex.name.ru||ex.name.en||Object.values(ex.name)[0]):ex.name)||'';
+    // Find previous results by exercise NAME in exercises_json array
+    const prevWo=woHist.slice().sort((a,b)=>b.date.localeCompare(a.date))
+      .find(w=>Array.isArray(w.sets)&&w.sets.find(s=>s.name&&s.name.toLowerCase()===exName.toLowerCase()));
+    const prevSets=prevWo?((prevWo.sets.find(s=>s.name&&s.name.toLowerCase()===exName.toLowerCase()))||{}).sets||[]:[];
     const isC=ex.type==='cardio'||isCard;
-    const prevStr=prevSets.length?`${t('prev')}: ${prevSets.map(s=>isC?s.dist+'km '+s.time+'min':`${s.reps}×${s.weight}kg`).join(', ')}`:t('prev')+': —';
-    html+=`<div class="exc"><div class="exh"><div class="exn">${tn(ex)}</div><button class="btn bg bxs" onclick="addSet(${ex.id},${isC})">+ ${t('setn')}</button></div><div class="exp">${prevStr}</div><div class="shd"><div>${t('setn')}</div><div style="text-align:center">${isC?t('distn'):t('repsn')}</div><div style="text-align:center">${isC?t('timen'):t('weightn')}</div><div style="text-align:center">PR</div><div></div></div><div id="sets-${ex.id}"></div></div>`;
+    const prevStr=prevSets.length
+      ?`${t('prev')}: ${prevSets.map(s=>isC?`${s.dist||0}км ${s.time||0}мин`:`${s.reps||0}×${s.weight||0}кг`).join(' · ')}`
+      :`${t('prev')}: —`;
+    html+=`<div class="exc">
+      <div class="exh"><div class="exn">${tn(ex)}</div><button class="btn bg bxs" onclick="addSet(${ex.id},${isC})">+ ${t('setn')}</button></div>
+      <div class="exp">${prevStr}</div>
+      <div class="shd">
+        <div style="width:20px"></div>
+        <div>${t('setn')}</div>
+        <div style="text-align:center">${isC?t('distn'):t('repsn')}</div>
+        <div style="text-align:center">${isC?t('timen'):t('weightn')}</div>
+        <div style="text-align:center;font-size:9px">PR</div>
+        <div></div>
+      </div>
+      <div id="sets-${ex.id}"></div>
+    </div>`;
     curSess.sets[ex.id]=[];
   });
   el('sessbody').innerHTML=html+`<button class="btn ba" style="width:100%;margin-top:12px" onclick="finishSess()">${t('finish')}</button>`;
   openOv('ov-sess');sessStart=Date.now();el('ssbar').style.display='flex';el('ssname').textContent=tn(tmpl);
   if(sessInt)clearInterval(sessInt);
   sessInt=setInterval(()=>{const s=Math.floor((Date.now()-sessStart)/1000);el('sstimer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');},1000);
-  (tmpl.exercises||[]).forEach(ex=>addSet(ex.id,ex.type==='cardio'||isCard));
+  (tmpl.exercises||[]).forEach(ex=>{
+    const exName=(typeof ex.name==='object'?(ex.name.ru||Object.values(ex.name)[0]):ex.name)||'';
+    const isC=ex.type==='cardio'||isCard;
+    const prevWo=woHist.slice().sort((a,b)=>b.date.localeCompare(a.date))
+      .find(w=>Array.isArray(w.sets)&&w.sets.find(s=>s.name&&s.name.toLowerCase()===exName.toLowerCase()));
+    const prevExSets=prevWo?((prevWo.sets.find(s=>s.name&&s.name.toLowerCase()===exName.toLowerCase()))||{}).sets||[]:[];
+    if(prevExSets.length){
+      prevExSets.forEach(s=>addSet(ex.id,isC,isC?s.dist:s.reps,isC?s.time:s.weight));
+    } else {
+      addSet(ex.id,isC);
+    }
+  });
 }
-function addSet(exId,isC){
+function addSet(exId,isC,prefillReps,prefillWeight){
   if(!curSess.sets[exId])curSess.sets[exId]=[];const n=curSess.sets[exId].length+1;
-  const c=document.getElementById('sets-'+exId);if(!c)return;
+  const cEl=document.getElementById('sets-'+exId);if(!cEl)return;
   const rid='sr-'+exId+'-'+n;const div=document.createElement('div');div.className='srow';div.id=rid;
-  div.innerHTML=`<div class="sn">${n}</div><input class="si2" type="number" min="0" step="${isC?'0.1':'1'}" placeholder="0" oninput="updSet(${exId},${n-1},this,'a')"><input class="si2" type="number" min="0" step="1" placeholder="0" oninput="updSet(${exId},${n-1},this,'b')"><div class="spr" id="pr-${exId}-${n}"></div><button class="ibt" onclick="rmSet(${exId},${n-1},'${rid}')"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>`;
-  c.appendChild(div);curSess.sets[exId].push(isC?{dist:0,time:0}:{reps:0,weight:0});
+  div.innerHTML=`<div class="set-chk" id="sc-${exId}-${n}" onclick="toggleSetDone(${exId},${n-1},this)"></div><div class="sn">${n}</div><input class="si2" type="number" min="0" step="${isC?'0.1':'1'}" placeholder="${prefillReps||0}" value="${prefillReps||''}" oninput="updSet(${exId},${n-1},this,'a')"><input class="si2" type="number" min="0" step="0.5" placeholder="${prefillWeight||0}" value="${prefillWeight||''}" oninput="updSet(${exId},${n-1},this,'b')"><div class="spr" id="pr-${exId}-${n}"></div><button class="ibt" onclick="rmSet(${exId},${n-1},'${rid}')"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>`;
+  cEl.appendChild(div);
+  curSess.sets[exId].push(isC?{dist:prefillReps||0,time:prefillWeight||0,done:false}:{reps:prefillReps||0,weight:prefillWeight||0,done:false});
+  if(prefillReps)updSet(exId,n-1,{value:String(prefillReps)},'a');
+  if(prefillWeight)updSet(exId,n-1,{value:String(prefillWeight)},'b');
+}
+
+function toggleSetDone(exId,idx,el){
+  if(!curSess.sets[exId])return;
+  curSess.sets[exId][idx].done=!curSess.sets[exId][idx].done;
+  el.classList.toggle('on',curSess.sets[exId][idx].done);
+  const row=el.closest('.srow');if(row)row.style.opacity=curSess.sets[exId][idx].done?'0.5':'1';
 }
 function updSet(exId,idx,inp,f){
   if(!curSess.sets[exId])return;const val=parseFloat(inp.value)||0;const isC='dist' in (curSess.sets[exId][0]||{});
