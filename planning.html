@@ -331,7 +331,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
   </div>
   <div class="g2">
     <div class="card"><div class="ch"><div class="ct"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 4H13l-3.5 2.5 1.5 4.5L7.5 9.5 4 12l1.5-4.5L2 5h4z" stroke="var(--pu)" stroke-width="1.2" fill="none"/></svg><span id="i-anctitle" style="color:var(--pu)">Якоря дня</span></div><span class="tag tp" id="ancst">0/0</span></div><div id="anclist"></div></div>
-    <div class="card"><div class="ch"><div class="ct"><svg viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span id="i-tasktitle">Задачи дня</span></div><div style="display:flex;align-items:center;gap:6px;margin-left:auto"><button onclick="viewDayPrev()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span id="toddate" style="font-size:11px;color:var(--muted);min-width:120px;text-align:center"></span><button onclick="viewDayNext()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3.5 2L6.5 5l-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div><div id="tasklist"></div><div class="arow"><input class="inp" id="tinp" placeholder="Добавить задачу..." onkeydown="if(event.key==='Enter')addTask()"><select class="sel" id="tprio" style="width:76px"><option value="1">❗</option><option value="2" selected>●</option><option value="3">○</option></select><button class="btn ba bxs" onclick="addTask()">+</button></div></div>
+    <div class="card"><div class="ch"><div class="ct"><svg viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span id="i-tasktitle">Задачи дня</span></div><div style="display:flex;align-items:center;gap:6px;margin-left:auto"><button onclick="viewDayPrev()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span id="toddate" style="font-size:11px;color:var(--muted);min-width:120px;text-align:center"></span><button onclick="viewDayNext()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3.5 2L6.5 5l-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div><div id="tasklist"></div><div class="arow"><input class="inp" id="tinp" placeholder="Добавить задачу..." onkeydown="if(event.key==='Enter')addTask()"><input class="inp" id="ttasktime" type="time" style="width:80px"><select class="sel" id="tprio" style="width:52px"><option value="1">❗</option><option value="2" selected>●</option><option value="3">○</option></select><button class="btn ba bxs" onclick="addTask()">+</button></div></div>
   </div>
   <div class="g2">
     <div class="card"><div class="ch"><div class="ct"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="i-habtoday">Привычки</span></div></div><div id="habtoday"></div></div>
@@ -1537,13 +1537,13 @@ async function apiToggleTask(id, done, note=''){
 }
 
 /* ── API: добавить задачу ── */
-async function apiAddTask(title, priority=2, date=viewDate){
-  const res = await api('add_task', {title, priority, date});
+async function apiAddTask(title, priority=2, date=viewDate, scheduled_time=null){
+  const res = await api('add_task', {title, priority, date, scheduled_time});
   if (res.success && res.task) {
     tasks.push({
       id: res.task.id,
       text: {ru: title, uk: title, en: title},
-      date: today, done: false, priority, completion_note: '', source: 'dashboard'
+      date: date, done: false, priority, completion_note: '', scheduled_time: scheduled_time, source: 'dashboard'
     });
   }
   return res.success;
@@ -1604,10 +1604,12 @@ addTask = async function(){
   if(!v) return;
   const p = parseInt(el('tprio').value) || 2;
   el('tinp').value = '';
-  const ok = await apiAddTask(v, p, viewDate);
+  const timeEl=document.getElementById('ttasktime');
+  const st=timeEl&&timeEl.value?timeEl.value:null;
+  if(timeEl)timeEl.value='';
+  const ok = await apiAddTask(v, p, viewDate, st);
   if(!ok){
-    // Fallback to localStorage
-    tasks.push({id: Date.now(), text:{ru:v,uk:v,en:v}, date:viewDate, done:false, priority:p, completion_note:'', source:'dashboard'});
+    tasks.push({id: Date.now(), text:{ru:v,uk:v,en:v}, date:viewDate, done:false, priority:p, completion_note:'', scheduled_time:st, source:'dashboard'});
   }
   renderToday();
   toast(t('added'), 'tok');
@@ -2001,16 +2003,17 @@ function tlBuildEvents(d){
   TL.events=[];
   // Якоря — используем preferred_time если есть, иначе дефолт
   const ancTimes=[7,13,19,22];
+  const tlHabName=h=>typeof h.name==='object'?(h.name[lang]||h.name.ru||h.name.uk||''):( h.name||h.name_uk||h.name_en||'');
   (d.habits||[]).filter(h=>h.anchor||h.is_anchor).forEach((h,i)=>{
     let st=ancTimes[i]||7;
     if(h.preferred_time){const p=h.preferred_time.split(':');st=parseInt(p[0])+parseInt(p[1]||0)/60;}
-    TL.events.push({id:'anc-'+h.id,type:'anchor',title:h.name||(h.name_uk||h.name_en||'Якорь'),start:st,dur:0.25,done:h.done||false});
+    TL.events.push({id:'anc-'+h.id,type:'anchor',title:tlHabName(h),start:st,dur:0.25,done:h.done||false});
   });
   // Обычные привычки — только если есть preferred_time
   (d.habits||[]).filter(h=>!(h.anchor||h.is_anchor)&&h.preferred_time).forEach(h=>{
     const p=h.preferred_time.split(':');
     const st=parseInt(p[0])+parseInt(p[1]||0)/60;
-    TL.events.push({id:'hab-'+h.id,type:'habit',title:h.name||(h.name_uk||h.name_en||'Привычка'),start:st,dur:0.25,done:h.done||false});
+    TL.events.push({id:'hab-'+h.id,type:'habit',title:tlHabName(h),start:st,dur:0.25,done:h.done||false});
   });
   // Тренировка
   if(d.workout&&!d.workout.completed_at){
