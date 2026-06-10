@@ -758,13 +758,13 @@ async function selDay(key){
 
 function renderCalDet(key){
   const d=new Date(key+'T12:00:00');
-  const ancs=habits.filter(h=>h.anchor&&hlog[h.id]?.[key]);
+  const ancs=habits.filter(h=>h.anchor);
   const habs=habits.filter(h=>!h.anchor&&hlog[h.id]?.[key]);
   const wo=woHist.find(w=>w.date===key)||schedWo.find(w=>w.date===key);
   const dT=tasks.filter(t2=>t2.date===key);
   const plbl={1:{ru:'Срочно',uk:'Терміново',en:'Urgent'},2:{ru:'Норм',uk:'Норм',en:'Normal'},3:{ru:'Низкий',uk:'Низький',en:'Low'}};
   let html='';
-  if(ancs.length)html+=`<div style="font-size:11px;color:var(--pu);font-weight:600;margin-bottom:8px">${ancs.map(h=>hn(h)).join(' · ')}</div>`;
+  if(ancs.length)html+=`<div style="margin-bottom:8px">${ancs.map((h,i)=>{const t2=['07:00','13:00','19:00','22:00'];const done=hlog[h.id]?.[key];return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px"><span style="color:var(--muted2);width:40px;flex-shrink:0">${h.preferred_time||t2[i]||''}</span><span style="color:var(--pu);flex:1">${hn(h)}</span>${done?'<span style="color:var(--gr);font-size:10px">✓</span>':''}</div>`;}).join('')}</div>`;
   if(habs.length)html+=`<div style="font-size:11px;color:var(--ac);margin-bottom:8px">${habs.map(h=>hn(h)).join(' · ')}</div>`;
   if(wo){const tmpl=templates.find(x=>x.id===wo.templateId);html+=`<div style="margin-bottom:8px"><span class="tag tb2">${tmpl?tn(tmpl):''} ${wo.duration?'· '+wo.duration+' '+t('timen'):''}</span></div>`;}
   if(dT.length){
@@ -1555,12 +1555,14 @@ async function loadViewDateFromAPI(){
   if(viewDate===today){
     await loadTodayFromAPI();
   } else {
-    // Load tasks for other date via get_tasks
-    const res=await api('get_tasks',{date:viewDate});
-    if(res&&res.success&&Array.isArray(res.tasks)){
-      // Remove old viewDate tasks from memory, add new ones
+    // Load tasks + habits log for selected date
+    const [tasksRes, habitsRes] = await Promise.all([
+      api('get_tasks',{date:viewDate}),
+      api('get_habits')
+    ]);
+    if(tasksRes&&tasksRes.success&&Array.isArray(tasksRes.tasks)){
       tasks=tasks.filter(t=>t.date!==viewDate);
-      res.tasks.forEach(t=>{
+      tasksRes.tasks.forEach(t=>{
         tasks.push({
           id:t.id,
           text:{ru:t.title,uk:t.title,en:t.title},
@@ -1571,6 +1573,20 @@ async function loadViewDateFromAPI(){
           scheduled_time:t.scheduled_time||null,
           source:t.source||'db'
         });
+      });
+    }
+    if(habitsRes&&habitsRes.success&&Array.isArray(habitsRes.habits)){
+      if(!habits.length){
+        habits=habitsRes.habits.map(h=>({
+          id:h.id,
+          name:{ru:h.name,uk:h.name_uk||h.name,en:h.name_en||h.name},
+          freq:h.freq||'daily',anchor:h.is_anchor||false,
+          streak:h.streak_7d||0,preferred_time:h.preferred_time||null
+        }));
+      }
+      habitsRes.habits.forEach(h=>{
+        if(!hlog[h.id])hlog[h.id]={};
+        // For past/future dates we don't have log data, leave as false
       });
     }
   }
