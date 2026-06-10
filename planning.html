@@ -331,7 +331,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
   </div>
   <div class="g2">
     <div class="card"><div class="ch"><div class="ct"><svg viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 4H13l-3.5 2.5 1.5 4.5L7.5 9.5 4 12l1.5-4.5L2 5h4z" stroke="var(--pu)" stroke-width="1.2" fill="none"/></svg><span id="i-anctitle" style="color:var(--pu)">Якоря дня</span></div><span class="tag tp" id="ancst">0/0</span></div><div id="anclist"></div></div>
-    <div class="card"><div class="ch"><div class="ct"><svg viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span id="i-tasktitle">Задачи дня</span></div><span id="toddate" style="font-size:11px;color:var(--muted)"></span></div><div id="tasklist"></div><div class="arow"><input class="inp" id="tinp" placeholder="Добавить задачу..." onkeydown="if(event.key==='Enter')addTask()"><select class="sel" id="tprio" style="width:76px"><option value="1">❗</option><option value="2" selected>●</option><option value="3">○</option></select><button class="btn ba bxs" onclick="addTask()">+</button></div></div>
+    <div class="card"><div class="ch"><div class="ct"><svg viewBox="0 0 15 15" fill="none"><path d="M2 4h11M2 7.5h8M2 11h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span id="i-tasktitle">Задачи дня</span></div><div style="display:flex;align-items:center;gap:6px;margin-left:auto"><button onclick="viewDayPrev()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span id="toddate" style="font-size:11px;color:var(--muted);min-width:120px;text-align:center"></span><button onclick="viewDayNext()" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3.5 2L6.5 5l-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div><div id="tasklist"></div><div class="arow"><input class="inp" id="tinp" placeholder="Добавить задачу..." onkeydown="if(event.key==='Enter')addTask()"><select class="sel" id="tprio" style="width:76px"><option value="1">❗</option><option value="2" selected>●</option><option value="3">○</option></select><button class="btn ba bxs" onclick="addTask()">+</button></div></div>
   </div>
   <div class="g2">
     <div class="card"><div class="ch"><div class="ct"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="i-habtoday">Привычки</span></div></div><div id="habtoday"></div></div>
@@ -629,8 +629,9 @@ en:{out:'Sign out',ntag:'Planning',sbmain:'Main',sbmods:'Sections',sbsys:'System
 let lang=localStorage.getItem('sc_lang')||'ru';
 const t=k=>(L[lang]||L.ru)[k]||(L.ru[k]||k);
 const el=id=>document.getElementById(id);
-const dk=d=>d.toISOString().slice(0,10);
+const dk=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`;};
 const today=dk(new Date());
+let viewDate=today;
 const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}};
 const sv=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const hn=h=>h.name[lang]||h.name.ru||Object.values(h.name)[0];
@@ -662,17 +663,17 @@ function calcMetrics(){
 
 function renderToday(){
   calcMetrics();
-  const d=new Date();el('toddate').textContent=d.toLocaleDateString(lang==='en'?'en-US':lang==='uk'?'uk-UA':'ru-RU',{weekday:'long',day:'numeric',month:'long'});
+  const vd=new Date(viewDate+'T12:00:00');el('toddate').textContent=vd.toLocaleDateString(lang==='en'?'en-US':lang==='uk'?'uk-UA':'ru-RU',{weekday:'long',day:'numeric',month:'long'});
   const ancs=habits.filter(h=>h.anchor);const atimes=['07:00','13:00','19:00','22:00'];
-  el('anclist').innerHTML=ancs.map((h,i)=>{const done=hlog[h.id]?.[today];return `<div class="ar"><span class="at">${atimes[i]||''}</span><span class="an">${hn(h)}</span><button class="abtn${done?' on':''}" onclick="tgAnc(${h.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>${done?t('markedDone'):t('markDone')}</button></div>`;}).join('');
-  const tt=tasks.filter(x=>x.date===today);
+  el('anclist').innerHTML=ancs.map((h,i)=>{const done=hlog[h.id]?.[viewDate];return `<div class="ar"><span class="at">${atimes[i]||''}</span><span class="an">${hn(h)}</span><button class="abtn${done?' on':''}" onclick="tgAnc(${h.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>${done?t('markedDone'):t('markDone')}</button></div>`;}).join('');
+  const tt=tasks.filter(x=>x.date===viewDate);
   const plbl={1:{ru:'Срочно',uk:'Терміново',en:'Urgent'},2:{ru:'Норм',uk:'Норм',en:'Normal'},3:{ru:'Низкий',uk:'Низький',en:'Low'}};
   el('tasklist').innerHTML=tt.length?tt.map(task=>`<div>
     <div class="row"><div class="pd p${task.priority}"></div><div class="chk${task.done?' on':''}" onclick="tgTask(${task.id})">${task.done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div class="rin"><div class="rn" style="${task.done?'text-decoration:line-through;color:var(--muted2)':''}">${txn(task.text)}</div>${task.completion_note?`<div style="font-size:11px;color:var(--ac);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2h8v6H7l-2 2V8H2V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/></svg>${task.completion_note}</div>`:''}</div><span class="tag t${task.priority===1?'r':task.priority===2?'a':'m'}">${(plbl[task.priority]||{})[lang]||''}</span><button class="ibt" onclick="delTask(${task.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>
   </div>`).join(''):`<div style="padding:20px;text-align:center;color:var(--muted2);font-size:12px">${t('noTasks')}</div>`;
   const sorted=[...habits].sort((a,b)=>(b.anchor?1:0)-(a.anchor?1:0));
-  el('habtoday').innerHTML=sorted.map(h=>{const done=hlog[h.id]?.[today];return `<div class="row"><div class="ri" style="background:${h.anchor?'var(--pub)':'var(--acl)'};color:${h.anchor?'var(--pu)':'var(--ac)'}"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${hn(h)}</div></div>${h.anchor?`<span class="tag tp">${t('anchor')}</span>`:h.streak>=5?`<span class="tag ta">${h.streak} ${t('days')}</span>`:''}<div class="chkr${done?' on':''}${h.anchor?' anc':''}" onclick="${h.anchor?'':('tgHab('+h.id+')')}">${done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div></div>`;}).join('');
-  const sw=schedWo.find(w=>w.date===today);const wdones=woHist.filter(w=>w.date===today);const wb=el('wotoday');
+  el('habtoday').innerHTML=sorted.map(h=>{const done=hlog[h.id]?.[viewDate];return `<div class="row"><div class="ri" style="background:${h.anchor?'var(--pub)':'var(--acl)'};color:${h.anchor?'var(--pu)':'var(--ac)'}"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${hn(h)}</div></div>${h.anchor?`<span class="tag tp">${t('anchor')}</span>`:h.streak>=5?`<span class="tag ta">${h.streak} ${t('days')}</span>`:''}<div class="chkr${done?' on':''}${h.anchor?' anc':''}" onclick="${h.anchor?'':('tgHab('+h.id+')')}">${done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div></div>`;}).join('');
+  const sw=schedWo.find(w=>w.date===viewDate);const wdones=woHist.filter(w=>w.date===viewDate);const wb=el('wotoday');
   if(wdones.length){
     wb.innerHTML=wdones.map(wdone=>{
       const tmpl=templates.find(x=>x.id===wdone.templateId);
@@ -740,21 +741,75 @@ function renderCal(){
   }).join('');
   renderCalStats();
 }
-function selDay(key){
+async function selDay(key){
   calSel=key;renderCal();
   const d=new Date(key+'T12:00:00');
   el('caldettitle').textContent=d.getDate()+' '+t('months')[d.getMonth()]+' '+d.getFullYear();
+  el('caldet').style.display='block';
+  el('caldetbody').innerHTML=`<div style="padding:16px;text-align:center;color:var(--muted2);font-size:12px">загрузка...</div>`;
+  // Load tasks for this day from API
+  const res=await api('get_tasks',{date:key});
+  const dayTasks=res&&res.success&&Array.isArray(res.tasks)?res.tasks:[];
+  // Update tasks in memory for this date
+  tasks=tasks.filter(t=>t.date!==key);
+  dayTasks.forEach(t=>{tasks.push({id:t.id,text:{ru:t.title,uk:t.title,en:t.title},date:key,done:t.done||false,priority:t.priority||2,completion_note:t.completion_note||'',scheduled_time:t.scheduled_time||null,source:t.source||'db'});});
+  renderCalDet(key);
+}
+
+function renderCalDet(key){
+  const d=new Date(key+'T12:00:00');
   const ancs=habits.filter(h=>h.anchor&&hlog[h.id]?.[key]);
   const habs=habits.filter(h=>!h.anchor&&hlog[h.id]?.[key]);
   const wo=woHist.find(w=>w.date===key)||schedWo.find(w=>w.date===key);
   const dT=tasks.filter(t2=>t2.date===key);
+  const plbl={1:{ru:'Срочно',uk:'Терміново',en:'Urgent'},2:{ru:'Норм',uk:'Норм',en:'Normal'},3:{ru:'Низкий',uk:'Низький',en:'Low'}};
   let html='';
-  if(ancs.length)html+=`<div style="font-size:11px;color:var(--pu);font-weight:600;margin-bottom:6px">${ancs.map(h=>hn(h)).join(' · ')}</div>`;
-  if(habs.length)html+=`<div style="font-size:11px;color:var(--ac);margin-bottom:6px">${habs.map(h=>hn(h)).join(' · ')}</div>`;
-  if(wo){const tmpl=templates.find(x=>x.id===wo.templateId);html+=`<div style="margin-bottom:6px"><span class="tag tb2">${tmpl?tn(tmpl):''} ${wo.duration?'· '+wo.duration+' '+t('timen'):''}</span></div>`;}
-  dT.forEach(t2=>html+=`<div style="font-size:12px;color:var(--muted);padding:2px 0">• ${txn(t2.text)}</div>`);
-  if(!html)html=`<div style="font-size:12px;color:var(--muted2)">—</div>`;
-  el('caldetbody').innerHTML=html;el('caldet').style.display='block';
+  if(ancs.length)html+=`<div style="font-size:11px;color:var(--pu);font-weight:600;margin-bottom:8px">${ancs.map(h=>hn(h)).join(' · ')}</div>`;
+  if(habs.length)html+=`<div style="font-size:11px;color:var(--ac);margin-bottom:8px">${habs.map(h=>hn(h)).join(' · ')}</div>`;
+  if(wo){const tmpl=templates.find(x=>x.id===wo.templateId);html+=`<div style="margin-bottom:8px"><span class="tag tb2">${tmpl?tn(tmpl):''} ${wo.duration?'· '+wo.duration+' '+t('timen'):''}</span></div>`;}
+  if(dT.length){
+    html+=dT.map(t2=>`<div class="row" style="padding:6px 0;border-bottom:1px solid var(--border)">
+      <div class="chk${t2.done?' on':''}" onclick="calToggleTask(${t2.id},'${key}')" style="flex-shrink:0">${t2.done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div>
+      <div class="rin"><div class="rn" style="${t2.done?'text-decoration:line-through;color:var(--muted2)':''}">${txn(t2.text)}</div>${t2.scheduled_time?`<div style="font-size:10px;color:var(--ac)">${t2.scheduled_time}</div>`:''}</div>
+      <span class="tag t${t2.priority===1?'r':t2.priority===2?'a':'m'}" style="flex-shrink:0">${(plbl[t2.priority]||{})[lang]||''}</span>
+      <button class="ibt" onclick="calDelTask(${t2.id},'${key}')"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>`).join('');
+  } else {
+    html+=`<div style="font-size:12px;color:var(--muted2);padding:8px 0">—</div>`;
+  }
+  // Add task input
+  html+=`<div class="arow" style="margin-top:10px">
+    <input class="inp" id="cal-tinp" placeholder="${t('noTasks')==='Задач нет'?'Добавить задачу...':'Add task...'}" onkeydown="if(event.key==='Enter')calAddTask('${key}')">
+    <select class="sel" id="cal-tprio" style="width:52px"><option value="1">❗</option><option value="2" selected>●</option><option value="3">○</option></select>
+    <button class="btn ba bxs" onclick="calAddTask('${key}')">+</button>
+  </div>`;
+  el('caldetbody').innerHTML=html;
+}
+
+async function calToggleTask(id,key){
+  const t2=tasks.find(x=>x.id===id);if(!t2)return;
+  t2.done=!t2.done;
+  renderCalDet(key);renderCal();
+  apiToggleTask(id,t2.done).catch(console.error);
+}
+
+async function calDelTask(id,key){
+  tasks=tasks.filter(x=>x.id!==id);
+  renderCalDet(key);renderCal();
+  apiDeleteTask(id).catch(console.error);
+}
+
+async function calAddTask(key){
+  const inp=document.getElementById('cal-tinp');
+  const v=inp?inp.value.trim():'';if(!v)return;
+  const p=parseInt(document.getElementById('cal-tprio')?.value)||2;
+  inp.value='';
+  const res=await api('add_task',{title:v,priority:p,date:key});
+  if(res&&res.success&&res.task){
+    tasks.push({id:res.task.id,text:{ru:v,uk:v,en:v},date:key,done:false,priority:p,completion_note:'',source:'dashboard'});
+  }
+  renderCalDet(key);renderCal();
+  toast(t('added'),'tok');
 }
 function renderCalStats(){
   const dim=new Date(calY,calM+1,0).getDate();const keys=[];for(let i=1;i<=dim;i++)keys.push(dk(new Date(calY,calM,i)));
@@ -1386,7 +1441,7 @@ async function apiToggleTask(id, done, note=''){
 }
 
 /* ── API: добавить задачу ── */
-async function apiAddTask(title, priority=2, date=today){
+async function apiAddTask(title, priority=2, date=viewDate){
   const res = await api('add_task', {title, priority, date});
   if (res.success && res.task) {
     tasks.push({
@@ -1453,10 +1508,10 @@ addTask = async function(){
   if(!v) return;
   const p = parseInt(el('tprio').value) || 2;
   el('tinp').value = '';
-  const ok = await apiAddTask(v, p, today);
+  const ok = await apiAddTask(v, p, viewDate);
   if(!ok){
     // Fallback to localStorage
-    tasks.push({id: Date.now(), text:{ru:v,uk:v,en:v}, date:today, done:false, priority:p, completion_note:'', source:'dashboard'});
+    tasks.push({id: Date.now(), text:{ru:v,uk:v,en:v}, date:viewDate, done:false, priority:p, completion_note:'', source:'dashboard'});
   }
   renderToday();
   toast(t('added'), 'tok');
@@ -1485,6 +1540,44 @@ tgHab = function(id){
 // goals: full CRUD via API
 
 /* ── Главный init — загружает реальные данные ── */
+
+/* ── Навигация по дням ── */
+function viewDayOffset(offset){
+  const d=new Date(viewDate+'T12:00:00');
+  d.setDate(d.getDate()+offset);
+  viewDate=dk(d);
+  loadViewDateFromAPI();
+}
+function viewDayPrev(){viewDayOffset(-1);}
+function viewDayNext(){viewDayOffset(+1);}
+
+async function loadViewDateFromAPI(){
+  if(viewDate===today){
+    await loadTodayFromAPI();
+  } else {
+    // Load tasks for other date via get_tasks
+    const res=await api('get_tasks',{date:viewDate});
+    if(res&&res.success&&Array.isArray(res.tasks)){
+      // Remove old viewDate tasks from memory, add new ones
+      tasks=tasks.filter(t=>t.date!==viewDate);
+      res.tasks.forEach(t=>{
+        tasks.push({
+          id:t.id,
+          text:{ru:t.title,uk:t.title,en:t.title},
+          date:viewDate,
+          done:t.done||false,
+          priority:t.priority||2,
+          completion_note:t.completion_note||'',
+          scheduled_time:t.scheduled_time||null,
+          source:t.source||'db'
+        });
+      });
+    }
+  }
+  renderToday();
+  renderReview();
+}
+
 async function initFromAPI(){
   applyLang();
   el('tc-today').classList.add('on');
