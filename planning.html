@@ -345,9 +345,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
   <div class="tl-wrap">
     <div class="tl-card">
       <div class="tl-hdr">
-        <div class="tl-hdr-left">
-          <div class="tl-hdr-date" id="tl-date-lbl"></div>
-          <div class="tl-hdr-sub" id="tl-hdr-sub">загрузка...</div>
+        <div class="tl-hdr-left" style="display:flex;align-items:center;gap:6px">
+          <button onclick="tlDayOffset(-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div>
+            <div class="tl-hdr-date" id="tl-date-lbl"></div>
+            <div class="tl-hdr-sub" id="tl-hdr-sub">загрузка...</div>
+          </div>
+          <button onclick="tlDayOffset(1)" style="width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);flex-shrink:0"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M3.5 2L6.5 5l-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
         <button class="tl-ai-btn" onclick="tlAIPlan()">
           <svg width="12" height="12" viewBox="0 0 15 15" fill="none"><path d="M7.5 1l1.5 4H13l-3.5 2.5 1.5 4.5L7.5 9.5 4 12l1.5-4.5L2 5h4z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
@@ -757,33 +761,123 @@ async function selDay(key){
 }
 
 function renderCalDet(key){
-  const d=new Date(key+'T12:00:00');
-  const ancs=habits.filter(h=>h.anchor);
-  const habs=habits.filter(h=>!h.anchor&&hlog[h.id]?.[key]);
-  const wo=woHist.find(w=>w.date===key)||schedWo.find(w=>w.date===key);
-  const dT=tasks.filter(t2=>t2.date===key);
+  const ancTimes=['07:00','13:00','19:00','22:00'];
   const plbl={1:{ru:'Срочно',uk:'Терміново',en:'Urgent'},2:{ru:'Норм',uk:'Норм',en:'Normal'},3:{ru:'Низкий',uk:'Низький',en:'Low'}};
+
+  // Build unified event list sorted by time
+  const events=[];
+
+  // Anchors
+  habits.filter(h=>h.anchor).forEach((h,i)=>{
+    const time=h.preferred_time||ancTimes[i]||'00:00';
+    events.push({type:'anchor',time,label:hn(h),done:hlog[h.id]?.[key]||false,id:h.id});
+  });
+
+  // Tasks
+  tasks.filter(t2=>t2.date===key).forEach(t2=>{
+    events.push({type:'task',time:t2.scheduled_time||'',label:txn(t2.text),done:t2.done,id:t2.id,priority:t2.priority,task:t2});
+  });
+
+  // Workouts
+  const wos=woHist.filter(w=>w.date===key);
+  const swos=schedWo.filter(w=>w.date===key);
+  wos.forEach(wo=>{
+    const tmpl=templates.find(x=>x.id===wo.templateId);
+    events.push({type:'workout',time:'',label:(tmpl?tn(tmpl):tpN(wo.type||'strength'))+(wo.duration?' · '+wo.duration+' '+t('timen'):''),done:true,id:wo.id,wo});
+  });
+  swos.filter(sw=>!wos.find(w=>w.templateId===sw.templateId)).forEach(sw=>{
+    const tmpl=templates.find(x=>x.id===sw.templateId);
+    events.push({type:'sched_wo',time:'',label:tmpl?tn(tmpl):'',done:false,id:sw.id,sw});
+  });
+
+  // Sort by time
+  events.sort((a,b)=>{
+    if(!a.time&&!b.time)return 0;
+    if(!a.time)return 1;
+    if(!b.time)return -1;
+    return a.time.localeCompare(b.time);
+  });
+
   let html='';
-  if(ancs.length)html+=`<div style="margin-bottom:8px">${ancs.map((h,i)=>{const t2=['07:00','13:00','19:00','22:00'];const done=hlog[h.id]?.[key];return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px"><span style="color:var(--muted2);width:40px;flex-shrink:0">${h.preferred_time||t2[i]||''}</span><span style="color:var(--pu);flex:1">${hn(h)}</span>${done?'<span style="color:var(--gr);font-size:10px">✓</span>':''}</div>`;}).join('')}</div>`;
-  if(habs.length)html+=`<div style="font-size:11px;color:var(--ac);margin-bottom:8px">${habs.map(h=>hn(h)).join(' · ')}</div>`;
-  if(wo){const tmpl=templates.find(x=>x.id===wo.templateId);html+=`<div style="margin-bottom:8px"><span class="tag tb2">${tmpl?tn(tmpl):''} ${wo.duration?'· '+wo.duration+' '+t('timen'):''}</span></div>`;}
-  if(dT.length){
-    html+=dT.map(t2=>`<div class="row" style="padding:6px 0;border-bottom:1px solid var(--border)">
-      <div class="chk${t2.done?' on':''}" onclick="calToggleTask(${t2.id},'${key}')" style="flex-shrink:0">${t2.done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div>
-      <div class="rin"><div class="rn" style="${t2.done?'text-decoration:line-through;color:var(--muted2)':''}">${txn(t2.text)}</div>${t2.scheduled_time?`<div style="font-size:10px;color:var(--ac)">${t2.scheduled_time}</div>`:''}</div>
-      <span class="tag t${t2.priority===1?'r':t2.priority===2?'a':'m'}" style="flex-shrink:0">${(plbl[t2.priority]||{})[lang]||''}</span>
-      <button class="ibt" onclick="calDelTask(${t2.id},'${key}')"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
-    </div>`).join('');
+  if(events.length){
+    html+=events.map(ev=>{
+      const timeStr=ev.time?`<span style="color:var(--muted2);font-size:10px;width:38px;flex-shrink:0;font-variant-numeric:tabular-nums">${ev.time}</span>`:`<span style="width:38px;flex-shrink:0"></span>`;
+      if(ev.type==='anchor'){
+        return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          ${timeStr}
+          <span style="color:var(--pu);flex:1;font-size:12px;font-weight:500">${ev.label}</span>
+          ${ev.done?'<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="var(--gr)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
+        </div>`;
+      }
+      if(ev.type==='task'){
+        return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          ${timeStr}
+          <div class="chk${ev.done?' on':''}" onclick="calToggleTask(${ev.id},'${key}')" style="flex-shrink:0">${ev.done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div>
+          <div style="flex:1;min-width:0"><div style="font-size:12px;${ev.done?'text-decoration:line-through;color:var(--muted2)':''}">${ev.label}</div></div>
+          <span class="tag t${ev.priority===1?'r':ev.priority===2?'a':'m'}" style="flex-shrink:0">${(plbl[ev.priority]||{})[lang]||''}</span>
+          <button class="ibt" onclick="calEditTask(${ev.id},'${key}')" title="Редактировать"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M8 2l2 2-6 6H2V8l6-6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
+          <button class="ibt" onclick="calDelTask(${ev.id},'${key}')"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+        </div>`;
+      }
+      if(ev.type==='workout'){
+        return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          ${timeStr}
+          <span style="color:var(--gr);font-size:11px">💪</span>
+          <div style="flex:1;font-size:12px;color:var(--gr)">${ev.label}</div>
+          <span class="tag tg" style="flex-shrink:0">${t('woDone')}</span>
+        </div>`;
+      }
+      if(ev.type==='sched_wo'){
+        return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          ${timeStr}
+          <span style="color:var(--bl);font-size:11px">🏋️</span>
+          <div style="flex:1;font-size:12px;color:var(--bl)">${ev.label}</div>
+          <span class="tag tb" style="flex-shrink:0">${t('woPlanned')}</span>
+        </div>`;
+      }
+      return '';
+    }).join('');
   } else {
-    html+=`<div style="font-size:12px;color:var(--muted2);padding:8px 0">—</div>`;
+    html=`<div style="font-size:12px;color:var(--muted2);padding:8px 0">—</div>`;
   }
-  // Add task input
-  html+=`<div class="arow" style="margin-top:10px">
-    <input class="inp" id="cal-tinp" placeholder="${t('noTasks')==='Задач нет'?'Добавить задачу...':'Add task...'}" onkeydown="if(event.key==='Enter')calAddTask('${key}')">
-    <select class="sel" id="cal-tprio" style="width:52px"><option value="1">❗</option><option value="2" selected>●</option><option value="3">○</option></select>
-    <button class="btn ba bxs" onclick="calAddTask('${key}')">+</button>
+
+  // Add event controls
+  html+=`<div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+    <div class="arow">
+      <input class="inp" id="cal-tinp" placeholder="Задача..." onkeydown="if(event.key==='Enter')calAddTask('${key}')">
+      <input class="inp" id="cal-ttime" type="time" style="width:80px">
+      <select class="sel" id="cal-tprio" style="width:44px"><option value="1">❗</option><option value="2" selected>●</option><option value="3">○</option></select>
+      <button class="btn ba bxs" onclick="calAddTask('${key}')">+</button>
+    </div>
+    <div style="display:flex;gap:6px">
+      <select class="sel" id="cal-wo-tmpl" style="flex:1">${templates.map(x=>`<option value="${x.id}">${tn(x)}</option>`).join('')}</select>
+      <button class="btn bg bxs" onclick="calScheduleWo('${key}')" style="font-size:11px">+ ${t('mwo')}</button>
+    </div>
   </div>`;
   el('caldetbody').innerHTML=html;
+}
+
+async function calEditTask(id,key){
+  const t2=tasks.find(x=>x.id===id);if(!t2)return;
+  const newTitle=prompt('Название:',txn(t2.text));if(newTitle===null)return;
+  const newTime=prompt('Время (HH:MM или пусто):',t2.scheduled_time||'');if(newTime===null)return;
+  t2.text={ru:newTitle,uk:newTitle,en:newTitle};
+  t2.scheduled_time=newTime||null;
+  await api('update_task',{id,title:newTitle,scheduled_time:newTime||null});
+  renderCalDet(key);renderCal();
+}
+
+async function calScheduleWo(key){
+  const sel=document.getElementById('cal-wo-tmpl');
+  if(!sel||!templates.length)return;
+  const tmplId=parseInt(sel.value);
+  const tmpl=templates.find(x=>x.id===tmplId);
+  const res=await api('schedule_workout',{template_id:tmplId,date:key,type:tmpl?tmpl.type:'strength'});
+  if(res&&res.success){
+    schedWo.push({id:res.workout?res.workout.id:Date.now(),templateId:tmplId,date:key,note:''});
+    renderCalDet(key);renderCal();
+    toast(t('saved'),'tok');
+  }
 }
 
 async function calToggleTask(id,key){
@@ -803,10 +897,12 @@ async function calAddTask(key){
   const inp=document.getElementById('cal-tinp');
   const v=inp?inp.value.trim():'';if(!v)return;
   const p=parseInt(document.getElementById('cal-tprio')?.value)||2;
-  inp.value='';
-  const res=await api('add_task',{title:v,priority:p,date:key});
+  const timeInp=document.getElementById('cal-ttime');
+  const scheduled_time=timeInp&&timeInp.value?timeInp.value:null;
+  inp.value='';if(timeInp)timeInp.value='';
+  const res=await api('add_task',{title:v,priority:p,date:key,scheduled_time});
   if(res&&res.success&&res.task){
-    tasks.push({id:res.task.id,text:{ru:v,uk:v,en:v},date:key,done:false,priority:p,completion_note:'',source:'dashboard'});
+    tasks.push({id:res.task.id,text:{ru:v,uk:v,en:v},date:key,done:false,priority:p,completion_note:'',scheduled_time,source:'dashboard'});
   }
   renderCalDet(key);renderCal();
   toast(t('added'),'tok');
@@ -1633,6 +1729,8 @@ goTab = async function(name){
 /* ═══════════════════════════════════════════════════════
    TIMELINE — умный распорядок дня
 ═══════════════════════════════════════════════════════ */
+let tlViewDate=today;
+
 const TL={
   wasDragging:false,
   SH:6,EH:23,
@@ -1861,7 +1959,7 @@ function tlAddConfirm(){
   const timeStr=tlFmt(startH); // e.g. "14:15"
   closeOv('ov-tladd');
   // Pass scheduled_time so event appears at correct time slot
-  api('add_task',{title,priority:2,date:today,scheduled_time:timeStr}).then(()=>tlLoadAndRender());
+  api('add_task',{title,priority:2,date:tlViewDate,scheduled_time:timeStr}).then(()=>tlLoadAndRender());
   toast(t('taskAdded'),'tok');
 }
 
@@ -1960,28 +2058,47 @@ function tlBuildEvents(d){
   TL.events.sort((a,b)=>(a.start||0)-(b.start||0));
 }
 
+function tlDayOffset(offset){
+  const d=new Date(tlViewDate+'T12:00:00');
+  d.setDate(d.getDate()+offset);
+  tlViewDate=dk(d);
+  tlLoadAndRender();
+}
+
 async function tlLoadAndRender(){
-  const res=await api('get_today');
-  if(!res||!res.success)return;
-  const d=(res.data&&res.data.data)?res.data.data:(res.data||{});
+  let d={};
+  if(tlViewDate===today){
+    const res=await api('get_today');
+    if(!res||!res.success)return;
+    d=(res.data&&res.data.data)?res.data.data:(res.data||{});
+  } else {
+    // Load tasks + habits for other date
+    const [tasksRes]=await Promise.all([api('get_tasks',{date:tlViewDate})]);
+    d={
+      tasks:tasksRes&&tasksRes.success?tasksRes.tasks:[],
+      habits:habits,
+      workout:woHist.find(w=>w.date===tlViewDate)||null,
+      checkin:null
+    };
+  }
   tlBuildEvents(d);
   tlBuildGrid();
   tlRenderEvents();
   // Header
-  const now=new Date();
+  const vd=new Date(tlViewDate+'T12:00:00');
   const days=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
   const months=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
   const dateEl=document.getElementById('tl-date-lbl');
-  if(dateEl)dateEl.textContent=days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()];
+  if(dateEl)dateEl.textContent=days[vd.getDay()]+', '+vd.getDate()+' '+months[vd.getMonth()];
   const subEl=document.getElementById('tl-hdr-sub');
   if(subEl){
     const tks=TL.events.filter(e=>e.type==='task').length;
     const wo=TL.events.find(e=>e.type==='workout');
     subEl.textContent=tks+' задач'+(wo?' · тренировка '+tlFmt(wo.start):'');
   }
-  // Scroll to current time - 1.5h
+  // Scroll to current time only for today
   const body=document.getElementById('tl-body');
-  if(body){
+  if(body&&tlViewDate===today){
     const nowH2=new Date().getHours()+new Date().getMinutes()/60;
     setTimeout(()=>{body.scrollTop=Math.max(0,tlH2Y(nowH2-1.5));},60);
   }
