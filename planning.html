@@ -624,6 +624,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
     <button class="btn ba" style="width:100%" onclick="goalUpdConfirm()" id="goal-upd-btn">Сохранить</button>
   </div>
 </div></div>
+
+<div class="ov" id="ov-task-edit"><div class="modal" style="max-width:420px">
+  <div class="mh"><div class="mt" id="task-edit-title">Редактировать задачу</div><button class="mc" onclick="closeOv('ov-task-edit')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="task-edit-id" value="">
+    <input type="hidden" id="task-edit-key" value="">
+    <div class="fr"><div class="fl">Название</div><input class="inp" id="task-edit-name" placeholder="Название задачи..."></div>
+    <div class="fr2">
+      <div><div class="fl">Время</div><input class="inp" id="task-edit-time" type="time"></div>
+      <div><div class="fl">Приоритет</div><select class="sel" id="task-edit-prio"><option value="1">❗ Срочно</option><option value="2" selected>● Норм</option><option value="3">○ Низкий</option></select></div>
+    </div>
+    <button class="btn ba" style="width:100%;margin-top:4px" onclick="saveTaskEdit()">Сохранить</button>
+  </div>
+</div></div>
+
 <div id="toasts"></div><script>
 const L={
 ru:{out:'Выход',ntag:'Планирование',sbmain:'Главное',sbmods:'Разделы',sbsys:'Система',sbdash:'Дашборд',sbplan:'Планирование',sbhealth:'Здоровье',sbfood:'Питание',sbfin:'Финансы',sban:'Аналитика',sbset:'Настройки',ttod:'Сегодня',tcal:'Календарь',two:'Тренировки',thab:'Привычки',tgoals:'Цели',mhab:'Привычки',mtask:'Задачи',mwo:'Тренировка',mweek:'Неделя',mtasksub:'сегодня',mwosub:'сегодня',mweeksub:'выполнение',anctitle:'Якоря дня',tasktitle:'Задачи дня',habtoday:'Привычки',wotoday:'Тренировка',planwo:'Запланировать',leganc:'Якоря',leghab:'Привычки',legwo:'Тренировка',legtask:'Задачи',calstats:'Статистика месяца',tmpllbl:'Шаблоны',addtmpl:'+ Создать',histlbl:'История',exproglbl:'Прогресс упражнения',allhablbl:'Все привычки',addhab:'+ Добавить',hmaplbl:'12 недель',streaklbl:'Серии',less:'Меньше',more:'Больше',goalslbl:'Цели',addgoal:'+ Добавить',d30lbl:'Привычки (30 дней)',mhtitle:'Новая привычка',mhname:'Название',mhfreq:'Частота',mhtype:'Тип',hfd:'Ежедневно',hfc:'Несколько раз в неделю',htn:'Обычная',hta:'Якорь',mhsave:'Сохранить',mttitle:'Шаблон тренировки',mtname:'Название',mttype:'Тип',mtexs:'Упражнения',mtaddex:'+ Добавить',mtsave:'Сохранить',ttstr:'Силовая',ttcard:'Кардио',ttflex:'Растяжка',tthiit:'HIIT',mawtitle:'Запланировать',mawtmpl:'Шаблон',mawdate:'Дата',mawnote:'Заметка',mawsave:'Запланировать',mgtitle:'Новая цель',mgname:'Цель',mgcat:'Категория',mgdl:'Дедлайн',mgcur:'Текущее',mgtarget:'Цель',mgsave:'Сохранить',gch:'Здоровье',gcs:'Спорт',gcst:'Учёба',gcsp:'Духовное',gco:'Другое',finish:'Завершить',start:'Начать',setn:'Подход',repsn:'Повт',weightn:'Кг',distn:'Км',timen:'Мин',prev:'Прошлый раз',pr:'PR',done:'Готово',added:'Добавлено',deleted:'Удалено',saved:'Сохранено',anchor:'якорь',streak:'серия',days:'дн',woDone:'Выполнено',woPlanned:'Запланировано',noTmpl:'Нет шаблонов',noHist:'История пуста',noGoals:'Целей нет',noTasks:'Задач нет',markDone:'Отметить',markedDone:'Выполнено',mbhome:'Главная',mbtod:'Сегодня',mbcal:'Кал.',mbwo:'Трен.',mbhab:'Привычки',mbgoals:'Цели',mbfood:'Питание',wkd:['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],months:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],tntitle:'Как прошло?',tnlbl:'Комментарий (опционально)',tnsave:'Сохранить',tnskip:'Пропустить',wftitle:'Как прошла тренировка?',wffeellbl:'Самочувствие',wfnotelbl:'Заметка',wfsave:'Сохранить',goalLink:'Привязать к упражнению',goalLinkPh:'жим, присед, подтягивания...',goalLinkHint:'Система сама обновит прогресс после тренировки',goalSynced:'Цель обновлена автоматически',goalDelConfirm:'Удалить цель?',goalDelDesc:'Данные о прогрессе будут удалены.',editGoalTitle:'Редактировать цель',goalUnit:'Единица измерения',goalUnitPh:'кг, км, мин...',goalProgress:'Прогресс',goalDays:'дней осталось',goalDone:'Цель достигнута!',taskAdded:'Задача добавлена',editHabit:'Редактировать привычку',newHabit:'Новая привычка',nowEnergy:'сейчас: ',micListening:'Слушаю...',aiReplan:'Перестраиваю день...',aiAccepted:'План принят',aiDone:'Готово!',aiSchedule:'Расставляю по энергоблокам...',aiAnalyze:'Анализирую задачи и энергию...',errRetry:'Ошибка. Попробуй снова.',errDel:'Ошибка удаления',errAdd:'Ошибка добавления',errSave:'Ошибка сохранения',goalUpdBtn:'Сохранить',goalUpdLbl:'Текущее значение',goalUpdTitle:'Обновить цель',habDelBtn:'Удалить',habDelDesc:'Это действие нельзя отменить.',habDelConfirm:'Удалить привычку?'},
@@ -673,7 +688,7 @@ function renderToday(){
   const tt=tasks.filter(x=>x.date===viewDate);
   const plbl={1:{ru:'Срочно',uk:'Терміново',en:'Urgent'},2:{ru:'Норм',uk:'Норм',en:'Normal'},3:{ru:'Низкий',uk:'Низький',en:'Low'}};
   el('tasklist').innerHTML=tt.length?tt.map(task=>`<div>
-    <div class="row"><div class="pd p${task.priority}"></div><div class="chk${task.done?' on':''}" onclick="tgTask(${task.id})">${task.done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div class="rin"><div class="rn" style="${task.done?'text-decoration:line-through;color:var(--muted2)':''}">${txn(task.text)}</div>${task.completion_note?`<div style="font-size:11px;color:var(--ac);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2h8v6H7l-2 2V8H2V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/></svg>${task.completion_note}</div>`:''}</div><span class="tag t${task.priority===1?'r':task.priority===2?'a':'m'}">${(plbl[task.priority]||{})[lang]||''}</span><button class="ibt" onclick="delTask(${task.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>
+    <div class="row"><div class="pd p${task.priority}"></div><div class="chk${task.done?' on':''}" onclick="tgTask(${task.id})">${task.done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><div class="rin"><div class="rn" style="${task.done?'text-decoration:line-through;color:var(--muted2)':''}">${txn(task.text)}</div>${task.completion_note?`<div style="font-size:11px;color:var(--ac);margin-top:2px;display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2h8v6H7l-2 2V8H2V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/></svg>${task.completion_note}</div>`:''}</div><span class="tag t${task.priority===1?'r':task.priority===2?'a':'m'}">${(plbl[task.priority]||{})[lang]||''}</span><button class="ibt ed" onclick="openTaskEdit(${task.id},'','today')" title="Редактировать"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M8 2l2 2-6 6H2V8l6-6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button><button class="ibt" onclick="delTask(${task.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>
   </div>`).join(''):`<div style="padding:20px;text-align:center;color:var(--muted2);font-size:12px">${t('noTasks')}</div>`;
   const sorted=[...habits].sort((a,b)=>(b.anchor?1:0)-(a.anchor?1:0));
   el('habtoday').innerHTML=sorted.map(h=>{const done=hlog[h.id]?.[viewDate];return `<div class="row"><div class="ri" style="background:${h.anchor?'var(--pub)':'var(--acl)'};color:${h.anchor?'var(--pu)':'var(--ac)'}"><svg viewBox="0 0 15 15" fill="none"><path d="M2 7.5l3.5 3.5 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="rin"><div class="rn">${hn(h)}</div></div>${h.anchor?`<span class="tag tp">${t('anchor')}</span>`:h.streak>=5?`<span class="tag ta">${h.streak} ${t('days')}</span>`:''}<div class="chkr${done?' on':''}${h.anchor?' anc':''}" onclick="${h.anchor?'':('tgHab('+h.id+')')}">${done?'<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div></div>`;}).join('');
@@ -857,14 +872,35 @@ function renderCalDet(key){
   el('caldetbody').innerHTML=html;
 }
 
-async function calEditTask(id,key){
+function calEditTask(id,key){
+  openTaskEdit(id,key,'cal');
+}
+
+function openTaskEdit(id, key='', source='today'){
   const t2=tasks.find(x=>x.id===id);if(!t2)return;
-  const newTitle=prompt('Название:',txn(t2.text));if(newTitle===null)return;
-  const newTime=prompt('Время (HH:MM или пусто):',t2.scheduled_time||'');if(newTime===null)return;
-  t2.text={ru:newTitle,uk:newTitle,en:newTitle};
-  t2.scheduled_time=newTime||null;
-  await api('update_task',{id,title:newTitle,scheduled_time:newTime||null});
-  renderCalDet(key);renderCal();
+  document.getElementById('task-edit-id').value=id;
+  document.getElementById('task-edit-key').value=key+'|'+source;
+  document.getElementById('task-edit-name').value=txn(t2.text);
+  document.getElementById('task-edit-time').value=t2.scheduled_time||'';
+  document.getElementById('task-edit-prio').value=t2.priority||2;
+  openOv('ov-task-edit');
+}
+
+async function saveTaskEdit(){
+  const id=parseInt(document.getElementById('task-edit-id').value);
+  const keySource=document.getElementById('task-edit-key').value.split('|');
+  const key=keySource[0];const source=keySource[1]||'today';
+  const title=document.getElementById('task-edit-name').value.trim();
+  const scheduled_time=document.getElementById('task-edit-time').value||null;
+  const priority=parseInt(document.getElementById('task-edit-prio').value)||2;
+  if(!title)return;
+  const t2=tasks.find(x=>x.id===id);
+  if(t2){t2.text={ru:title,uk:title,en:title};t2.scheduled_time=scheduled_time;t2.priority=priority;}
+  closeOv('ov-task-edit');
+  await api('update_task',{id,title,scheduled_time,priority});
+  if(source==='cal'){renderCalDet(key);renderCal();}
+  else{renderToday();}
+  toast(t('saved'),'tok');
 }
 
 async function calScheduleWo(key){
@@ -1430,6 +1466,7 @@ async function loadTodayFromAPI(){
     done: t.done || false,
     priority: t.priority || 2,
     completion_note: t.completion_note || '',
+    scheduled_time: t.scheduled_time || null,
     source: t.source || 'db'
   })) : [];
 
