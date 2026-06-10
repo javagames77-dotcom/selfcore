@@ -134,6 +134,33 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .si2:focus{outline:none;border-color:var(--ac)}
 .spr{font-size:9px;color:var(--gr);font-weight:700;text-align:center}
 .ssbar{background:var(--acl);border:1px solid var(--acm);border-radius:10px;padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.wo-stab{padding:7px 14px;font-size:12px;font-weight:500;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;margin-bottom:-1px}
+.wo-stab.on{color:var(--ac);border-bottom-color:var(--ac)}
+.wo-stab:hover{color:var(--text)}
+.wo-sec{display:none}.wo-sec.on{display:block}
+.wo-day-col{display:flex;flex-direction:column;gap:4px;min-width:0}
+.wo-day-hdr{font-size:10px;font-weight:500;color:var(--muted2);text-align:center;padding:3px 0;text-transform:uppercase;letter-spacing:.04em}
+.wo-day-hdr.today{color:var(--ac)}
+.wo-slot{border-radius:6px;padding:5px 7px;font-size:11px;cursor:pointer;border:1px solid transparent;transition:filter .1s;overflow:hidden}
+.wo-slot:hover{filter:brightness(.93)}
+.wo-slot.strength{background:var(--blb);color:var(--bl);border-color:var(--blu)}
+.wo-slot.cardio{background:#fffbeb;color:#b45309;border-color:#fcd34d}
+.wo-slot.flexibility{background:var(--pub);color:var(--pu);border-color:var(--puu)}
+.wo-slot.hiit{background:var(--reb);color:var(--re);border-color:var(--reu)}
+.wo-slot.done{background:var(--grb);color:var(--gr);border-color:var(--gru)}
+.wo-slot.rest{background:var(--bg3);color:var(--muted2);border-color:var(--border);text-align:center;cursor:default}
+.wo-slot.empty{background:transparent;border:1px dashed var(--border);color:var(--muted2);text-align:center;cursor:pointer;padding:8px}
+.wo-slot.empty:hover{background:var(--acl);border-color:var(--acm);color:var(--ac)}
+.wo-slot-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px}
+.wo-slot-time{font-size:10px;opacity:.7;margin-top:1px}
+.badge-prog{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--acl);color:var(--acd)}
+.prog-entry{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border)}
+.prog-entry:last-child{border-bottom:none}
+.prog-active-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--border2)}
+.prog-active-dot.on{background:var(--ac)}
+.prog-day-btn{width:36px;height:32px;border-radius:6px;border:1px solid var(--border);background:transparent;font-size:11px;cursor:pointer;color:var(--muted);font-family:inherit;font-weight:500}
+.prog-day-btn.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.prog-day-btn:hover:not(.on){background:var(--bg3)}
 .stimer{font-size:20px;font-weight:700;color:var(--ac);font-variant-numeric:tabular-nums}
 .sname{font-size:13px;font-weight:500;color:var(--acd);flex:1}
 .hm{display:flex;gap:3px;overflow-x:auto;padding-bottom:4px}
@@ -430,18 +457,62 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
     <div class="sname" id="ssname"></div><div class="stimer" id="sstimer">00:00</div>
     <button class="btn ba bxs" onclick="finishSess()" id="i-finish">Завершить</button>
   </div>
-  <div class="g2" style="align-items:start">
-    <div>
-      <div class="slbl"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="3" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 3V2M10 3V2M2 7h11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span id="i-tmpllbl">Шаблоны</span><button class="btn bg bxs" onclick="openAddTmpl()" style="margin-left:auto" id="i-addtmpl">+ Создать</button></div>
-      <div class="card" id="tmpllist"></div>
-    </div>
-    <div>
-      <div class="slbl"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span id="i-histlbl">История</span></div>
-      <div class="card" id="wohist"></div>
+  <!-- Вкладки раздела тренировок -->
+  <div style="display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:14px">
+    <button class="wo-stab on" id="wost-week"    onclick="woSwitchTab('week')"     >Неделя</button>
+    <button class="wo-stab"    id="wost-programs" onclick="woSwitchTab('programs')" >Программы</button>
+    <button class="wo-stab"    id="wost-templates"onclick="woSwitchTab('templates')">Шаблоны</button>
+    <button class="wo-stab"    id="wost-history"  onclick="woSwitchTab('history')"  >История</button>
+    <button class="wo-stab"    id="wost-progress" onclick="woSwitchTab('progress')" >Прогресс</button>
+  </div>
+
+  <!-- НЕДЕЛЯ -->
+  <div class="wo-sec on" id="wosec-week">
+    <div class="card" style="overflow:hidden">
+      <div class="ch" style="padding:10px 14px">
+        <span style="font-size:13px;font-weight:500;color:var(--black);flex:1" id="wo-week-lbl"></span>
+        <span class="badge-prog" id="wo-prog-badge" style="display:none"></span>
+      </div>
+      <div id="wo-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:10px 14px 14px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 14px">
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:20px;font-weight:500;color:var(--black)" id="wo-week-count">0</div>
+          <div style="font-size:11px;color:var(--muted)">тренировок на неделе</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-size:20px;font-weight:500;color:var(--ac)" id="wo-week-mins">0</div>
+          <div style="font-size:11px;color:var(--muted)">минут</div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="slbl" style="margin-top:4px"><svg viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span id="i-exproglbl">Прогресс упражнения</span><select id="exsel" onchange="renderExProg()" style="margin-left:auto;font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--inp-bg);color:var(--text);font-family:inherit"></select></div>
-  <div class="card"><div style="padding:14px 16px"><div id="exchart" style="min-height:80px;display:flex;align-items:flex-end;gap:4px"></div><div id="expr" style="margin-top:8px;font-size:12px;color:var(--muted)"></div></div></div>
+
+  <!-- ПРОГРАММЫ -->
+  <div class="wo-sec" id="wosec-programs">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="font-size:13px;font-weight:500;color:var(--black)">Мои программы</span>
+      <button class="btn ba bxs" onclick="openAddProgram()">+ Создать</button>
+    </div>
+    <div class="card" id="prog-list"></div>
+  </div>
+
+  <!-- ШАБЛОНЫ -->
+  <div class="wo-sec" id="wosec-templates">
+    <div class="slbl"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="3" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 3V2M10 3V2M2 7h11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span id="i-tmpllbl">Шаблоны</span><button class="btn bg bxs" onclick="openAddTmpl()" style="margin-left:auto" id="i-addtmpl">+ Создать</button></div>
+    <div class="card" id="tmpllist"></div>
+  </div>
+
+  <!-- ИСТОРИЯ -->
+  <div class="wo-sec" id="wosec-history">
+    <div class="slbl"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7.5 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span id="i-histlbl">История</span></div>
+    <div class="card" id="wohist"></div>
+  </div>
+
+  <!-- ПРОГРЕСС -->
+  <div class="wo-sec" id="wosec-progress">
+    <div class="slbl" style="margin-top:4px"><svg viewBox="0 0 15 15" fill="none"><path d="M1 11l3.5-4 3 3 3.5-5 3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span id="i-exproglbl">Прогресс упражнения</span><select id="exsel" onchange="renderExProg()" style="margin-left:auto;font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--inp-bg);color:var(--text);font-family:inherit"></select></div>
+    <div class="card"><div style="padding:14px 16px"><div id="exchart" style="min-height:80px;display:flex;align-items:flex-end;gap:4px"></div><div id="expr" style="margin-top:8px;font-size:12px;color:var(--muted)"></div></div></div>
+  </div>
 </div>
 
 <!-- HABITS -->
@@ -636,6 +707,44 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
       <div><div class="fl">Приоритет</div><select class="sel" id="task-edit-prio"><option value="1">❗ Срочно</option><option value="2" selected>● Норм</option><option value="3">○ Низкий</option></select></div>
     </div>
     <button class="btn ba" style="width:100%;margin-top:4px" onclick="saveTaskEdit()">Сохранить</button>
+  </div>
+</div></div>
+
+
+<div class="ov" id="ov-program"><div class="modal" style="max-width:440px">
+  <div class="mh"><div class="mt" id="prog-modal-title">Новая программа</div><button class="mc" onclick="closeOv('ov-program')">✕</button></div>
+  <div class="mb">
+    <input type="hidden" id="prog-modal-id" value="">
+    <div class="fr"><div class="fl">Название программы</div><input class="inp" id="prog-name-inp" placeholder="Программа А — силовая 3×"></div>
+    <div class="fr">
+      <div class="fl">Дни недели</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">
+        <button class="prog-day-btn" data-day="1">Пн</button>
+        <button class="prog-day-btn" data-day="2">Вт</button>
+        <button class="prog-day-btn" data-day="3">Ср</button>
+        <button class="prog-day-btn" data-day="4">Чт</button>
+        <button class="prog-day-btn" data-day="5">Пт</button>
+        <button class="prog-day-btn" data-day="6">Сб</button>
+        <button class="prog-day-btn" data-day="7">Вс</button>
+      </div>
+    </div>
+    <div class="fr2">
+      <div><div class="fl">Время</div><input class="inp" id="prog-time-inp" type="time" value="10:00"></div>
+      <div><div class="fl">Длительность</div>
+        <select class="sel" id="prog-dur-sel">
+          <option value="30">30 мин</option>
+          <option value="45">45 мин</option>
+          <option value="60" selected>60 мин</option>
+          <option value="90">90 мин</option>
+          <option value="120">120 мин</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr"><div class="fl">Шаблон тренировки</div><select class="sel" id="prog-tmpl-sel"></select></div>
+    <div style="font-size:11px;color:var(--muted);padding:8px;background:var(--bg3);border-radius:8px;margin-bottom:12px">
+      При активации тренировки автоматически появятся в Календаре и Timeline на 4 недели вперёд
+    </div>
+    <button class="btn ba" style="width:100%" onclick="saveProgram()">Сохранить</button>
   </div>
 </div></div>
 
@@ -965,7 +1074,203 @@ function calNext(){calM++;if(calM>11){calM=0;calY++;}renderCal();}
 const tpC={strength:'var(--blb)',cardio:'var(--amb)',flexibility:'var(--grb)',hiit:'var(--reb)'};
 const tpT={strength:'var(--bl)',cardio:'var(--am)',flexibility:'var(--gr)',hiit:'var(--re)'};
 function tpN(tp){return{strength:t('ttstr'),cardio:t('ttcard'),flexibility:t('ttflex'),hiit:t('tthiit')}[tp]||tp;}
+
+/* ══════════════════════════════════════════
+   WORKOUT SUBTABS
+══════════════════════════════════════════ */
+function woSwitchTab(name){
+  document.querySelectorAll('.wo-stab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.wo-sec').forEach(s=>s.classList.remove('on'));
+  const btn=document.getElementById('wost-'+name);
+  const sec=document.getElementById('wosec-'+name);
+  if(btn)btn.classList.add('on');
+  if(sec)sec.classList.add('on');
+  if(name==='week')renderWoWeek();
+  if(name==='programs')renderPrograms();
+}
+
+/* ══════════════════════════════════════════
+   WEEK VIEW
+══════════════════════════════════════════ */
+function renderWoWeek(){
+  const now=new Date();
+  // Start from Monday of current week
+  const dow=now.getDay()||7;
+  const mon=new Date(now);mon.setDate(now.getDate()-dow+1);
+  const days=[];
+  for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);days.push(d);}
+  // Week label
+  const lbl=document.getElementById('wo-week-lbl');
+  if(lbl){
+    const opts={day:'numeric',month:'long'};
+    lbl.textContent=days[0].toLocaleDateString('ru-RU',opts)+' – '+days[6].toLocaleDateString('ru-RU',opts)+' '+days[0].getFullYear();
+  }
+  // Active program badge
+  const activeProg=programs.find(p=>p.is_active);
+  const badge=document.getElementById('wo-prog-badge');
+  if(badge){
+    if(activeProg){badge.textContent=activeProg.name;badge.style.display='inline-block';}
+    else{badge.style.display='none';}
+  }
+  const grid=document.getElementById('wo-week-grid');
+  if(!grid)return;
+  const wdNames=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  let totalWo=0,totalMins=0;
+  grid.innerHTML=days.map((d,i)=>{
+    const key=dk(d);
+    const isToday=key===today;
+    const done=woHist.find(w=>w.date===key);
+    const sched=schedWo.find(w=>w.date===key);
+    const tmpl=done?templates.find(x=>x.id===done.templateId):sched?templates.find(x=>x.id===sched.templateId):null;
+    let slotHtml='';
+    if(done){
+      totalWo++;totalMins+=done.duration||0;
+      slotHtml=`<div class="wo-slot done" onclick="viewWo(${done.id})"><div class="wo-slot-name">${tmpl?tn(tmpl):'✓'}</div><div class="wo-slot-time">${done.duration} ${t('timen')}</div></div>`;
+    } else if(sched){
+      const timeStr=sched.time||'';
+      slotHtml=`<div class="wo-slot ${tmpl?tmpl.type:'strength'}" onclick="startSess(${sched.templateId})"><div class="wo-slot-name">${tmpl?tn(tmpl):'?'}</div>${timeStr?`<div class="wo-slot-time">${timeStr}</div>`:''}</div>`;
+    } else {
+      slotHtml=`<div class="wo-slot empty" onclick="calScheduleWoForDate('${key}')">+</div>`;
+    }
+    return `<div class="wo-day-col"><div class="wo-day-hdr${isToday?' today':''}">${wdNames[i]}<br>${d.getDate()}</div>${slotHtml}</div>`;
+  }).join('');
+  document.getElementById('wo-week-count').textContent=totalWo;
+  document.getElementById('wo-week-mins').textContent=totalMins;
+}
+
+async function calScheduleWoForDate(key){
+  if(!templates.length){toast('Сначала создай шаблон','ter');return;}
+  openOv('ov-addwo');
+  const dateEl=document.getElementById('awdate');
+  if(dateEl)dateEl.value=key;
+}
+
+/* ══════════════════════════════════════════
+   PROGRAMS
+══════════════════════════════════════════ */
+async function loadProgramsFromAPI(){
+  try{
+    const res=await api('get_programs');
+    if(res&&res.success&&Array.isArray(res.programs)){
+      programs=res.programs.map(p=>({
+        id:p.id,name:p.name,
+        entries:Array.isArray(p.entries)?p.entries:[],
+        is_active:p.is_active||false
+      }));
+    }
+  }catch(e){console.error('loadProgramsFromAPI:',e);}
+}
+
+function renderPrograms(){
+  const el2=document.getElementById('prog-list');if(!el2)return;
+  if(!programs.length){
+    el2.innerHTML=`<div style="padding:20px;text-align:center;color:var(--muted2);font-size:12px">Нет программ. Создай первую!</div>`;
+    return;
+  }
+  const dayNames=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  el2.innerHTML=programs.map(p=>{
+    const days=p.entries.map(e=>dayNames[(e.day_of_week||1)-1]).join(' · ');
+    const time=p.entries[0]?p.entries[0].time:'';
+    const dur=p.entries[0]?p.entries[0].duration_min:60;
+    return `<div class="prog-entry">
+      <div class="prog-active-dot${p.is_active?' on':''}"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;color:var(--black)">${p.name}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">${days}${time?' · '+time:''}${dur?' · '+dur+' мин':''}</div>
+      </div>
+      ${p.is_active?`<span style="font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--acl);color:var(--acd)">активна</span>`:`<button class="btn bg bxs" onclick="activateProgram(${p.id})" style="font-size:11px">Активировать</button>`}
+      <button class="ibt" onclick="editProgram(${p.id})" title="Редактировать"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M8 2l2 2-6 6H2V8l6-6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button>
+      <button class="ibt" onclick="deleteProgram(${p.id})" title="Удалить"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>`;
+  }).join('');
+}
+
+async function activateProgram(id){
+  const prog=programs.find(p=>p.id===id);if(!prog)return;
+  toast('Генерирую расписание на 4 недели...','tin');
+  const res=await api('activate_program',{id});
+  if(res&&res.success){
+    programs.forEach(p=>p.is_active=p.id===id);
+    toast(`Активировано! ${(res.scheduled||[]).length} тренировок запланировано`,'tok');
+    await loadWorkoutsFromAPI();
+    renderPrograms();renderWoWeek();
+  } else {toast(t('errSave'),'ter');}
+}
+
+async function deleteProgram(id){
+  showConfirm('habDelConfirm','habDelDesc','habDelBtn',async()=>{
+    const res=await api('delete_program',{id:parseInt(id)});
+    if(res&&res.success){
+      programs=programs.filter(p=>p.id!==id);
+      renderPrograms();toast(t('deleted'),'tin');
+    } else {toast(t('errDel'),'ter');}
+  });
+}
+
+function openAddProgram(){
+  // Populate template selector
+  const sel=document.getElementById('prog-tmpl-sel');
+  if(sel)sel.innerHTML=templates.map(x=>`<option value="${x.id}">${tn(x)}</option>`).join('');
+  document.getElementById('prog-modal-id').value='';
+  document.getElementById('prog-modal-title').textContent='Новая программа';
+  document.getElementById('prog-name-inp').value='';
+  document.querySelectorAll('.prog-day-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('prog-time-inp').value='10:00';
+  document.getElementById('prog-dur-sel').value='60';
+  document.getElementById('prog-tmpl-sel').value=templates[0]?.id||'';
+  openOv('ov-program');
+}
+
+function editProgram(id){
+  const sel=document.getElementById('prog-tmpl-sel');
+  if(sel)sel.innerHTML=templates.map(x=>`<option value="${x.id}">${tn(x)}</option>`).join('');
+  const p=programs.find(x=>x.id===id);if(!p)return;
+  document.getElementById('prog-modal-id').value=id;
+  document.getElementById('prog-modal-title').textContent='Редактировать программу';
+  document.getElementById('prog-name-inp').value=p.name;
+  const days=(p.entries||[]).map(e=>e.day_of_week);
+  document.querySelectorAll('.prog-day-btn').forEach(b=>{
+    const d=parseInt(b.dataset.day);
+    b.classList.toggle('on',days.includes(d));
+  });
+  if(p.entries&&p.entries[0]){
+    document.getElementById('prog-time-inp').value=p.entries[0].time||'10:00';
+    document.getElementById('prog-dur-sel').value=p.entries[0].duration_min||60;
+    document.getElementById('prog-tmpl-sel').value=p.entries[0].template_id||'';
+  }
+  openOv('ov-program');
+}
+
+async function saveProgram(){
+  const id=document.getElementById('prog-modal-id').value;
+  const name=document.getElementById('prog-name-inp').value.trim();if(!name)return;
+  const time=document.getElementById('prog-time-inp').value||'10:00';
+  const dur=parseInt(document.getElementById('prog-dur-sel').value)||60;
+  const tmplId=parseInt(document.getElementById('prog-tmpl-sel').value)||null;
+  const days=[];
+  document.querySelectorAll('.prog-day-btn.on').forEach(b=>days.push(parseInt(b.dataset.day)));
+  if(!days.length){toast('Выбери хотя бы один день','ter');return;}
+  const entries=days.map(d=>({day_of_week:d,template_id:tmplId,time,duration_min:dur}));
+  closeOv('ov-program');
+  if(id){
+    const res=await api('update_program',{id:parseInt(id),name,entries});
+    if(res&&res.success){
+      const p=programs.find(x=>x.id===parseInt(id));
+      if(p){p.name=name;p.entries=entries;}
+      toast(t('saved'),'tok');
+    } else {toast(t('errSave'),'ter');}
+  } else {
+    const res=await api('save_program',{name,entries});
+    if(res&&res.success&&res.program){
+      programs.push({id:res.program.id,name,entries,is_active:false});
+      toast(t('saved'),'tok');
+    } else {toast(t('errSave'),'ter');}
+  }
+  renderPrograms();
+}
+
 function renderWorkouts(){
+  buildExSel();renderWoWeek();
   if(!templates.length){el('tmpllist').innerHTML=`<div style="padding:20px;text-align:center;color:var(--muted2);font-size:12px">${t('noTmpl')}</div>`;}
   else el('tmpllist').innerHTML=templates.map(tmpl=>`<div class="row"><div class="ri" style="background:${tpC[tmpl.type]||'var(--bg3)'};color:${tpT[tmpl.type]||'var(--muted)'}"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="rin"><div class="rn">${tn(tmpl)}</div><div class="rs">${tpN(tmpl.type)} · ${(tmpl.exercises||[]).length} упр.</div></div><button class="btn ba bxs" onclick="startSess(${tmpl.id})">${t('start')}</button><button class="ibt" onclick="delTmpl(${tmpl.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`).join('');
   const sorted=[...woHist].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,12);
@@ -1525,7 +1830,8 @@ async function loadWorkoutsFromAPI(){
       api('get_templates')
     ]);
     if (woRes && woRes.success && Array.isArray(woRes.workouts)) {
-      woHist = woRes.workouts.map(w => ({
+      const allWo = woRes.workouts || [];
+      woHist = allWo.filter(w => w.completed_at).map(w => ({
         id: w.id,
         templateId: w.template_id || null,
         date: w.date ? w.date.slice(0,10) : today,
@@ -1534,7 +1840,14 @@ async function loadWorkoutsFromAPI(){
         sets: Array.isArray(w.exercises_json) ? w.exercises_json : [],
         feel: w.feel_score || 0,
         note: w.session_note || '',
-        completed: !!w.completed_at
+        completed: true
+      }));
+      schedWo = allWo.filter(w => !w.completed_at).map(w => ({
+        id: w.id,
+        templateId: w.template_id || null,
+        date: w.date ? w.date.slice(0,10) : today,
+        time: w.planned_time || '',
+        note: ''
       }));
     }
     if (tmplRes && tmplRes.success && Array.isArray(tmplRes.templates)) {
@@ -1543,6 +1856,14 @@ async function loadWorkoutsFromAPI(){
         name: {ru: t.name, uk: t.name_uk||t.name, en: t.name_en||t.name},
         type: t.type || 'strength',
         exercises: Array.isArray(t.exercises) ? t.exercises : []
+      }));
+    }
+    const progRes = await api('get_programs');
+    if(progRes && progRes.success && Array.isArray(progRes.programs)){
+      programs = progRes.programs.map(p=>({
+        id:p.id, name:p.name,
+        entries:Array.isArray(p.entries)?p.entries:[],
+        is_active:p.is_active||false
       }));
     }
   } catch(e) { console.error('loadWorkoutsFromAPI:', e); }
@@ -1777,6 +2098,7 @@ goTab = async function(name){
    TIMELINE — умный распорядок дня
 ═══════════════════════════════════════════════════════ */
 let tlViewDate=today;
+let programs=[];
 
 const TL={
   wasDragging:false,
@@ -2205,6 +2527,11 @@ goTab=async function(name){
   await _goTabBase(name);
   // timeline handled in main goTab
 };
+
+// Program day buttons
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('prog-day-btn'))e.target.classList.toggle('on');
+});
 
 (function(){
   const th=localStorage.getItem('sc_theme');if(th){document.documentElement.setAttribute('data-theme',th);el('isun').style.display=th==='dark'?'none':'block';el('imoon').style.display=th==='dark'?'block':'none';}
