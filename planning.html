@@ -1096,7 +1096,6 @@ function woSwitchTab(name){
    WEEK VIEW
 ══════════════════════════════════════════ */
 function renderWoWeek(){
-  const now=new Date();
   // Start from Monday of current week
   const dow=now.getDay()||7;
   const mon=new Date(now);mon.setDate(now.getDate()-dow+1);
@@ -1124,7 +1123,7 @@ function renderWoWeek(){
     const isToday=key===today;
     const done=woHist.find(w=>w.date===key);
     const sched=schedWo.find(w=>w.date===key);
-    const tmpl=done?templates.find(x=>x.id===done.templateId):sched?templates.find(x=>x.id===sched.templateId):null;
+    const tmpl=done?templates.find(x=>x.id===parseInt(done.templateId)):sched?templates.find(x=>x.id===parseInt(sched.templateId)):null;
     let slotHtml='';
     if(done){
       totalWo++;totalMins+=done.duration||0;
@@ -1189,14 +1188,17 @@ function renderPrograms(){
 }
 
 async function activateProgram(id){
-  const prog=programs.find(p=>p.id===id);if(!prog)return;
+  const prog=programs.find(p=>p.id===parseInt(id));if(!prog)return;
   toast('Генерирую расписание на 4 недели...','tin');
-  const res=await api('activate_program',{id});
+  const res=await api('activate_program',{id:parseInt(id)});
   if(res&&res.success){
-    programs.forEach(p=>p.is_active=p.id===id);
-    toast(`Активировано! ${(res.scheduled||[]).length} тренировок запланировано`,'tok');
+    programs.forEach(p=>p.is_active=(p.id===parseInt(id)));
+    const count=(res.scheduled||[]).length;
+    toast('Активировано! '+count+' тренировок запланировано','tok');
     await loadWorkoutsFromAPI();
-    renderPrograms();renderWoWeek();
+    renderPrograms();
+    renderWoWeek();
+    woSwitchTab('week');
   } else {toast(t('errSave'),'ter');}
 }
 
@@ -1886,7 +1888,7 @@ async function loadWorkoutsFromAPI(){
       }));
       schedWo = allWo.filter(w => !w.completed_at).map(w => ({
         id: w.id,
-        templateId: w.template_id || null,
+        templateId: w.template_id ? parseInt(w.template_id) : null,
         date: w.date ? w.date.slice(0,10) : today,
         time: w.planned_time || '',
         note: ''
