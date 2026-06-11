@@ -1362,7 +1362,19 @@ async function doCopyWeek(){
 
 function renderTmplList(){
   if(!templates.length){el('tmpllist').innerHTML=`<div style="padding:20px;text-align:center;color:var(--muted2);font-size:12px">${t('noTmpl')}</div>`;return;}
-  el('tmpllist').innerHTML=templates.map(tmpl=>`<div class="row"><div class="ri" style="background:var(--blb);color:var(--bl)"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="rin"><div class="rn">${tn(tmpl)}</div><div class="rs">${tmpl.exercises.length} ${t('exn')}</div></div><button class="btn ba bxs" onclick="startSess(${tmpl.id})" style="font-size:11px">${t('start')}</button><button class="ibt" onclick="delTmpl(${tmpl.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`).join('');
+  el('tmpllist').innerHTML=templates.map(tmpl=>`<div class="row"><div class="ri" style="background:var(--blb);color:var(--bl)"><svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h2M12 7.5h2M3 7.5h9M3 5.5v4M12 5.5v4M5 6.5v2M10 6.5v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="rin"><div class="rn">${tn(tmpl)}</div><div class="rs">${tmpl.exercises.length} ${t('exn')}</div></div><button class="btn ba bxs" onclick="startSess(${tmpl.id})" style="font-size:11px">${t('start')}</button><button class="ibt ed" onclick="editTmpl(${tmpl.id})" title="Редактировать"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M8 2l2 2-6 6H2V8l6-6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></button><button class="ibt" onclick="delTmpl(${tmpl.id})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`).join('');
+}
+
+function editTmpl(id){
+  const tmpl=templates.find(x=>x.id===id);if(!tmpl)return;
+  tmplExList=[...(tmpl.exercises||[])];
+  el('tmname').value=tn(tmpl);
+  el('tmtype').value=tmpl.type||'strength';
+  el('tmexs').innerHTML=tmplExList.map((ex,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid var(--border)"><div style="flex:1;font-size:12px;color:var(--text)">${tn(ex)}</div><button class="ibt" onclick="rmTmEx(${i})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`).join('');
+  el('tmexinp').value='';
+  // Store edit id
+  el('ov-tmpl').dataset.editId=id;
+  openOv('ov-tmpl');
 }
 
 function renderWoHist(){
@@ -1567,12 +1579,22 @@ function viewWo(id){
   el('sesstitle').textContent=title;el('sessbody').innerHTML=html;openOv('ov-sess');
 }
 let tmplExList=[];
-function openAddTmpl(){tmplExList=[];el('tmname').value='';el('tmexs').innerHTML='';el('tmexinp').value='';openOv('ov-tmpl');}
+function openAddTmpl(){tmplExList=[];el('tmname').value='';el('tmexs').innerHTML='';el('tmexinp').value='';el('ov-tmpl').dataset.editId='';openOv('ov-tmpl');}
 function addTmEx(){const v=el('tmexinp').value.trim();if(!v)return;const tp=el('tmtype').value;tmplExList.push({id:Date.now(),name:{ru:v,uk:v,en:v},type:tp==='cardio'?'cardio':'weight'});el('tmexinp').value='';el('tmexs').innerHTML=tmplExList.map((ex,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid var(--border)"><div style="flex:1;font-size:12px;color:var(--text)">${tn(ex)}</div><button class="ibt" onclick="rmTmEx(${i})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`).join('');}
 function rmTmEx(i){tmplExList.splice(i,1);el('tmexs').innerHTML=tmplExList.map((ex,j)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid var(--border)"><div style="flex:1;font-size:12px;color:var(--text)">${tn(ex)}</div><button class="ibt" onclick="rmTmEx(${j})"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div>`).join('');}
 async function saveTmpl(){
   const name=el('tmname').value.trim();if(!name)return;
+  const editId=el('ov-tmpl').dataset.editId;
   closeOv('ov-tmpl');
+  if(editId){
+    const res=await api('save_template',{id:parseInt(editId),name,name_uk:name,name_en:name,type:el('tmtype').value,exercises:tmplExList});
+    if(res.success){
+      const tmpl=templates.find(x=>x.id===parseInt(editId));
+      if(tmpl){tmpl.name={ru:name,uk:name,en:name};tmpl.type=el('tmtype').value;tmpl.exercises=tmplExList;}
+      renderWorkouts();toast(t('saved'),'tok');
+    } else {toast(t('errSave'),'ter');}
+    return;
+  }
   const res=await api('save_template',{
     name,name_uk:name,name_en:name,
     type:el('tmtype').value,
