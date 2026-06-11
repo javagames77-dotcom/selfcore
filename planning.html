@@ -144,7 +144,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .wo-day-col{display:flex;flex-direction:column;gap:4px;min-width:0}
 .wo-day-hdr{font-size:10px;font-weight:500;color:var(--muted2);text-align:center;padding:3px 0;text-transform:uppercase;letter-spacing:.04em}
 .wo-day-hdr.today{color:var(--ac)}
-.wo-slot{border-radius:6px;padding:5px 7px;font-size:11px;cursor:pointer;border:1px solid transparent;transition:filter .1s;overflow:hidden}
+.wo-slot{border-radius:6px;padding:5px 7px;font-size:11px;cursor:pointer;border:1px solid transparent;transition:filter .1s;overflow:hidden;min-height:44px}
 .wo-slot:hover{filter:brightness(.93)}
 .wo-slot.strength{background:var(--blb);color:var(--bl);border-color:var(--blu)}
 .wo-slot.cardio{background:#fffbeb;color:#b45309;border-color:#fcd34d}
@@ -152,7 +152,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .wo-slot.hiit{background:var(--reb);color:var(--re);border-color:var(--reu)}
 .wo-slot.done{background:var(--grb);color:var(--gr);border-color:var(--gru)}
 .wo-slot.rest{background:var(--bg3);color:var(--muted2);border-color:var(--border);text-align:center;cursor:default}
-.wo-slot.empty{background:transparent;border:1px dashed var(--border);color:var(--muted2);text-align:center;cursor:pointer;padding:8px}
+.wo-slot.empty{background:transparent;border:1px dashed var(--border);color:var(--muted2);text-align:center;cursor:pointer;padding:8px;min-height:44px;display:flex;align-items:center;justify-content:center}
 .wo-slot.empty:hover{background:var(--acl);border-color:var(--acm);color:var(--ac)}
 .wo-slot-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px}
 .wo-slot-time{font-size:10px;opacity:.7;margin-top:1px}
@@ -471,7 +471,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 
   <!-- НЕДЕЛЯ -->
   <div class="wo-sec on" id="wosec-week">
-    <div class="card" style="overflow:hidden">
+    <div class="card">
       <div class="ch" style="padding:10px 14px">
         <span style="font-size:13px;font-weight:500;color:var(--black);flex:1" id="wo-week-lbl"></span>
         <span class="badge-prog" id="wo-prog-badge" style="display:none"></span>
@@ -1090,12 +1090,16 @@ function woSwitchTab(name){
   if(sec)sec.classList.add('on');
   if(name==='week')renderWoWeek();
   if(name==='programs')renderPrograms();
+  if(name==='templates')renderWorkouts();
+  if(name==='history')renderWorkouts();
+  if(name==='progress'){buildExSel();renderExProg();}
 }
 
 /* ══════════════════════════════════════════
    WEEK VIEW
 ══════════════════════════════════════════ */
 function renderWoWeek(){
+  const now=new Date();
   // Start from Monday of current week
   const dow=now.getDay()||7;
   const mon=new Date(now);mon.setDate(now.getDate()-dow+1);
