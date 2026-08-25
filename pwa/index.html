@@ -15,12 +15,12 @@
     margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: #F5F1E8; color: #2B2A25;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 480px; margin: 0 auto; padding: 24px 18px 60px; }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 20px 18px 60px; }
   .eyebrow { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 1px; color: #8B8A80; text-transform: uppercase; margin-bottom: 4px; }
   .dot { width: 6px; height: 6px; border-radius: 50%; background: #C9A227; }
-  h1 { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; margin: 0 0 6px; }
-  .sub { font-size: 13px; color: #8B8A80; margin: 0 0 20px; line-height: 1.5; }
-  .tabs { display: flex; gap: 4px; background: #EFE9D8; border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+  h1 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; margin: 0 0 6px; }
+  .sub { font-size: 13px; color: #8B8A80; margin: 0 0 16px; line-height: 1.5; }
+  .tabs { display: flex; gap: 4px; background: #EFE9D8; border-radius: 12px; padding: 4px; margin-bottom: 10px; }
   .tab { flex: 1; text-align: center; padding: 9px 4px; border-radius: 9px; font-size: 13px; cursor: pointer; border: none; background: transparent; color: #8B8A80; font-family: inherit; }
   .tab.active { background: #FFFDF7; color: #2B2A25; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
   .panel { display: none; }
@@ -31,7 +31,7 @@
     background: #FFFDF7; font-family: inherit;
   }
   input:focus { outline: none; border-color: #4A5D3A; }
-  label.check { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #8B8A80; margin-bottom: 16px; }
+  label.check { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #8B8A80; margin-bottom: 4px; }
   .btn {
     border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
     font-family: inherit; background: #4A5D3A; color: #F5F1E8; display: inline-flex; align-items: center; gap: 6px;
@@ -56,26 +56,39 @@
   #reader { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
   .barcode-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
   .barcode-input-row input { flex: 1; }
-  .install-hint { background: #FFFDF7; border: 1px dashed #C9A227; border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #8B8A80; margin-bottom: 18px; line-height: 1.5; }
   .loading { font-size: 13px; color: #8B8A80; padding: 10px 0; }
+  .divider { border: none; border-top: 1px solid #E4DECE; margin: 22px 0 16px; }
+  .install-btn-row { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+  .link-btn { background: none; border: none; color: #4A5D3A; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; text-decoration: underline; padding: 4px 0; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(43,42,37,0.5); display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: #FFFDF7; border-radius: 16px; padding: 20px; width: 100%; max-width: 400px; max-height: 88vh; overflow-y: auto; }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .modal-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; }
+  .modal-close { background: none; border: none; font-size: 20px; line-height: 1; color: #8B8A80; cursor: pointer; padding: 2px 6px; }
+  .ptabs { display: flex; gap: 4px; background: #EFE9D8; border-radius: 10px; padding: 4px; margin-bottom: 16px; }
+  .ptab { flex: 1; text-align: center; padding: 8px 4px; border-radius: 7px; font-size: 12.5px; cursor: pointer; border: none; background: transparent; color: #8B8A80; font-family: inherit; }
+  .ptab.active { background: #FFFDF7; color: #2B2A25; font-weight: 600; }
+
+  .step-row { display: flex; gap: 14px; align-items: center; margin-bottom: 18px; }
+  .step-text { font-size: 13px; line-height: 1.5; }
+  .step-text b { color: #4A5D3A; }
+  .phone-frame { width: 74px; height: 150px; border-radius: 14px; border: 2.5px solid #2B2A25; background: #FFFDF7; position: relative; flex-shrink: 0; overflow: hidden; }
+  .phone-topbar { height: 12px; background: #2B2A25; display: flex; align-items: center; justify-content: center; }
+  .phone-topbar::after { content: ''; width: 18px; height: 4px; background: #FFFDF7; border-radius: 2px; }
+  .phone-screen { position: relative; height: 100%; padding: 8px 6px; }
+  .ui-line { height: 5px; background: #E4DECE; border-radius: 3px; margin-bottom: 5px; }
+  .ui-line.short { width: 60%; }
+  .tap-icon {
+    position: absolute; width: 20px; height: 20px; border-radius: 6px; background: #C9A227; color: #2B2A25;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+    box-shadow: 0 0 0 3px rgba(201,162,39,0.35);
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow"><span class="dot"></span>Демо · дані напряму з Open Food Facts</div>
-  <h1>Харчовий щоденник</h1>
-  <p class="sub">Це жива перевірка бази Open Food Facts: пошук і штрихкод працюють з реальними даними, без нашої бази. Мета — оцінити, скільки українських товарів там є і наскільки повні дані.</p>
-
-  <div id="installHint" class="install-hint">Встановити як застосунок: у браузері відкрийте меню (⋮ або «Поділитися») і оберіть «Додати на головний екран» / «Встановити застосунок».</div>
-
-  <div id="proxySetup" class="install-hint" style="border-color:#8B3A3A;">
-    <div style="margin-bottom:8px; color:#2B2A25; font-weight:600; font-size:13px;">Налаштування: адреса n8n-воркфлоу</div>
-    <div style="margin-bottom:8px;">Дані йдуть через ваш n8n-webhook (не напряму з браузера) — так дотримано вимоги Open Food Facts щодо User-Agent і лімітів запитів.</div>
-    <div style="display:flex; gap:6px;">
-      <input type="text" id="proxyUrlInput" placeholder="https://ваш-n8n.up.railway.app/webhook/off-proxy" style="flex:1; font-size:12px;" />
-      <button class="btn secondary" id="proxySaveBtn" style="padding:8px 12px; font-size:12px;">Зберегти</button>
-    </div>
-  </div>
 
   <div class="tabs">
     <button class="tab active" data-tab="search">Пошук за назвою</button>
@@ -84,10 +97,9 @@
 
   <div class="panel active" id="panel-search">
     <div class="search-row">
-      <input type="text" id="searchInput" placeholder="Наприклад: сирок, кефір, чіпси" />
+      <input type="text" id="searchInput" placeholder="Наприклад: сирок, кефір, чіпси" autofocus />
     </div>
     <label class="check"><input type="checkbox" id="uaOnly" checked /> Тільки товари з тегом «Україна»</label>
-    <button class="btn block" id="searchBtn">Шукати в Open Food Facts</button>
     <div id="searchSummary"></div>
     <div id="searchResults"></div>
   </div>
@@ -101,15 +113,38 @@
     </div>
     <div id="barcodeResult"></div>
   </div>
+
+  <hr class="divider" />
+
+  <div class="eyebrow"><span class="dot"></span>Демо · дані напряму з Open Food Facts</div>
+  <h1>Харчовий щоденник</h1>
+  <p class="sub">Це жива перевірка бази Open Food Facts: пошук і штрихкод працюють з реальними даними через ваш n8n-воркфлоу, без нашої бази. Мета — оцінити, скільки українських товарів там є і наскільки повні дані.</p>
+
+  <div class="install-btn-row">
+    <button class="link-btn" id="openInstallModal">Як встановити застосунок на телефон</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="installModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Встановлення на екран</div>
+      <button class="modal-close" id="closeInstallModal">×</button>
+    </div>
+    <div class="ptabs">
+      <button class="ptab active" data-p="ios">iPhone · Safari</button>
+      <button class="ptab" data-p="android">Android · Chrome</button>
+    </div>
+    <div id="installSteps"></div>
+  </div>
 </div>
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
+const PROXY_URL = 'https://primary-production-4b93e.up.railway.app/webhook/off-proxy';
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  document.getElementById('installHint').style.display = 'none';
 }
 
 const tabs = document.querySelectorAll('.tab');
@@ -121,18 +156,6 @@ tabs.forEach((t) => t.addEventListener('click', () => {
 }));
 
 function round1(x) { return Math.round(x * 10) / 10; }
-
-function getProxyUrl() {
-  return localStorage.getItem('offProxyUrl') || '';
-}
-
-document.getElementById('proxyUrlInput').value = getProxyUrl();
-document.getElementById('proxySaveBtn').addEventListener('click', () => {
-  const val = document.getElementById('proxyUrlInput').value.trim();
-  localStorage.setItem('offProxyUrl', val);
-  document.getElementById('proxySetup').style.background = '#EAF3DE';
-  setTimeout(() => { document.getElementById('proxySetup').style.background = '#FFFDF7'; }, 400);
-});
 
 // нормалізований продукт з n8n-проксі: {name, brand, image, isUkraine, hasKcal, kcal_100g, proteins_100g, fat_100g, carbs_100g}
 function renderProduct(p) {
@@ -171,16 +194,13 @@ async function searchOFF() {
   const summaryEl = document.getElementById('searchSummary');
   if (q.length < 2) { resultsEl.innerHTML = ''; summaryEl.innerHTML = ''; return; }
 
-  const proxy = getProxyUrl();
-  if (!proxy) { resultsEl.innerHTML = '<div class="muted">Спочатку вкажіть і збережіть адресу n8n-воркфлоу вище.</div>'; return; }
-
   if (searchAbortController) searchAbortController.abort();
   searchAbortController = new AbortController();
 
   resultsEl.innerHTML = '<div class="loading">Шукаємо через ваш n8n-проксі...</div>';
   summaryEl.innerHTML = '';
 
-  const url = `${proxy}?mode=search&q=${encodeURIComponent(q)}${uaOnly ? '&country=ukraine' : ''}`;
+  const url = `${PROXY_URL}?mode=search&q=${encodeURIComponent(q)}${uaOnly ? '&country=ukraine' : ''}`;
 
   try {
     const res = await fetch(url, { signal: searchAbortController.signal });
@@ -201,22 +221,19 @@ async function searchOFF() {
     resultsEl.innerHTML = products.map(renderProduct).join('');
   } catch (e) {
     if (e.name === 'AbortError') return;
-    resultsEl.innerHTML = '<div class="muted">Помилка запиту до n8n-воркфлоу. Перевірте, що воркфлоу активовано і адреса вказана вірно.</div>';
+    resultsEl.innerHTML = '<div class="muted">Помилка запиту до n8n-воркфлоу. Перевірте, що воркфлоу активовано.</div>';
   }
 }
 
 const debouncedSearch = debounce(searchOFF, 550);
 document.getElementById('searchInput').addEventListener('input', debouncedSearch);
 document.getElementById('uaOnly').addEventListener('change', searchOFF);
-document.getElementById('searchBtn').addEventListener('click', searchOFF);
 
 async function lookupBarcode(code) {
   const el = document.getElementById('barcodeResult');
-  const proxy = getProxyUrl();
-  if (!proxy) { el.innerHTML = '<div class="muted">Спочатку вкажіть і збережіть адресу n8n-воркфлоу вище.</div>'; return; }
   el.innerHTML = '<div class="loading">Шукаємо штрихкод ' + code + '...</div>';
   try {
-    const res = await fetch(`${proxy}?mode=barcode&q=${encodeURIComponent(code)}`);
+    const res = await fetch(`${PROXY_URL}?mode=barcode&q=${encodeURIComponent(code)}`);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (!data.found) {
@@ -266,6 +283,65 @@ document.getElementById('camBtn').addEventListener('click', async () => {
     btn.textContent = 'Увімкнути камеру і сканувати';
     qrScanner = null;
   }
+});
+
+// ---------- Модалка "Як встановити" з мокапами телефону ----------
+const INSTALL_STEPS = {
+  ios: [
+    { pos: 'bottom', icon: '↑', text: 'Відкрийте сторінку в <b>Safari</b> і натисніть іконку «Поділитися» внизу екрана.' },
+    { pos: 'middle', icon: '＋', text: 'У списку дій прогорніть і оберіть <b>«На екран Додому»</b>.' },
+    { pos: 'top', icon: '✓', text: 'Натисніть <b>«Додати»</b> у правому верхньому куті — готово.' },
+  ],
+  android: [
+    { pos: 'top', icon: '⋮', text: 'Відкрийте сторінку в <b>Chrome</b> і натисніть три крапки у правому верхньому куті.' },
+    { pos: 'middle', icon: '＋', text: 'Оберіть пункт <b>«Встановити застосунок»</b> (або «Додати на головний екран»).' },
+    { pos: 'top', icon: '✓', text: 'Підтвердіть, натиснувши <b>«Встановити»</b> — готово.' },
+  ],
+};
+
+function phoneMock(step) {
+  const posStyle = step.pos === 'top'
+    ? 'top:16px; right:6px;'
+    : step.pos === 'bottom'
+      ? 'bottom:8px; left:50%; transform: translateX(-50%);'
+      : 'top:50%; left:50%; transform: translate(-50%,-50%);';
+  return `
+    <div class="phone-frame">
+      <div class="phone-topbar"></div>
+      <div class="phone-screen">
+        <div class="ui-line"></div>
+        <div class="ui-line short"></div>
+        <div class="ui-line"></div>
+        <div class="tap-icon" style="${posStyle}">${step.icon}</div>
+      </div>
+    </div>`;
+}
+
+function renderInstallSteps(platform) {
+  const steps = INSTALL_STEPS[platform];
+  document.getElementById('installSteps').innerHTML = steps.map((s, i) => `
+    <div class="step-row">
+      ${phoneMock(s)}
+      <div class="step-text"><b>${i + 1}.</b> ${s.text}</div>
+    </div>`).join('');
+}
+
+renderInstallSteps('ios');
+
+document.querySelectorAll('.ptab').forEach((t) => t.addEventListener('click', () => {
+  document.querySelectorAll('.ptab').forEach((x) => x.classList.remove('active'));
+  t.classList.add('active');
+  renderInstallSteps(t.dataset.p);
+}));
+
+document.getElementById('openInstallModal').addEventListener('click', () => {
+  document.getElementById('installModal').classList.add('open');
+});
+document.getElementById('closeInstallModal').addEventListener('click', () => {
+  document.getElementById('installModal').classList.remove('open');
+});
+document.getElementById('installModal').addEventListener('click', (e) => {
+  if (e.target.id === 'installModal') e.target.classList.remove('open');
 });
 </script>
 </body>
