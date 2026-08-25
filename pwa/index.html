@@ -107,11 +107,7 @@
   <div class="panel" id="panel-barcode">
     <button class="btn secondary block" id="camBtn" style="margin-bottom:12px;">Увімкнути камеру і сканувати</button>
     <div id="reader"></div>
-    <div class="barcode-input-row">
-      <input type="text" id="barcodeInput" placeholder="або введіть штрихкод вручну" />
-      <button class="btn secondary" id="barcodeBtn">Знайти</button>
-    </div>
-    <div class="hint">ШІ не завжди точно впізнає товар лише за цифрами штрихкоду — якщо впевненість низька, скористайтесь вкладкою «Фото».</div>
+    <div class="hint">ШІ не може визначити товар лише за цифрами штрихкоду — бази відповідностей тут немає. Після сканування одразу перейдемо до фото упаковки, це єдиний надійний спосіб.</div>
     <div id="barcodeResult" style="margin-top:10px;"></div>
   </div>
 
@@ -236,33 +232,40 @@ async function searchByText() {
 const debouncedSearch = debounce(searchByText, 700);
 document.getElementById('searchInput').addEventListener('input', debouncedSearch);
 
-// ---------- Штрихкод ----------
+// ---------- Штрихкод: спочатку сканування, потім реальний lookup через n8n ----------
 async function lookupBarcode(code) {
   const el = document.getElementById('barcodeResult');
-  el.innerHTML = loadingHtml('ШІ намагається розпізнати штрихкод ' + code + '...');
+  el.innerHTML = loadingHtml('Шукаємо штрихкод ' + code + ' у базах Open Food Facts і UPCitemdb...');
   try {
     const res = await fetch(AI_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'text', query: 'товар зі штрихкодом ' + code, grams: 100, lang: LANG }),
+      body: JSON.stringify({ mode: 'barcode', query: code, lang: LANG }),
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if (data.success && data.nutrition) {
-      el.innerHTML = renderNutrition(data.nutrition);
+    const n = data.nutrition;
+    if (data.success && n && n.found !== false) {
+      el.innerHTML = renderNutrition(n);
     } else {
-      el.innerHTML = '<div class="muted">Не вдалося отримати відповідь від ШІ.</div>';
+      el.innerHTML = `
+        <div class="result">
+          <div class="imgph">📷</div>
+          <div style="flex:1">
+            <div class="rname">Штрихкод ${code} не знайдено</div>
+            <div class="notes">${(n && n.notes) || 'Немає в жодній базі даних.'}</div>
+            <button class="btn block" id="goToPhotoBtn" style="margin-top:8px;">Сфотографувати упаковку</button>
+          </div>
+        </div>`;
+      document.getElementById('goToPhotoBtn').addEventListener('click', () => {
+        document.querySelector('.tab[data-tab="photo"]').click();
+        document.getElementById('photoInput').click();
+      });
     }
   } catch (e) {
     el.innerHTML = '<div class="muted">Помилка запиту до воркфлоу. Перевірте, що він активований.</div>';
   }
 }
-
-document.getElementById('barcodeBtn').addEventListener('click', () => {
-  const code = document.getElementById('barcodeInput').value.trim();
-  if (code) lookupBarcode(code);
-});
-document.getElementById('barcodeInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('barcodeBtn').click(); });
 
 let qrScanner = null;
 document.getElementById('camBtn').addEventListener('click', async () => {
@@ -275,23 +278,32 @@ document.getElementById('camBtn').addEventListener('click', async () => {
     return;
   }
   btn.textContent = 'Зупинити камеру';
-  qrScanner = new Html5Qrcode('reader');
+  qrScanner = new Html5Qrcode('reader', {
+    formatsToSupport: [
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.EAN_8,
+      Html5QrcodeSupportedFormats.UPC_A,
+      Html5QrcodeSupportedFormats.UPC_E,
+      Html5QrcodeSupportedFormats.CODE_128,
+    ],
+    useBarCodeDetectorIfSupported: true,
+    verbose: false,
+  });
   try {
     await qrScanner.start(
       { facingMode: 'environment' },
-      { fps: 10, qrbox: { width: 240, height: 140 } },
+      { fps: 15, qrbox: { width: 260, height: 130 } },
       async (decodedText) => {
-        document.getElementById('barcodeInput').value = decodedText;
-        await lookupBarcode(decodedText);
         await qrScanner.stop().catch(() => {});
         qrScanner = null;
         document.getElementById('reader').innerHTML = '';
         btn.textContent = 'Увімкнути камеру і сканувати';
+        await lookupBarcode(decodedText);
       },
       () => {}
     );
   } catch (e) {
-    document.getElementById('reader').innerHTML = '<div class="muted">Немає доступу до камери. Введіть штрихкод вручну нижче.</div>';
+    document.getElementById('reader').innerHTML = '<div class="muted">Немає доступу до камери.</div>';
     btn.textContent = 'Увімкнути камеру і сканувати';
     qrScanner = null;
   }
