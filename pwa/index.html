@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Харчовий щоденник — демо Open Food Facts</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#4A5D3A" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="icon" href="icon-192.png" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: 'IBM Plex Sans', sans-serif; background: #F5F1E8; color: #2B2A25;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 24px 18px 60px; }
+  .eyebrow { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 1px; color: #8B8A80; text-transform: uppercase; margin-bottom: 4px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #C9A227; }
+  h1 { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; margin: 0 0 6px; }
+  .sub { font-size: 13px; color: #8B8A80; margin: 0 0 20px; line-height: 1.5; }
+  .tabs { display: flex; gap: 4px; background: #EFE9D8; border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+  .tab { flex: 1; text-align: center; padding: 9px 4px; border-radius: 9px; font-size: 13px; cursor: pointer; border: none; background: transparent; color: #8B8A80; font-family: inherit; }
+  .tab.active { background: #FFFDF7; color: #2B2A25; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .search-row { position: relative; margin-bottom: 10px; }
+  input[type=text], input[type=number] {
+    width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #E4DECE; font-size: 15px;
+    background: #FFFDF7; font-family: inherit;
+  }
+  input:focus { outline: none; border-color: #4A5D3A; }
+  label.check { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #8B8A80; margin-bottom: 16px; }
+  .btn {
+    border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit; background: #4A5D3A; color: #F5F1E8; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn.secondary { background: #EFE9D8; color: #2B2A25; }
+  .btn.block { width: 100%; justify-content: center; }
+  .summary { display: flex; gap: 10px; margin: 14px 0; }
+  .summary .card { flex: 1; background: #FFFDF7; border: 1px solid #E4DECE; border-radius: 10px; padding: 10px; text-align: center; }
+  .summary .num { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600; }
+  .summary .lab { font-size: 10.5px; color: #8B8A80; margin-top: 2px; }
+  .result { display: flex; gap: 10px; background: #FFFDF7; border: 1px solid #E4DECE; border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+  .result img { width: 52px; height: 52px; object-fit: contain; border-radius: 8px; background: #F5F1E8; flex-shrink: 0; }
+  .result .imgph { width: 52px; height: 52px; border-radius: 8px; background: #F5F1E8; flex-shrink: 0; }
+  .rname { font-size: 14px; font-weight: 500; }
+  .rbrand { font-size: 11.5px; color: #8B8A80; margin-top: 1px; }
+  .badge { display: inline-block; font-size: 9.5px; font-weight: 600; padding: 2px 6px; border-radius: 5px; margin-top: 5px; }
+  .badge.ok { background: #EAF3DE; color: #27500A; }
+  .badge.missing { background: #FAECE7; color: #4A1B0C; }
+  .badge.ua { background: #E6F1FB; color: #042C53; margin-left: 5px; }
+  .kbju { display: flex; gap: 8px; margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #2B2A25; }
+  .muted { color: #8B8A80; font-size: 13px; }
+  #reader { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+  .barcode-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .barcode-input-row input { flex: 1; }
+  .install-hint { background: #FFFDF7; border: 1px dashed #C9A227; border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #8B8A80; margin-bottom: 18px; line-height: 1.5; }
+  .loading { font-size: 13px; color: #8B8A80; padding: 10px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow"><span class="dot"></span>Демо · дані напряму з Open Food Facts</div>
+  <h1>Харчовий щоденник</h1>
+  <p class="sub">Це жива перевірка бази Open Food Facts: пошук і штрихкод працюють з реальними даними, без нашої бази. Мета — оцінити, скільки українських товарів там є і наскільки повні дані.</p>
+
+  <div id="installHint" class="install-hint">Встановити як застосунок: у браузері відкрийте меню (⋮ або «Поділитися») і оберіть «Додати на головний екран» / «Встановити застосунок».</div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="search">Пошук за назвою</button>
+    <button class="tab" data-tab="barcode">Штрихкод</button>
+  </div>
+
+  <div class="panel active" id="panel-search">
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder="Наприклад: сирок, кефір, чіпси" />
+    </div>
+    <label class="check"><input type="checkbox" id="uaOnly" checked /> Тільки товари з тегом «Україна»</label>
+    <button class="btn block" id="searchBtn">Шукати в Open Food Facts</button>
+    <div id="searchSummary"></div>
+    <div id="searchResults"></div>
+  </div>
+
+  <div class="panel" id="panel-barcode">
+    <button class="btn secondary block" id="camBtn" style="margin-bottom:12px;">Увімкнути камеру і сканувати</button>
+    <div id="reader"></div>
+    <div class="barcode-input-row">
+      <input type="text" id="barcodeInput" placeholder="або введіть штрихкод вручну, напр. 4820000000012" />
+      <button class="btn secondary" id="barcodeBtn">Знайти</button>
+    </div>
+    <div id="barcodeResult"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+if (window.matchMedia('(display-mode: standalone)').matches) {
+  document.getElementById('installHint').style.display = 'none';
+}
+
+const tabs = document.querySelectorAll('.tab');
+tabs.forEach((t) => t.addEventListener('click', () => {
+  tabs.forEach((x) => x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach((p) => p.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+}));
+
+function kbjuBadgeHtml(n) {
+  const hasK = n && (n['energy-kcal_100g'] !== undefined && n['energy-kcal_100g'] !== null);
+  return hasK
+    ? '<span class="badge ok">є КБЖУ</span>'
+    : '<span class="badge missing">без КБЖУ</span>';
+}
+
+function round1(x) { return Math.round(x * 10) / 10; }
+
+function renderProduct(p) {
+  const name = p.product_name_uk || p.product_name || p.generic_name || '(без назви)';
+  const brand = p.brands || '';
+  const img = p.image_front_small_url || p.image_small_url;
+  const n = p.nutriments || {};
+  const isUa = (p.countries_tags || []).includes('en:ukraine');
+  const hasK = n['energy-kcal_100g'] !== undefined && n['energy-kcal_100g'] !== null;
+  const kbjuRow = hasK
+    ? `<div class="kbju">
+        <span>${Math.round(n['energy-kcal_100g'])} ккал</span>
+        <span>Б${round1(n['proteins_100g'] ?? 0)}</span>
+        <span>Ж${round1(n['fat_100g'] ?? 0)}</span>
+        <span>В${round1(n['carbohydrates_100g'] ?? 0)}</span>
+      </div>`
+    : '';
+  return `
+    <div class="result">
+      ${img ? `<img src="${img}" alt="" />` : '<div class="imgph"></div>'}
+      <div>
+        <div class="rname">${name}</div>
+        ${brand ? `<div class="rbrand">${brand}</div>` : ''}
+        <div>${kbjuBadgeHtml(n)}${isUa ? '<span class="badge ua">UA</span>' : ''}</div>
+        ${kbjuRow}
+      </div>
+    </div>`;
+}
+
+async function searchOFF() {
+  const q = document.getElementById('searchInput').value.trim();
+  const uaOnly = document.getElementById('uaOnly').checked;
+  const resultsEl = document.getElementById('searchResults');
+  const summaryEl = document.getElementById('searchSummary');
+  if (!q) { resultsEl.innerHTML = '<div class="muted">Введіть назву продукту.</div>'; summaryEl.innerHTML = ''; return; }
+  resultsEl.innerHTML = '<div class="loading">Шукаємо в Open Food Facts...</div>';
+  summaryEl.innerHTML = '';
+
+  let url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=24`;
+  if (uaOnly) {
+    url += `&tagtype_0=countries&tag_contains_0=contains&tag_0=ukraine`;
+  }
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const products = data.products || [];
+    if (products.length === 0) {
+      resultsEl.innerHTML = '<div class="muted">Нічого не знайдено' + (uaOnly ? ' серед товарів з тегом «Україна». Спробуйте зняти галочку вище.' : '.') + '</div>';
+      return;
+    }
+    const withKbju = products.filter((p) => p.nutriments && p.nutriments['energy-kcal_100g'] !== undefined && p.nutriments['energy-kcal_100g'] !== null).length;
+    summaryEl.innerHTML = `
+      <div class="summary">
+        <div class="card"><div class="num">${products.length}</div><div class="lab">знайдено</div></div>
+        <div class="card"><div class="num">${withKbju}</div><div class="lab">з КБЖУ</div></div>
+        <div class="card"><div class="num">${Math.round((withKbju / products.length) * 100)}%</div><div class="lab">повнота</div></div>
+      </div>`;
+    resultsEl.innerHTML = products.map(renderProduct).join('');
+  } catch (e) {
+    resultsEl.innerHTML = '<div class="muted">Помилка запиту до Open Food Facts. Перевірте інтернет-з’єднання.</div>';
+  }
+}
+
+document.getElementById('searchBtn').addEventListener('click', searchOFF);
+document.getElementById('searchInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') searchOFF(); });
+
+async function lookupBarcode(code) {
+  const el = document.getElementById('barcodeResult');
+  el.innerHTML = '<div class="loading">Шукаємо штрихкод ' + code + '...</div>';
+  try {
+    const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json`);
+    const data = await res.json();
+    if (data.status !== 1) {
+      el.innerHTML = `<div class="muted">Штрихкод ${code} не знайдено в базі Open Food Facts.</div>`;
+      return;
+    }
+    el.innerHTML = renderProduct(data.product);
+  } catch (e) {
+    el.innerHTML = '<div class="muted">Помилка запиту. Перевірте інтернет-з’єднання.</div>';
+  }
+}
+
+document.getElementById('barcodeBtn').addEventListener('click', () => {
+  const code = document.getElementById('barcodeInput').value.trim();
+  if (code) lookupBarcode(code);
+});
+document.getElementById('barcodeInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('barcodeBtn').click(); });
+
+let qrScanner = null;
+document.getElementById('camBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('camBtn');
+  if (qrScanner) {
+    await qrScanner.stop().catch(() => {});
+    qrScanner = null;
+    document.getElementById('reader').innerHTML = '';
+    btn.textContent = 'Увімкнути камеру і сканувати';
+    return;
+  }
+  btn.textContent = 'Зупинити камеру';
+  qrScanner = new Html5Qrcode('reader');
+  try {
+    await qrScanner.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: 240, height: 140 } },
+      async (decodedText) => {
+        document.getElementById('barcodeInput').value = decodedText;
+        await lookupBarcode(decodedText);
+        await qrScanner.stop().catch(() => {});
+        qrScanner = null;
+        document.getElementById('reader').innerHTML = '';
+        btn.textContent = 'Увімкнути камеру і сканувати';
+      },
+      () => {}
+    );
+  } catch (e) {
+    document.getElementById('reader').innerHTML = '<div class="muted">Немає доступу до камери. Введіть штрихкод вручну нижче.</div>';
+    btn.textContent = 'Увімкнути камеру і сканувати';
+    qrScanner = null;
+  }
+});
+</script>
+</body>
+</html>
