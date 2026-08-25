@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>Харчовий щоденник — демо Open Food Facts</title>
+<title>Харчовий щоденник — AI демо</title>
 <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#4A5D3A" />
 <link rel="apple-touch-icon" href="icon-192.png" />
@@ -21,7 +21,7 @@
   h1 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; margin: 0 0 6px; }
   .sub { font-size: 13px; color: #8B8A80; margin: 0 0 16px; line-height: 1.5; }
   .tabs { display: flex; gap: 4px; background: #EFE9D8; border-radius: 12px; padding: 4px; margin-bottom: 10px; }
-  .tab { flex: 1; text-align: center; padding: 9px 4px; border-radius: 9px; font-size: 13px; cursor: pointer; border: none; background: transparent; color: #8B8A80; font-family: inherit; }
+  .tab { flex: 1; text-align: center; padding: 9px 4px; border-radius: 9px; font-size: 12.5px; cursor: pointer; border: none; background: transparent; color: #8B8A80; font-family: inherit; }
   .tab.active { background: #FFFDF7; color: #2B2A25; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
   .panel { display: none; }
   .panel.active { display: block; }
@@ -31,35 +31,36 @@
     background: #FFFDF7; font-family: inherit;
   }
   input:focus { outline: none; border-color: #4A5D3A; }
-  label.check { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #8B8A80; margin-bottom: 4px; }
   .btn {
     border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
     font-family: inherit; background: #4A5D3A; color: #F5F1E8; display: inline-flex; align-items: center; gap: 6px;
   }
   .btn.secondary { background: #EFE9D8; color: #2B2A25; }
   .btn.block { width: 100%; justify-content: center; }
-  .summary { display: flex; gap: 10px; margin: 14px 0; }
-  .summary .card { flex: 1; background: #FFFDF7; border: 1px solid #E4DECE; border-radius: 10px; padding: 10px; text-align: center; }
-  .summary .num { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600; }
-  .summary .lab { font-size: 10.5px; color: #8B8A80; margin-top: 2px; }
+  .btn:disabled { opacity: .5; cursor: default; }
   .result { display: flex; gap: 10px; background: #FFFDF7; border: 1px solid #E4DECE; border-radius: 12px; padding: 12px; margin-bottom: 8px; }
-  .result img { width: 52px; height: 52px; object-fit: contain; border-radius: 8px; background: #F5F1E8; flex-shrink: 0; }
-  .result .imgph { width: 52px; height: 52px; border-radius: 8px; background: #F5F1E8; flex-shrink: 0; }
+  .result .imgph { width: 40px; height: 40px; border-radius: 8px; background: #F5F1E8; flex-shrink: 0; display:flex; align-items:center; justify-content:center; font-size:18px; }
   .rname { font-size: 14px; font-weight: 500; }
-  .rbrand { font-size: 11.5px; color: #8B8A80; margin-top: 1px; }
+  .rmeta { font-size: 11px; color: #8B8A80; margin-top: 2px; }
   .badge { display: inline-block; font-size: 9.5px; font-weight: 600; padding: 2px 6px; border-radius: 5px; margin-top: 5px; }
   .badge.ok { background: #EAF3DE; color: #27500A; }
-  .badge.missing { background: #FAECE7; color: #4A1B0C; }
-  .badge.ua { background: #E6F1FB; color: #042C53; margin-left: 5px; }
+  .badge.warn { background: #FAECE7; color: #4A1B0C; }
   .kbju { display: flex; gap: 8px; margin-top: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #2B2A25; }
+  .notes { font-size: 11.5px; color: #8B8A80; margin-top: 6px; line-height: 1.4; }
   .muted { color: #8B8A80; font-size: 13px; }
+  .loading { font-size: 13px; color: #8B8A80; padding: 10px 0; display:flex; align-items:center; gap:8px; }
+  .spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #E4DECE; border-top-color: #4A5D3A; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   #reader { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
   .barcode-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
   .barcode-input-row input { flex: 1; }
-  .loading { font-size: 13px; color: #8B8A80; padding: 10px 0; }
   .divider { border: none; border-top: 1px solid #E4DECE; margin: 22px 0 16px; }
   .install-btn-row { display: flex; justify-content: flex-end; margin-bottom: 6px; }
   .link-btn { background: none; border: none; color: #4A5D3A; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; text-decoration: underline; padding: 4px 0; }
+  .photo-drop { border: 1.5px dashed #C9A227; border-radius: 12px; padding: 24px 16px; text-align: center; cursor: pointer; display: block; margin-bottom: 10px; }
+  .photo-drop-title { font-size: 13px; font-weight: 500; color: #2B2A25; margin-bottom: 3px; }
+  .photo-drop-sub { font-size: 11px; color: #8B8A80; }
+  .hint { font-size: 11px; color: #8B8A80; background: #FFFDF7; border: 1px solid #E4DECE; border-radius: 8px; padding: 8px 10px; margin-top: 8px; line-height: 1.5; }
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(43,42,37,0.5); display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
   .modal-overlay.open { display: flex; }
@@ -70,7 +71,6 @@
   .ptabs { display: flex; gap: 4px; background: #EFE9D8; border-radius: 10px; padding: 4px; margin-bottom: 16px; }
   .ptab { flex: 1; text-align: center; padding: 8px 4px; border-radius: 7px; font-size: 12.5px; cursor: pointer; border: none; background: transparent; color: #8B8A80; font-family: inherit; }
   .ptab.active { background: #FFFDF7; color: #2B2A25; font-weight: 600; }
-
   .step-row { display: flex; gap: 14px; align-items: center; margin-bottom: 18px; }
   .step-text { font-size: 13px; line-height: 1.5; }
   .step-text b { color: #4A5D3A; }
@@ -91,34 +91,44 @@
 <div class="wrap">
 
   <div class="tabs">
-    <button class="tab active" data-tab="search">Пошук за назвою</button>
+    <button class="tab active" data-tab="search">Пошук</button>
     <button class="tab" data-tab="barcode">Штрихкод</button>
+    <button class="tab" data-tab="photo">Фото</button>
   </div>
 
   <div class="panel active" id="panel-search">
     <div class="search-row">
-      <input type="text" id="searchInput" placeholder="Наприклад: сирок, кефір, чіпси" autofocus />
+      <input type="text" id="searchInput" placeholder="Наприклад: сирок, гречка варена" autofocus />
     </div>
-    <label class="check"><input type="checkbox" id="uaOnly" checked /> Тільки товари з тегом «Україна»</label>
-    <div id="searchSummary"></div>
-    <div id="searchResults"></div>
+    <div class="hint">Пошук працює через ШІ (GPT-4o): оцінює КБЖУ навіть без бази даних. Результат оновлюється через ~700мс після того, як ви перестали друкувати.</div>
+    <div id="searchResult" style="margin-top:10px;"></div>
   </div>
 
   <div class="panel" id="panel-barcode">
     <button class="btn secondary block" id="camBtn" style="margin-bottom:12px;">Увімкнути камеру і сканувати</button>
     <div id="reader"></div>
     <div class="barcode-input-row">
-      <input type="text" id="barcodeInput" placeholder="або введіть штрихкод вручну, напр. 4820000000012" />
+      <input type="text" id="barcodeInput" placeholder="або введіть штрихкод вручну" />
       <button class="btn secondary" id="barcodeBtn">Знайти</button>
     </div>
-    <div id="barcodeResult"></div>
+    <div class="hint">ШІ не завжди точно впізнає товар лише за цифрами штрихкоду — якщо впевненість низька, скористайтесь вкладкою «Фото».</div>
+    <div id="barcodeResult" style="margin-top:10px;"></div>
+  </div>
+
+  <div class="panel" id="panel-photo">
+    <label class="photo-drop">
+      <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" />
+      <div class="photo-drop-title">Сфотографуйте упаковку</div>
+      <div class="photo-drop-sub">Якщо на етикетці видно таблицю КБЖУ — ШІ прочитає точні цифри</div>
+    </label>
+    <div id="photoResult" style="margin-top:10px;"></div>
   </div>
 
   <hr class="divider" />
 
-  <div class="eyebrow"><span class="dot"></span>Демо · дані напряму з Open Food Facts</div>
+  <div class="eyebrow"><span class="dot"></span>Демо · пошук через GPT-4o</div>
   <h1>Харчовий щоденник</h1>
-  <p class="sub">Це жива перевірка бази Open Food Facts: пошук і штрихкод працюють з реальними даними через ваш n8n-воркфлоу, без нашої бази. Мета — оцінити, скільки українських товарів там є і наскільки повні дані.</p>
+  <p class="sub">Пошук за назвою, штрихкод і фото упаковки — усе оцінює ШІ (GPT-4o), без окремої бази продуктів. Мета — оцінити зручність і точність такого підходу.</p>
 
   <div class="install-btn-row">
     <button class="link-btn" id="openInstallModal">Як встановити застосунок на телефон</button>
@@ -141,7 +151,8 @@
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
-const PROXY_URL = 'https://primary-production-4b93e.up.railway.app/webhook/off-proxy';
+const AI_URL = 'https://primary-production-4b93e.up.railway.app/webhook/pwa/ai-nutrition';
+const LANG = 'uk';
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -155,94 +166,95 @@ tabs.forEach((t) => t.addEventListener('click', () => {
   document.getElementById('panel-' + t.dataset.tab).classList.add('active');
 }));
 
-function round1(x) { return Math.round(x * 10) / 10; }
-
-// нормалізований продукт з n8n-проксі: {name, brand, image, isUkraine, hasKcal, kcal_100g, proteins_100g, fat_100g, carbs_100g}
-function renderProduct(p) {
-  const name = p.name || '(без назви)';
-  const kbjuRow = p.hasKcal
-    ? `<div class="kbju">
-        <span>${Math.round(p.kcal_100g)} ккал</span>
-        <span>Б${round1(p.proteins_100g ?? 0)}</span>
-        <span>Ж${round1(p.fat_100g ?? 0)}</span>
-        <span>В${round1(p.carbs_100g ?? 0)}</span>
-      </div>`
-    : '';
-  return `
-    <div class="result">
-      ${p.image ? `<img src="${p.image}" alt="" />` : '<div class="imgph"></div>'}
-      <div>
-        <div class="rname">${name}</div>
-        ${p.brand ? `<div class="rbrand">${p.brand}</div>` : ''}
-        <div>${p.hasKcal ? '<span class="badge ok">є КБЖУ</span>' : '<span class="badge missing">без КБЖУ</span>'}${p.isUkraine ? '<span class="badge ua">UA</span>' : ''}</div>
-        ${kbjuRow}
-      </div>
-    </div>`;
-}
-
 function debounce(fn, ms) {
   let t;
   return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
 }
 
-let searchAbortController = null;
+// нормалізований результат від n8n: {dish_name, meal_type, kcal, prot, fat, carb, fiber, confidence, notes, weight_g?}
+function renderNutrition(n) {
+  const confOk = (n.confidence || 0) >= 50;
+  const mealLabel = { breakfast: 'сніданок', lunch: 'обід', dinner: 'вечеря', snack: 'перекус' }[n.meal_type] || '';
+  return `
+    <div class="result">
+      <div class="imgph">🍽</div>
+      <div style="flex:1">
+        <div class="rname">${n.dish_name || '(не розпізнано)'}</div>
+        <div class="rmeta">${mealLabel}${n.weight_g ? ' · ' + n.weight_g + 'г (за вагою)' : ''}</div>
+        <div>
+          <span class="badge ${confOk ? 'ok' : 'warn'}">ШІ впевненість: ${n.confidence ?? 0}%</span>
+        </div>
+        <div class="kbju">
+          <span>${n.kcal ?? 0} ккал</span>
+          <span>Б${n.prot ?? 0}</span>
+          <span>Ж${n.fat ?? 0}</span>
+          <span>В${n.carb ?? 0}</span>
+          <span>Кл${n.fiber ?? 0}</span>
+        </div>
+        ${n.notes ? `<div class="notes">${n.notes}</div>` : ''}
+      </div>
+    </div>`;
+}
 
-async function searchOFF() {
+function loadingHtml(text) {
+  return `<div class="loading"><span class="spinner"></span>${text}</div>`;
+}
+
+// ---------- Пошук за назвою (текст, debounce) ----------
+let searchAbort = null;
+
+async function searchByText() {
   const q = document.getElementById('searchInput').value.trim();
-  const uaOnly = document.getElementById('uaOnly').checked;
-  const resultsEl = document.getElementById('searchResults');
-  const summaryEl = document.getElementById('searchSummary');
-  if (q.length < 2) { resultsEl.innerHTML = ''; summaryEl.innerHTML = ''; return; }
+  const resultEl = document.getElementById('searchResult');
+  if (q.length < 2) { resultEl.innerHTML = ''; return; }
 
-  if (searchAbortController) searchAbortController.abort();
-  searchAbortController = new AbortController();
+  if (searchAbort) searchAbort.abort();
+  searchAbort = new AbortController();
 
-  resultsEl.innerHTML = '<div class="loading">Шукаємо через ваш n8n-проксі...</div>';
-  summaryEl.innerHTML = '';
-
-  const url = `${PROXY_URL}?mode=search&q=${encodeURIComponent(q)}${uaOnly ? '&country=ukraine' : ''}`;
+  resultEl.innerHTML = loadingHtml('ШІ оцінює продукт...');
 
   try {
-    const res = await fetch(url, { signal: searchAbortController.signal });
+    const res = await fetch(AI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: searchAbort.signal,
+      body: JSON.stringify({ mode: 'text', query: q, grams: 100, lang: LANG }),
+    });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const products = data.products || [];
-
-    if (products.length === 0) {
-      resultsEl.innerHTML = '<div class="muted">Нічого не знайдено' + (uaOnly ? ' серед товарів з тегом «Україна». Спробуйте зняти галочку вище.' : '.') + '</div>';
-      return;
+    if (data.success && data.nutrition) {
+      resultEl.innerHTML = renderNutrition(data.nutrition);
+    } else {
+      resultEl.innerHTML = '<div class="muted">Не вдалося отримати відповідь від ШІ.</div>';
     }
-    summaryEl.innerHTML = `
-      <div class="summary">
-        <div class="card"><div class="num">${data.summary.total}</div><div class="lab">знайдено</div></div>
-        <div class="card"><div class="num">${data.summary.withKbju}</div><div class="lab">з КБЖУ</div></div>
-        <div class="card"><div class="num">${data.summary.completenessPct}%</div><div class="lab">повнота</div></div>
-      </div>`;
-    resultsEl.innerHTML = products.map(renderProduct).join('');
   } catch (e) {
     if (e.name === 'AbortError') return;
-    resultsEl.innerHTML = '<div class="muted">Помилка запиту до n8n-воркфлоу. Перевірте, що воркфлоу активовано.</div>';
+    resultEl.innerHTML = '<div class="muted">Помилка запиту до воркфлоу. Перевірте, що він активований.</div>';
   }
 }
 
-const debouncedSearch = debounce(searchOFF, 550);
+const debouncedSearch = debounce(searchByText, 700);
 document.getElementById('searchInput').addEventListener('input', debouncedSearch);
-document.getElementById('uaOnly').addEventListener('change', searchOFF);
 
+// ---------- Штрихкод ----------
 async function lookupBarcode(code) {
   const el = document.getElementById('barcodeResult');
-  el.innerHTML = '<div class="loading">Шукаємо штрихкод ' + code + '...</div>';
+  el.innerHTML = loadingHtml('ШІ намагається розпізнати штрихкод ' + code + '...');
   try {
-    const res = await fetch(`${PROXY_URL}?mode=barcode&q=${encodeURIComponent(code)}`);
+    const res = await fetch(AI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'text', query: 'товар зі штрихкодом ' + code, grams: 100, lang: LANG }),
+    });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if (!data.found) {
-      el.innerHTML = `<div class="muted">Штрихкод ${code} не знайдено в базі Open Food Facts.</div>`;
-      return;
+    if (data.success && data.nutrition) {
+      el.innerHTML = renderNutrition(data.nutrition);
+    } else {
+      el.innerHTML = '<div class="muted">Не вдалося отримати відповідь від ШІ.</div>';
     }
-    el.innerHTML = renderProduct(data);
   } catch (e) {
-    el.innerHTML = '<div class="muted">Помилка запиту до n8n-воркфлоу. Перевірте, що воркфлоу активовано.</div>';
+    el.innerHTML = '<div class="muted">Помилка запиту до воркфлоу. Перевірте, що він активований.</div>';
   }
 }
 
@@ -283,6 +295,37 @@ document.getElementById('camBtn').addEventListener('click', async () => {
     btn.textContent = 'Увімкнути камеру і сканувати';
     qrScanner = null;
   }
+});
+
+// ---------- Фото упаковки ----------
+document.getElementById('photoInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const resultEl = document.getElementById('photoResult');
+  resultEl.innerHTML = loadingHtml('ШІ аналізує фото упаковки...');
+  try {
+    const base64 = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result.split(',')[1]);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+    const res = await fetch(AI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'photo', base64_image: base64, mime_type: file.type || 'image/jpeg', lang: LANG }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.success && data.nutrition) {
+      resultEl.innerHTML = renderNutrition(data.nutrition);
+    } else {
+      resultEl.innerHTML = '<div class="muted">Не вдалося отримати відповідь від ШІ.</div>';
+    }
+  } catch (err) {
+    resultEl.innerHTML = '<div class="muted">Помилка запиту до воркфлоу. Перевірте, що він активований.</div>';
+  }
+  e.target.value = '';
 });
 
 // ---------- Модалка "Як встановити" з мокапами телефону ----------
