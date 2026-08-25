@@ -68,6 +68,15 @@
 
   <div id="installHint" class="install-hint">Встановити як застосунок: у браузері відкрийте меню (⋮ або «Поділитися») і оберіть «Додати на головний екран» / «Встановити застосунок».</div>
 
+  <div id="proxySetup" class="install-hint" style="border-color:#8B3A3A;">
+    <div style="margin-bottom:8px; color:#2B2A25; font-weight:600; font-size:13px;">Налаштування: адреса n8n-воркфлоу</div>
+    <div style="margin-bottom:8px;">Дані йдуть через ваш n8n-webhook (не напряму з браузера) — так дотримано вимоги Open Food Facts щодо User-Agent і лімітів запитів.</div>
+    <div style="display:flex; gap:6px;">
+      <input type="text" id="proxyUrlInput" placeholder="https://ваш-n8n.up.railway.app/webhook/off-proxy" style="flex:1; font-size:12px;" />
+      <button class="btn secondary" id="proxySaveBtn" style="padding:8px 12px; font-size:12px;">Зберегти</button>
+    </div>
+  </div>
+
   <div class="tabs">
     <button class="tab active" data-tab="search">Пошук за назвою</button>
     <button class="tab" data-tab="barcode">Штрихкод</button>
@@ -111,93 +120,112 @@ tabs.forEach((t) => t.addEventListener('click', () => {
   document.getElementById('panel-' + t.dataset.tab).classList.add('active');
 }));
 
-function kbjuBadgeHtml(n) {
-  const hasK = n && (n['energy-kcal_100g'] !== undefined && n['energy-kcal_100g'] !== null);
-  return hasK
-    ? '<span class="badge ok">є КБЖУ</span>'
-    : '<span class="badge missing">без КБЖУ</span>';
-}
-
 function round1(x) { return Math.round(x * 10) / 10; }
 
+function getProxyUrl() {
+  return localStorage.getItem('offProxyUrl') || '';
+}
+
+document.getElementById('proxyUrlInput').value = getProxyUrl();
+document.getElementById('proxySaveBtn').addEventListener('click', () => {
+  const val = document.getElementById('proxyUrlInput').value.trim();
+  localStorage.setItem('offProxyUrl', val);
+  document.getElementById('proxySetup').style.background = '#EAF3DE';
+  setTimeout(() => { document.getElementById('proxySetup').style.background = '#FFFDF7'; }, 400);
+});
+
+// нормалізований продукт з n8n-проксі: {name, brand, image, isUkraine, hasKcal, kcal_100g, proteins_100g, fat_100g, carbs_100g}
 function renderProduct(p) {
-  const name = p.product_name_uk || p.product_name || p.generic_name || '(без назви)';
-  const brand = p.brands || '';
-  const img = p.image_front_small_url || p.image_small_url;
-  const n = p.nutriments || {};
-  const isUa = (p.countries_tags || []).includes('en:ukraine');
-  const hasK = n['energy-kcal_100g'] !== undefined && n['energy-kcal_100g'] !== null;
-  const kbjuRow = hasK
+  const name = p.name || '(без назви)';
+  const kbjuRow = p.hasKcal
     ? `<div class="kbju">
-        <span>${Math.round(n['energy-kcal_100g'])} ккал</span>
-        <span>Б${round1(n['proteins_100g'] ?? 0)}</span>
-        <span>Ж${round1(n['fat_100g'] ?? 0)}</span>
-        <span>В${round1(n['carbohydrates_100g'] ?? 0)}</span>
+        <span>${Math.round(p.kcal_100g)} ккал</span>
+        <span>Б${round1(p.proteins_100g ?? 0)}</span>
+        <span>Ж${round1(p.fat_100g ?? 0)}</span>
+        <span>В${round1(p.carbs_100g ?? 0)}</span>
       </div>`
     : '';
   return `
     <div class="result">
-      ${img ? `<img src="${img}" alt="" />` : '<div class="imgph"></div>'}
+      ${p.image ? `<img src="${p.image}" alt="" />` : '<div class="imgph"></div>'}
       <div>
         <div class="rname">${name}</div>
-        ${brand ? `<div class="rbrand">${brand}</div>` : ''}
-        <div>${kbjuBadgeHtml(n)}${isUa ? '<span class="badge ua">UA</span>' : ''}</div>
+        ${p.brand ? `<div class="rbrand">${p.brand}</div>` : ''}
+        <div>${p.hasKcal ? '<span class="badge ok">є КБЖУ</span>' : '<span class="badge missing">без КБЖУ</span>'}${p.isUkraine ? '<span class="badge ua">UA</span>' : ''}</div>
         ${kbjuRow}
       </div>
     </div>`;
 }
+
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+let searchAbortController = null;
 
 async function searchOFF() {
   const q = document.getElementById('searchInput').value.trim();
   const uaOnly = document.getElementById('uaOnly').checked;
   const resultsEl = document.getElementById('searchResults');
   const summaryEl = document.getElementById('searchSummary');
-  if (!q) { resultsEl.innerHTML = '<div class="muted">Введіть назву продукту.</div>'; summaryEl.innerHTML = ''; return; }
-  resultsEl.innerHTML = '<div class="loading">Шукаємо в Open Food Facts...</div>';
+  if (q.length < 2) { resultsEl.innerHTML = ''; summaryEl.innerHTML = ''; return; }
+
+  const proxy = getProxyUrl();
+  if (!proxy) { resultsEl.innerHTML = '<div class="muted">Спочатку вкажіть і збережіть адресу n8n-воркфлоу вище.</div>'; return; }
+
+  if (searchAbortController) searchAbortController.abort();
+  searchAbortController = new AbortController();
+
+  resultsEl.innerHTML = '<div class="loading">Шукаємо через ваш n8n-проксі...</div>';
   summaryEl.innerHTML = '';
 
-  let url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=24`;
-  if (uaOnly) {
-    url += `&tagtype_0=countries&tag_contains_0=contains&tag_0=ukraine`;
-  }
+  const url = `${proxy}?mode=search&q=${encodeURIComponent(q)}${uaOnly ? '&country=ukraine' : ''}`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: searchAbortController.signal });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     const products = data.products || [];
+
     if (products.length === 0) {
       resultsEl.innerHTML = '<div class="muted">Нічого не знайдено' + (uaOnly ? ' серед товарів з тегом «Україна». Спробуйте зняти галочку вище.' : '.') + '</div>';
       return;
     }
-    const withKbju = products.filter((p) => p.nutriments && p.nutriments['energy-kcal_100g'] !== undefined && p.nutriments['energy-kcal_100g'] !== null).length;
     summaryEl.innerHTML = `
       <div class="summary">
-        <div class="card"><div class="num">${products.length}</div><div class="lab">знайдено</div></div>
-        <div class="card"><div class="num">${withKbju}</div><div class="lab">з КБЖУ</div></div>
-        <div class="card"><div class="num">${Math.round((withKbju / products.length) * 100)}%</div><div class="lab">повнота</div></div>
+        <div class="card"><div class="num">${data.summary.total}</div><div class="lab">знайдено</div></div>
+        <div class="card"><div class="num">${data.summary.withKbju}</div><div class="lab">з КБЖУ</div></div>
+        <div class="card"><div class="num">${data.summary.completenessPct}%</div><div class="lab">повнота</div></div>
       </div>`;
     resultsEl.innerHTML = products.map(renderProduct).join('');
   } catch (e) {
-    resultsEl.innerHTML = '<div class="muted">Помилка запиту до Open Food Facts. Перевірте інтернет-з’єднання.</div>';
+    if (e.name === 'AbortError') return;
+    resultsEl.innerHTML = '<div class="muted">Помилка запиту до n8n-воркфлоу. Перевірте, що воркфлоу активовано і адреса вказана вірно.</div>';
   }
 }
 
+const debouncedSearch = debounce(searchOFF, 550);
+document.getElementById('searchInput').addEventListener('input', debouncedSearch);
+document.getElementById('uaOnly').addEventListener('change', searchOFF);
 document.getElementById('searchBtn').addEventListener('click', searchOFF);
-document.getElementById('searchInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') searchOFF(); });
 
 async function lookupBarcode(code) {
   const el = document.getElementById('barcodeResult');
+  const proxy = getProxyUrl();
+  if (!proxy) { el.innerHTML = '<div class="muted">Спочатку вкажіть і збережіть адресу n8n-воркфлоу вище.</div>'; return; }
   el.innerHTML = '<div class="loading">Шукаємо штрихкод ' + code + '...</div>';
   try {
-    const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${code}.json`);
+    const res = await fetch(`${proxy}?mode=barcode&q=${encodeURIComponent(code)}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if (data.status !== 1) {
+    if (!data.found) {
       el.innerHTML = `<div class="muted">Штрихкод ${code} не знайдено в базі Open Food Facts.</div>`;
       return;
     }
-    el.innerHTML = renderProduct(data.product);
+    el.innerHTML = renderProduct(data);
   } catch (e) {
-    el.innerHTML = '<div class="muted">Помилка запиту. Перевірте інтернет-з’єднання.</div>';
+    el.innerHTML = '<div class="muted">Помилка запиту до n8n-воркфлоу. Перевірте, що воркфлоу активовано.</div>';
   }
 }
 
